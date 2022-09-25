@@ -12,7 +12,7 @@ export class OrganizationService {
     return `This action returns all organization`;
   }
 
-  findOne(id: number) {
+  async findOne(id: any): Promise<any> {
     return `This action returns a #${id} organization`;
   }
 
