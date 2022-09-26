@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { isEmail, isPhoneNumber } from 'class-validator';
 import mongoose, { Document } from 'mongoose';
 import { Member } from 'src/member/schemas/member.schema';
+import { DuplicateFieldError } from 'src/shared/errors/duplicate-field.error';
 
 // export type UserDocument = User & Document;
-
 @Schema()
 export class User extends Document {
   @Prop()
@@ -12,10 +13,34 @@ export class User extends Document {
   @Prop()
   lastName: string;
 
-  @Prop()
+  @Prop({
+    lowercase: true,
+    validate: async function (value) {
+      if (!value) return true;
+      if (!isEmail(value))
+        throw new Error('Please enter a valid email address.');
+      const user = await this.constructor.findOne({ email: value });
+      if (user)
+        throw new Error(
+          'A user is already registered with this email address.',
+        );
+    },
+    // match: [/.+@.+\..+/g, 'Please fill a valid email address'],
+  })
   email: string;
 
-  @Prop()
+  @Prop({
+    validate: async function (value) {
+      if (!value) return true;
+      if (!isPhoneNumber(value))
+        throw new Error(
+          'Please enter a valid phone number. Ensure you include the country code',
+        );
+      const user = await this.constructor.findOne({ phone: value });
+      if (user)
+        throw new Error('A user is already registered with this phone number');
+    },
+  })
   phone: string;
 
   @Prop(Boolean)
@@ -29,3 +54,24 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Virtual for user's full name
+UserSchema.virtual('name').get(function () {
+  let fullName = '';
+  if (this.firstName && this.lastName) {
+    fullName = `${this.firstName} ${this.lastName}`;
+  }
+  if (!this.firstName || !this.lastName) {
+    fullName = this.firstName || this.lastName;
+  }
+  return fullName;
+});
+
+UserSchema.post('save', function (error, doc, next) {
+  if (error.name === 'MongoServerError' && error.code === 11000) {
+    const field = /{\s[a-zA-Z]+:/i.exec(error.message)[0].replace(/{|:| /g, '');
+    next(new DuplicateFieldError('The ' + field + ' already exists.'));
+  } else {
+    next();
+  }
+});

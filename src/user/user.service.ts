@@ -1,11 +1,13 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SharedService } from 'src/shared/shared.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
-import { isEmail, isPhoneNumber } from 'class-validator';
-import { ObjectId, Types } from 'mongoose';
-import { User } from './schemas/user.schema';
+import { ObjectId } from 'mongoose';
 
 @Injectable()
 export class UserService extends SharedService<UserRepository> {
@@ -19,19 +21,13 @@ export class UserService extends SharedService<UserRepository> {
         'You need to enter either your email or phone number',
       );
     }
-    return this.repo.create(dto);
+    return this.repo.findOrCreateByUsername(dto);
   }
 
   public async getUserByUsername(username: string, throwError = true) {
-    let user: User & { _id: Types.ObjectId };
-    if (isPhoneNumber(username)) {
-      user = await this.repo.findOne({ phone: username });
-    }
-    if (isEmail(username)) {
-      user = await this.repo.findOne({ email: username });
-    }
+    const user = await this.repo.findUserByUsername(username);
     if (!user && throwError) {
-      throw new BadRequestException(`Username is invalid`);
+      throw new NotFoundException(`User not found`);
     }
     return user;
   }
@@ -40,8 +36,8 @@ export class UserService extends SharedService<UserRepository> {
     return this.repo.find();
   }
 
-  public async findOne(id: ObjectId | string) {
-    return this.findOne(id);
+  public async findById(id: ObjectId | string) {
+    return this.repo.findById(id);
   }
 
   public async update(id: ObjectId | string, dto: UpdateUserDto) {
