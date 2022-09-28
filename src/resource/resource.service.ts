@@ -1,26 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ObjectId } from 'mongoose';
+import slugify from 'slugify';
+import { SharedService } from 'src/shared/shared.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import { ResourceRepository } from './resource.repository';
 
 @Injectable()
-export class ResourceService {
-  create(createResourceDto: CreateResourceDto) {
-    return 'This action adds a new resource';
+export class ResourceService extends SharedService<ResourceRepository> {
+  constructor(readonly repo: ResourceRepository) {
+    super(repo);
   }
 
-  findAll() {
-    return `This action returns all resource`;
+  public async findOrCreate(dto: CreateResourceDto) {
+    dto.slug = (dto.slug ?? slugify(dto.name)).toLowerCase();
+    return this.repo.findOrCreate(dto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} resource`;
+  public async findBySlug(slug: string, throwError = true) {
+    const resource = await this.repo.findBySlug(slug);
+    if (!resource && throwError) {
+      throw new NotFoundException(`Resource not found`);
+    }
+    return resource;
   }
 
-  update(id: number, updateResourceDto: UpdateResourceDto) {
-    return `This action updates a #${id} resource`;
+  public async findAll(filter?: any) {
+    return this.repo.find();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} resource`;
+  public async findById(id: ObjectId | string) {
+    return this.repo.findById(id);
+  }
+
+  public async update(id: ObjectId | string, dto: UpdateResourceDto) {
+    return this.repo.update(id, dto);
+  }
+
+  public async remove(id: ObjectId | string) {
+    return this.repo.delete(id);
   }
 }

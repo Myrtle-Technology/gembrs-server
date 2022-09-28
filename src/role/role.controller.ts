@@ -18,9 +18,9 @@ export class RoleController {
   constructor(private readonly service: RoleService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a Role' })
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.service.findOrCreate(createRoleDto);
+  @ApiOperation({ summary: 'Fond or Create a Role' })
+  create(@Body() dto: CreateRoleDto) {
+    return this.service.findOrCreate(dto);
   }
 
   @Get()
@@ -43,8 +43,8 @@ export class RoleController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a Role' })
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.service.update(id, updateRoleDto);
+  update(@Param('id') id: string, @Body() dto: UpdateRoleDto) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
