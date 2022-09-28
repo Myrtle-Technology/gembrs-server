@@ -1,26 +1,42 @@
 import { Injectable } from '@nestjs/common';
+import { ObjectId } from 'mongoose';
+import { SharedService } from 'src/shared/shared.service';
 import { CreateMemberDto } from './dto/create-member.dto';
+import { UpdateMemberPasswordDto } from './dto/update-member-password.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
+import { MemberRepository } from './member.repository';
 
 @Injectable()
-export class MemberService {
-  create(createMemberDto: CreateMemberDto) {
-    return 'This action adds a new member';
+export class MemberService extends SharedService<MemberRepository> {
+  constructor(readonly repo: MemberRepository) {
+    super(repo);
   }
 
-  findAll() {
-    return `This action returns all member`;
+  public async createOne(dto: CreateMemberDto) {
+    return this.repo.create(dto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} member`;
+  public async findAll(filter?: any) {
+    return this.repo.find();
   }
 
-  update(id: number, updateMemberDto: UpdateMemberDto) {
-    return `This action updates a #${id} member`;
+  public async findById(id: ObjectId | string) {
+    return this.repo.findById(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} member`;
+  public async update(id: ObjectId | string, dto: UpdateMemberDto) {
+    delete dto.password;
+    return this.repo.update(id, dto);
+  }
+
+  public async remove(id: ObjectId | string) {
+    return this.repo.delete(id);
+  }
+
+  public async updatePassword(
+    id: ObjectId | string,
+    dto: UpdateMemberPasswordDto,
+  ) {
+    return this.repo.update(id, dto);
   }
 }
