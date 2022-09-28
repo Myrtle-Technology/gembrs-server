@@ -7,7 +7,7 @@ import {
   IsPhoneNumber,
 } from 'class-validator';
 import { IsSlug } from 'src/shared/decorators/is-slug.decorator';
-import { IsEqualTo } from '../decorators/is-equal-to.decorator';
+import { IsEqualTo } from 'src/shared/decorators/is-equal-to.decorator';
 
 export class CreateAccountDto {
   @IsString()

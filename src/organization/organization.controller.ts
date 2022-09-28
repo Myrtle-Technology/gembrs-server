@@ -17,36 +17,36 @@ import { Request } from 'express';
 @ApiTags('Organization')
 @Controller('organization')
 export class OrganizationController {
-  constructor(private readonly organizationService: OrganizationService) {}
+  constructor(private readonly service: OrganizationService) {}
 
   @ApiOperation({ summary: 'Find all Organizations' })
   @Get()
   findAll() {
-    return this.organizationService.findAll();
+    return this.service.findAll();
   }
 
   @ApiOperation({ summary: 'Create a Organization' })
   @Post()
   create(@Body() dto: CreateOrganizationDto, @Req() request: Request) {
     // dto.ownerId = request.user.id;
-    return this.organizationService.createOne(dto);
+    return this.service.createOne(dto);
   }
 
   @ApiOperation({ summary: 'Find an Organization' })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.organizationService.findById(id);
+    return this.service.findById(id);
   }
 
   @ApiOperation({ summary: 'Update an Organization' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateOrganizationDto) {
-    return this.organizationService.update(id, dto);
+    return this.service.update(id, dto);
   }
 
   @ApiOperation({ summary: 'Delete an Organization' })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.organizationService.remove(id);
+    return this.service.remove(id);
   }
 }

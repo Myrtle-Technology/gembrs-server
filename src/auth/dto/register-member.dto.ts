@@ -1,6 +1,6 @@
 import { IsString, IsOptional, MaxLength, MinLength } from 'class-validator';
 // import { CreateMemberCommonFieldDto } from 'src/member-common-field/dto/create-member-common-field.dto';
-import { IsUsername } from '../decorators/is-username.decorator';
+import { IsUsername } from 'src/shared/decorators/is-username.decorator';
 
 export class RegisterMember {
   @IsString()

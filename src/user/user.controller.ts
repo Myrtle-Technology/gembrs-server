@@ -16,12 +16,12 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly service: UserService) {}
 
   @Get()
   @ApiOperation({ summary: 'Find all Users' })
   findAll(@Query('filter') filter: any) {
-    return this.userService.findAll(filter);
+    return this.service.findAll(filter);
   }
 
   @Post()
@@ -30,7 +30,7 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
     @Res() response: Response,
   ) {
-    const user = await this.userService.createOne(createUserDto);
+    const user = await this.service.createOne(createUserDto);
     if (user.created) {
       return response.status(201).json(user.user);
     }
@@ -40,7 +40,7 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: 'Find a User' })
   findOne(@Param('id') id: string) {
-    return this.userService.findById(id);
+    return this.service.findById(id);
   }
 
   // @Patch(':id')
@@ -51,7 +51,7 @@ export class UserController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a User' })
   public async remove(@Param('id') id: string) {
-    await this.userService.remove(id);
+    await this.service.remove(id);
     return { message: 'User deleted successfully' };
   }
 }
