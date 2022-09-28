@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-
-export type RoleDocument = Role & Document;
+import { Organization } from 'src/organization/schemas/organization.schema';
 
 /* 
   RBAC - role-based access control
@@ -11,7 +10,7 @@ export type RoleDocument = Role & Document;
 */
 // https://blog.nextwebb.tech/role-based-access-control-rbac-for-nosql-db-in-nodejs
 @Schema({ timestamps: true })
-export class Role {
+export class Role extends Document {
   @Prop({ required: true })
   name: string;
 
@@ -19,7 +18,7 @@ export class Role {
   slug: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
-  organizationId: string;
+  organization: Organization;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

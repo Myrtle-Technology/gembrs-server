@@ -1,26 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ObjectId } from 'mongoose';
+import slugify from 'slugify';
+import { SharedService } from 'src/shared/shared.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { RoleRepository } from './role.repository';
 
 @Injectable()
-export class RoleService {
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+export class RoleService extends SharedService<RoleRepository> {
+  constructor(readonly repo: RoleRepository) {
+    super(repo);
   }
 
-  findAll() {
-    return `This action returns all role`;
+  public async findOrCreate(dto: CreateRoleDto) {
+    dto.slug = (dto.slug ?? slugify(dto.name)).toLowerCase();
+    return this.repo.findOrCreate(dto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  public async findBySlug(slug: string, throwError = true) {
+    const role = await this.repo.findBySlug(slug);
+    if (!role && throwError) {
+      throw new NotFoundException(`Role not found`);
+    }
+    return role;
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  public async findAll(filter?: any) {
+    return this.repo.find();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  public async findById(id: ObjectId | string) {
+    return this.repo.findById(id);
+  }
+
+  public async update(id: ObjectId | string, dto: UpdateRoleDto) {
+    return this.repo.update(id, dto);
+  }
+
+  public async remove(id: ObjectId | string) {
+    return this.repo.delete(id);
   }
 }

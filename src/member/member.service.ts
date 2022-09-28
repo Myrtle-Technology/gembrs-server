@@ -58,6 +58,6 @@ export class MemberService extends SharedService<MemberRepository> {
     // create a member without password
     // create invitation
     // send member an invite email
-    return this.repo.create(dto);
+    return this.repo.create(dto as any);
   }
 }
