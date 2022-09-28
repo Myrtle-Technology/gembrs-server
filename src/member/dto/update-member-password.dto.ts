@@ -2,7 +2,6 @@ import { IsString } from 'class-validator';
 import { IsEqualTo } from 'src/shared/decorators/is-equal-to.decorator';
 
 export class UpdateMemberPasswordDto {
-  id: string;
   @IsString()
   password: string;
   @IsEqualTo('password')

@@ -1,7 +1,7 @@
 import { IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 
 export class CreateMemberDto {
-  organizationId?: number;
+  organizationId?: string;
   @IsString()
   bio?: string;
 
