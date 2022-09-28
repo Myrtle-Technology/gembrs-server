@@ -1,5 +1,4 @@
 import {
-  AnyObject,
   FilterQuery,
   HydratedDocument,
   Model,
@@ -25,8 +24,22 @@ export class SharedRepository<
     return this.model.find(options).exec();
   }
 
+  populateOnFind: string[] = [];
+
   public async findById(id: ObjectId | any, options?: QueryOptions<Entity>) {
-    return this.model.findById(id, {}, options).exec();
+    return (
+      this.model
+        .findById(
+          id,
+          {},
+          {
+            populate: this.populateOnFind,
+            ...options,
+          },
+        )
+        // .populate(this.populateOnFind)
+        .exec()
+    );
   }
 
   public async findOne(
@@ -34,7 +47,15 @@ export class SharedRepository<
     projection?: ProjectionType<Entity> | null,
     options?: QueryOptions<Entity> | null,
   ) {
-    return this.model.findOne(filter, projection, options).exec();
+    return (
+      this.model
+        .findOne(filter, projection, {
+          populate: this.populateOnFind,
+          ...options,
+        })
+        // .populate(this.populateOnFind)
+        .exec()
+    );
   }
 
   public async create(dto: CreateDto, options?: SaveOptions) {
@@ -50,6 +71,7 @@ export class SharedRepository<
     return this.model.findByIdAndUpdate(id, dto, {
       new: true,
       ...options,
+      populate: this.populateOnFind,
     });
   }
 

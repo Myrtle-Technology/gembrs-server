@@ -47,9 +47,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }
 
       return this.organizationService
-        .findOne({
-          siteName: organizationSlug,
-        })
+        .findBySiteName(organizationSlug)
         .then((organization) => {
           if (!organization)
             throw new NotFoundException(

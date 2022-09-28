@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { BadRequestException } from '@nestjs/common';
 import { isEmail, isPhoneNumber } from 'class-validator';
 import mongoose, { Document } from 'mongoose';
 import { Member } from 'src/member/schemas/member.schema';
-import { DuplicateFieldError } from 'src/shared/errors/duplicate-field.error';
+// import { DuplicateFieldError } from 'src/shared/errors/duplicate-field.error';
 
 // export type UserDocument = User & Document;
 @Schema()
@@ -70,8 +71,8 @@ UserSchema.virtual('name').get(function () {
 UserSchema.post('save', function (error, doc, next) {
   if (error.name === 'MongoServerError' && error.code === 11000) {
     const field = /{\s[a-zA-Z]+:/i.exec(error.message)[0].replace(/{|:| /g, '');
-    next(new DuplicateFieldError('The ' + field + ' already exists.'));
+    next(new BadRequestException('The ' + field + ' already exists.'));
   } else {
-    next();
+    next(new BadRequestException('Bad input try again'));
   }
 });

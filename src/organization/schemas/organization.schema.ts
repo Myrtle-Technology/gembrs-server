@@ -1,16 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Member } from 'src/member/schemas/member.schema';
+import { Role } from 'src/role/schemas/role.schema';
 import { User } from 'src/user/schemas/user.schema';
 
-export type OrganizationDocument = Organization & Document;
+// export type OrganizationDocument = Organization & Document;
 
 @Schema()
-export class Organization {
+export class Organization extends Document {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   siteName: string;
 
   @Prop()
@@ -34,14 +35,17 @@ export class Organization {
   @Prop()
   country: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop()
+  currency: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: User;
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Member' }] })
   members: Member[];
 
-  // @OneToMany(() => Role, (role) => role.ownerOrganization)
-  // roles: Role[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role' }] })
+  roles: Role[];
 
   // @OneToMany(() => CommonField, (commonField) => commonField.organization)
   // commonFields: CommonField[];

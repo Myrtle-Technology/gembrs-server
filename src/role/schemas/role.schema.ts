@@ -17,6 +17,9 @@ export class Role {
 
   @Prop({ required: true })
   slug: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
+  organizationId: string;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

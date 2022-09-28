@@ -7,7 +7,7 @@ import {
 export function IsSlug(validationOptions?: ValidationOptions) {
   return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
-      name: 'IsUserName',
+      name: 'IsSlug',
       target: object.constructor,
       propertyName: propertyName,
       options: {

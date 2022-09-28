@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ObjectId } from 'mongoose';
+import { SharedService } from 'src/shared/shared.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { OrganizationRepository } from './organization.repository';
 
 @Injectable()
-export class OrganizationService {
-  create(createOrganizationDto: CreateOrganizationDto) {
-    return 'This action adds a new organization';
+export class OrganizationService extends SharedService<OrganizationRepository> {
+  constructor(readonly repo: OrganizationRepository) {
+    super(repo);
   }
 
-  findAll() {
-    return `This action returns all organization`;
+  public async createOne(dto: CreateOrganizationDto) {
+    return this.repo.create(dto);
   }
 
-  async findOne(id: any): Promise<any> {
-    return `This action returns a #${id} organization`;
+  public async findBySiteName(username: string, throwError = true) {
+    const user = await this.repo.findBySiteName(username);
+    if (!user && throwError) {
+      throw new NotFoundException(`Organization not found`);
+    }
+    return user;
   }
 
-  update(id: number, updateOrganizationDto: UpdateOrganizationDto) {
-    return `This action updates a #${id} organization`;
+  public async findAll(filter?: any) {
+    return this.repo.find();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} organization`;
+  public async findById(id: ObjectId | string) {
+    return this.repo.findById(id);
+  }
+
+  public async update(id: ObjectId | string, dto: UpdateOrganizationDto) {
+    return this.repo.update(id, dto);
+  }
+
+  public async remove(id: ObjectId | string) {
+    return this.repo.delete(id);
   }
 }
