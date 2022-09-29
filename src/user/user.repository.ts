@@ -17,7 +17,7 @@ export class UserRepository extends SharedRepository<
     super(model);
   }
 
-  public async findOrCreateByUsername(dto: CreateUserDto) {
+  public async findOrCreate(dto: CreateUserDto) {
     const query =
       dto.email && dto.phone
         ? { $or: [{ email: dto.email }, { phone: dto.phone }] }
@@ -34,7 +34,7 @@ export class UserRepository extends SharedRepository<
     return { user, created: false };
   }
 
-  findUserByUsername(username: string) {
+  findByUsername(username: string) {
     return this.model.findOne(
       isEmail(username) ? { email: username } : { phone: username },
     );

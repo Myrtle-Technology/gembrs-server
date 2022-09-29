@@ -4,10 +4,10 @@ import { Organization } from 'src/organization/schemas/organization.schema';
 import { Role } from 'src/role/schemas/role.schema';
 import { User } from 'src/user/schemas/user.schema';
 
-export type MemberDocument = Member & Document;
+// export type MemberDocument = Member & Document;
 
 @Schema()
-export class Member {
+export class Member extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 

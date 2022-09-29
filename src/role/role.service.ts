@@ -12,6 +12,14 @@ export class RoleService extends SharedService<RoleRepository> {
     super(repo);
   }
 
+  public async getDefaultAdminRole() {
+    return this.repo.findOne({ slug: 'admin' });
+  }
+
+  public async getDefaultMemberRole() {
+    return this.repo.findOne({ slug: 'member' });
+  }
+
   public async findOrCreate(dto: CreateRoleDto) {
     dto.slug = (dto.slug ?? slugify(dto.name)).toLowerCase();
     return this.repo.findOrCreate(dto);

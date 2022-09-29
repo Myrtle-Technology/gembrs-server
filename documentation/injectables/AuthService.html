@@ -1,0 +1,1941 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>gembrs-server documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">gembrs-server documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Injectables</li>
+  <li >AuthService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/auth/auth.service.ts</code>
+        </p>
+
+
+
+
+
+            <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#isDevServer" >isDevServer</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#saltRounds" >saltRounds</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#acceptOrganizationInvite" >acceptOrganizationInvite</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createNewAccount" >createNewAccount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createOrganization" class="deprecated-name">createOrganization</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createToken" >createToken</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findUserOrganizations" >findUserOrganizations</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAuthData" >getAuthData</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#initForgotMemberPassword" >initForgotMemberPassword</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#loginToOrganization" >loginToOrganization</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#registerMember" >registerMember</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#resetMemberPassword" >resetMemberPassword</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updatePersonalDetails" class="deprecated-name">updatePersonalDetails</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateMember" >validateMember</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateNewUserOTP" >validateNewUserOTP</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateOTP" >validateOTP</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#verifyEmailOrPhone" >verifyEmailOrPhone</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Accessors</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#organizationSlug" >organizationSlug</a>
+                                </li>
+                                <li>
+                                    <a href="#organizationId" >organizationId</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+            <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(request: <a href="../interfaces/TokenRequest.html" target="_self">TokenRequest</a>, tokenRepo: <a href="../injectables/TokenRepository.html" target="_self">TokenRepository</a>, mailService: <a href="../injectables/MailService.html" target="_self">MailService</a>, smsService: <a href="../injectables/SmsService.html" target="_self">SmsService</a>, jwtService: JwtService, configService: ConfigService, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, roleService: <a href="../injectables/RoleService.html" target="_self">RoleService</a>, organizationService: <a href="../injectables/OrganizationService.html" target="_self">OrganizationService</a>, memberService: <a href="../injectables/MemberService.html" target="_self">MemberService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/auth/auth.service.ts:47</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>request</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/TokenRequest.html" target="_self" >TokenRequest</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>tokenRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TokenRepository.html" target="_self" >TokenRepository</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>mailService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/MailService.html" target="_self" >MailService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>smsService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SmsService.html" target="_self" >SmsService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>jwtService</td>
+                                                  
+                                                        <td>
+                                                                    <code>JwtService</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>configService</td>
+                                                  
+                                                        <td>
+                                                                    <code>ConfigService</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>roleService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/RoleService.html" target="_self" >RoleService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>organizationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/OrganizationService.html" target="_self" >OrganizationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>memberService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/MemberService.html" target="_self" >MemberService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="acceptOrganizationInvite"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>acceptOrganizationInvite</b></span>
+                        <a href="#acceptOrganizationInvite"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>acceptOrganizationInvite()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="292"
+                            class="link-to-prism">src/auth/auth.service.ts:292</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createNewAccount"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>createNewAccount</b></span>
+                        <a href="#createNewAccount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createNewAccount(dto: <a href="../classes/CreateAccountDto.html" target="_self">CreateAccountDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="225"
+                            class="link-to-prism">src/auth/auth.service.ts:225</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/CreateAccountDto.html" target="_self" >CreateAccountDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createOrganization"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span class="deprecated-name"><b>createOrganization</b></span>
+                        <a href="#createOrganization"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4 deprecated">
+                    use this.createNewAccount instead
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createOrganization(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/CreateOrganizationPasswordDto.html" target="_self">CreateOrganizationPasswordDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="138"
+                            class="link-to-prism">src/auth/auth.service.ts:138</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>userId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/CreateOrganizationPasswordDto.html" target="_self" >CreateOrganizationPasswordDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createToken"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>createToken</b></span>
+                        <a href="#createToken"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createToken(identifier: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, code: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="88"
+                            class="link-to-prism">src/auth/auth.service.ts:88</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>identifier</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>code</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findUserOrganizations"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>findUserOrganizations</b></span>
+                        <a href="#findUserOrganizations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findUserOrganizations(dto: <a href="../classes/FindUserOrganization.html" target="_self">FindUserOrganization</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="216"
+                            class="link-to-prism">src/auth/auth.service.ts:216</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/FindUserOrganization.html" target="_self" >FindUserOrganization</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAuthData"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>getAuthData</b></span>
+                        <a href="#getAuthData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAuthData(member: <a href="../classes/Member.html" target="_self">Member</a>, dto?: <a href="../classes/LoginDto.html" target="_self">LoginDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="202"
+                            class="link-to-prism">src/auth/auth.service.ts:202</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>member</td>
+                                    <td>
+                                                <code><a href="../classes/Member.html" target="_self" >Member</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/LoginDto.html" target="_self" >LoginDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initForgotMemberPassword"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>initForgotMemberPassword</b></span>
+                        <a href="#initForgotMemberPassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>initForgotMemberPassword()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="284"
+                            class="link-to-prism">src/auth/auth.service.ts:284</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loginToOrganization"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>loginToOrganization</b></span>
+                        <a href="#loginToOrganization"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loginToOrganization(dto: <a href="../classes/LoginDto.html" target="_self">LoginDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="197"
+                            class="link-to-prism">src/auth/auth.service.ts:197</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/LoginDto.html" target="_self" >LoginDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="registerMember"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>registerMember</b></span>
+                        <a href="#registerMember"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>registerMember(dto: <a href="../classes/RegisterMember.html" target="_self">RegisterMember</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="296"
+                            class="link-to-prism">src/auth/auth.service.ts:296</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/RegisterMember.html" target="_self" >RegisterMember</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resetMemberPassword"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>resetMemberPassword</b></span>
+                        <a href="#resetMemberPassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>resetMemberPassword()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="288"
+                            class="link-to-prism">src/auth/auth.service.ts:288</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updatePersonalDetails"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span class="deprecated-name"><b>updatePersonalDetails</b></span>
+                        <a href="#updatePersonalDetails"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4 deprecated">
+                    use this.createNewAccount instead
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updatePersonalDetails(userId: ObjectId | string, dto: <a href="../classes/UpdateUserDto.html" target="_self">UpdateUserDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="132"
+                            class="link-to-prism">src/auth/auth.service.ts:132</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>userId</td>
+                                    <td>
+                                            <code>ObjectId | string</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/UpdateUserDto.html" target="_self" >UpdateUserDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateMember"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>validateMember</b></span>
+                        <a href="#validateMember"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateMember(dto: <a href="../classes/LoginDto.html" target="_self">LoginDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="156"
+                            class="link-to-prism">src/auth/auth.service.ts:156</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/LoginDto.html" target="_self" >LoginDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateNewUserOTP"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>validateNewUserOTP</b></span>
+                        <a href="#validateNewUserOTP"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateNewUserOTP(memberId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/VerifyOtpDto.html" target="_self">VerifyOtpDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="257"
+                            class="link-to-prism">src/auth/auth.service.ts:257</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>memberId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/VerifyOtpDto.html" target="_self" >VerifyOtpDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateOTP"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>validateOTP</b></span>
+                        <a href="#validateOTP"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateOTP(dto: <a href="../classes/VerifyOtpDto.html" target="_self">VerifyOtpDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="99"
+                            class="link-to-prism">src/auth/auth.service.ts:99</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/VerifyOtpDto.html" target="_self" >VerifyOtpDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="verifyEmailOrPhone"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>verifyEmailOrPhone</b></span>
+                        <a href="#verifyEmailOrPhone"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>verifyEmailOrPhone(dto: <a href="../classes/VerifyEmailDto.html" target="_self">VerifyEmailDto</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="69"
+                            class="link-to-prism">src/auth/auth.service.ts:69</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>dto</td>
+                                    <td>
+                                                <code><a href="../classes/VerifyEmailDto.html" target="_self" >VerifyEmailDto</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section>
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isDevServer"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>isDevServer</b></span>
+                        <a href="#isDevServer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.configService.get&lt;string&gt;(&#x27;IS_DEV_SERVER&#x27;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/auth/auth.service.ts:46</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saltRounds"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>saltRounds</b></span>
+                        <a href="#saltRounds"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>+this.configService.get&lt;number&gt;(&#x27;SALT_ROUNDS&#x27;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/auth/auth.service.ts:45</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section>
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="organizationSlug"></a>
+                        <span class="name"><b>organizationSlug</b><a href="#organizationSlug"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>organizationSlug()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/auth/auth.service.ts:61</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="organizationId"></a>
+                        <span class="name"><b>organizationId</b><a href="#organizationId"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>organizationId()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/auth/auth.service.ts:65</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+</section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  BadRequestException,
+  Injectable,
+  Scope,
+  Inject,
+  UnauthorizedException,
+  NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import { REQUEST } from &#x27;@nestjs/core&#x27;;
+import { UpdateUserDto } from &#x27;src/user/dto/update-user.dto&#x27;;
+import { User } from &#x27;src/user/schemas/user.schema&#x27;;
+import { VerifyEmailDto } from &#x27;./dto/verify-email.dto&#x27;;
+import { LoginDto } from &#x27;./dto/login.dto&#x27;;
+import { isEmail } from &#x27;class-validator&#x27;;
+import * as bcrypt from &#x27;bcrypt&#x27;;
+import { Member } from &#x27;src/member/schemas/member.schema&#x27;;
+import { JwtService } from &#x27;@nestjs/jwt&#x27;;
+import { UserService } from &#x27;src/user/user.service&#x27;;
+import { OrganizationService } from &#x27;src/organization/organization.service&#x27;;
+import { FindUserOrganization } from &#x27;./dto/find-user-organization..dto&#x27;;
+import { MemberService } from &#x27;src/member/member.service&#x27;;
+import { VerifyOtpDto } from &#x27;./dto/verify-otp.dto&#x27;;
+import { CreateOrganizationPasswordDto } from &#x27;./dto/create-organization-password.dto&#x27;;
+import { ConfigService } from &#x27;@nestjs/config&#x27;;
+import { ORGANIZATION_API_HEADER } from &#x27;./decorators/organization-api.decorator&#x27;;
+import { RoleService } from &#x27;src/role/role.service&#x27;;
+import { TokenData } from &#x27;./dto/token-data.dto&#x27;;
+import { TokenRequest } from &#x27;./interfaces/token-request.interface&#x27;;
+import { CreateAccountDto } from &#x27;./dto/create-account.dto&#x27;;
+import { MailService } from &#x27;src/mail/mail.service&#x27;;
+import { SmsService } from &#x27;src/sms/sms.service&#x27;;
+// import { MemberCommonField } from &#x27;src/member-common-field/schemas/member-common-field.schema&#x27;;
+// import { MemberCommonFieldService } from &#x27;src/member-common-field/member-common-field.service&#x27;;
+// import { MembershipPlanService } from &#x27;src/membership-plan/membership-plan.service&#x27;;
+// import { RegisterMember } from &#x27;./dto/register-member.dto&#x27;;
+// import { SubscriptionService } from &#x27;src/subscription/subscription.service&#x27;;
+// import { SubscriptionStatus } from &#x27;src/subscription/enums/subscription-status.enum&#x27;;
+// import { PlanRenewalDuration } from &#x27;src/membership-plan/enums/plan-renewal-duration&#x27;;
+import { DateTime, Duration } from &#x27;luxon&#x27;;
+import { ObjectId } from &#x27;mongoose&#x27;;
+import { RegisterMember } from &#x27;./dto/register-member.dto&#x27;;
+import { TokenRepository } from &#x27;./token.repository&#x27;;
+@Injectable({ scope: Scope.REQUEST })
+export class AuthService {
+  private readonly saltRounds &#x3D; +this.configService.get&lt;number&gt;(&#x27;SALT_ROUNDS&#x27;);
+  private readonly isDevServer: string &#x3D;
+    this.configService.get&lt;string&gt;(&#x27;IS_DEV_SERVER&#x27;);
+  constructor(
+    @Inject(REQUEST) private request: TokenRequest,
+    private tokenRepo: TokenRepository,
+    private mailService: MailService,
+    private smsService: SmsService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+    private userService: UserService,
+    private roleService: RoleService,
+    private organizationService: OrganizationService,
+    private memberService: MemberService, // public memberCommonFieldService: MemberCommonFieldService, // public membershipPlanService: MembershipPlanService, // public subscriptionService: SubscriptionService,
+  ) {}
+
+  get organizationSlug() {
+    return this.request.headers[ORGANIZATION_API_HEADER];
+  }
+
+  get organizationId() {
+    return this.request.tokenData.organizationId;
+  }
+
+  async verifyEmailOrPhone(dto: VerifyEmailDto) {
+    // const user &#x3D; await this.userService.findOrCreate(
+    //   isEmail(dto.username) ? { email: dto.username } : { phone: dto.username },
+    // );
+    if (!(this.isDevServer &#x3D;&#x3D; &#x27;true&#x27;)) {
+      if (isEmail(dto.username)) {
+        const code &#x3D; Math.floor(100000 + Math.random() * 900000);
+        const token &#x3D; await this.createToken(dto.username, code.toString());
+        await this.mailService.sendVerificationCode(
+          dto.username,
+          token.toObject().token,
+        );
+      } else {
+        await this.smsService.sendOTP(dto.username);
+      }
+    }
+    return { message: &#x27;otp sent to user&#x27; };
+  }
+
+  async createToken(identifier: string, code: string) {
+    const token &#x3D; await this.tokenRepo.findOne({ identifier });
+    if (token) {
+      await token.remove();
+    }
+    return this.tokenRepo.create({
+      token: code.toString(),
+      identifier: identifier,
+    });
+  }
+
+  async validateOTP(dto: VerifyOtpDto) {
+    const user &#x3D; await this.userService.findByUsername(dto.username);
+    // if (!(this.isDevServer &#x3D;&#x3D; &#x27;true&#x27;)) {
+    if (isEmail(dto.username)) {
+      const token &#x3D; await this.tokenRepo.findOne({
+        where: { token: dto.otp.toString(), userId: user.id },
+      });
+      if (!token) {
+        throw new BadRequestException(
+          &#x60;The one time password (OTP) you entered is invalid&#x60;,
+        );
+      }
+      await token.remove();
+      user.verifiedEmail &#x3D; true;
+    } else {
+      this.smsService.verifyOTP(user.phone, dto.otp.toString());
+      user.verifiedPhone &#x3D; true;
+    }
+    // }
+    await user.save();
+    const payload &#x3D; {
+      username: user.email || user.phone,
+      userId: user.id,
+    };
+    // this access token will be used to access only 4 routes
+    // update personal details, create organization, and find User Organizations, create new account
+    return {
+      accessToken: this.jwtService.sign(payload, { expiresIn: &#x27;24h&#x27; }),
+      user: user,
+    };
+  }
+
+  /** @deprecated use this.createNewAccount instead */
+  async updatePersonalDetails(userId: ObjectId | string, dto: UpdateUserDto) {
+    // TODO: send a welcome Email to user
+    return this.userService.update(userId, dto);
+  }
+
+  /** @deprecated use this.createNewAccount instead */
+  async createOrganization(userId: string, dto: CreateOrganizationPasswordDto) {
+    dto.owner &#x3D; userId;
+    const user &#x3D; await this.userService.findById(userId);
+    const organization &#x3D; await this.organizationService.createOne(dto);
+    const role &#x3D; await this.roleService.getDefaultAdminRole();
+    const member &#x3D; await this.memberService.createOne({
+      organization: organization._id,
+      user: userId,
+      role: role._id,
+      password: dto.password,
+      officeTitle: dto.officeTitle,
+    });
+    const _member &#x3D; member.toObject&lt;Member&gt;();
+    delete _member.password;
+    this.mailService.welcomeRegisteredOrganization(user, organization);
+    return { ..._member, organization, user, role };
+  }
+
+  async validateMember(dto: LoginDto) {
+    const user: User &#x3D; await this.userService.findByUsername(dto.username);
+    const organizationSlug &#x3D; this.request.headers[
+      ORGANIZATION_API_HEADER
+    ] as string;
+    if (!organizationSlug) {
+      throw new BadRequestException(
+        &#x27;Please specify the organization you want to login to&#x27;,
+      );
+    }
+
+    const organization &#x3D; await this.organizationService.findBySiteName(
+      organizationSlug,
+    );
+    if (!organization) {
+      throw new NotFoundException(
+        &#x60;We do not have an organization with the site name &quot;${organizationSlug}&quot;&#x60;,
+      );
+    }
+
+    const member &#x3D; await (
+      await this.memberService.repo.findOne({
+        user: user._id,
+        organization: organization._id,
+      })
+    ).populate([&#x27;organization&#x27;, &#x27;user&#x27;, &#x27;role&#x27;]);
+    if (!member) {
+      throw new UnauthorizedException(
+        &#x60;You are not a member of this organization, try joining the organization first.&#x60;,
+      );
+    }
+
+    const passwordMatch &#x3D; await bcrypt.compare(dto.password, member.password);
+    if (passwordMatch) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } &#x3D; member;
+      return result;
+    }
+    return member;
+  }
+
+  async loginToOrganization(dto: LoginDto) {
+    const Member &#x3D; (this.request as any).user;
+    return this.getAuthData(Member, dto);
+  }
+
+  async getAuthData(member: Member, dto?: LoginDto) {
+    const payload: TokenData &#x3D; {
+      username: dto?.username || member.user.email || member.user.phone,
+      memberId: member._id,
+      organizationId: member.organization._id,
+      userId: member.user._id,
+      roleId: member.role._id,
+    };
+    return {
+      accessToken: this.jwtService.sign(payload),
+      user: member,
+    };
+  }
+
+  async findUserOrganizations(dto: FindUserOrganization) {
+    const user &#x3D; await this.userService.findByUsername(dto.username);
+
+    const member &#x3D; await (
+      await this.memberService.findById(user._id)
+    ).populate(&#x27;organization&#x27;);
+    return member.organization;
+  }
+
+  async createNewAccount(dto: CreateAccountDto) {
+    const user &#x3D; (
+      await this.userService.findOrCreate({
+        email: dto.email,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phone: dto.phone,
+      })
+    ).user.toObject&lt;User&gt;();
+    const organization &#x3D; await this.organizationService.createOne({
+      // contactEmail: user.email,
+      name: dto.organizationName,
+      siteName: dto.organizationSiteName,
+      // contactPhone: user.phone,
+    });
+    const role &#x3D; await this.roleService.getDefaultAdminRole();
+    const member &#x3D; await this.memberService.createOne({
+      organization: organization._id,
+      user: user._id,
+      role: role._id,
+      password: dto.password,
+      officeTitle: dto.officeTitle,
+      // contactPhone: user.phone,
+    });
+    this.mailService.welcomeRegisteredOrganization(user, organization);
+    return this.getAuthData(
+      await (
+        await this.memberService.findById(member._id)
+      ).populate([&#x27;organization&#x27;, &#x27;user&#x27;, &#x27;role&#x27;]),
+    );
+  }
+
+  async validateNewUserOTP(memberId: string, dto: VerifyOtpDto) {
+    const user &#x3D; await this.userService.findByUsername(dto.username);
+    // if (!(this.isDevServer &#x3D;&#x3D; &#x27;true&#x27;)) {
+    if (isEmail(dto.username)) {
+      const token &#x3D; await this.tokenRepo.findOne({
+        where: { token: dto.otp.toString(), userId: user.id },
+      });
+      if (!token) {
+        throw new BadRequestException(
+          &#x60;The one time password (OTP) you entered is invalid&#x60;,
+        );
+      }
+      await token.remove();
+      user.verifiedEmail &#x3D; true;
+    } else {
+      this.smsService.verifyOTP(user.phone, dto.otp.toString());
+      user.verifiedPhone &#x3D; true;
+    }
+    // }
+    await user.save();
+    return this.getAuthData(
+      await (
+        await this.memberService.findById(memberId)
+      ).populate([&#x27;organization&#x27;, &#x27;user&#x27;, &#x27;role&#x27;]),
+    );
+  }
+
+  async initForgotMemberPassword() {
+    //
+  }
+
+  async resetMemberPassword() {
+    //
+  }
+
+  async acceptOrganizationInvite() {
+    //
+  }
+
+  async registerMember(dto: RegisterMember) {
+    /*
+    const membershipPlan &#x3D; await this.membershipPlanService.findOne(
+      dto.membershipPlanId,
+    );
+    if (!membershipPlan) {
+      throw new BadRequestException(&#x27;Membership level not found&#x27;);
+    }
+
+    let user &#x3D; await this.userService.findOrCreateUserByUsername(dto.username);
+    user &#x3D; await this.userService.updateOne(user.id, {
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+    });
+
+    const Member &#x3D; await this.MemberService.createOne(
+      new Member({
+        userId: user.id,
+        organizationId: this.organizationId,
+        password: dto.password, // password is hashed in this method.
+      }),
+    );
+
+    // save all fields that are not default fields
+    const bulkDto: MemberCommonField[] &#x3D; dto.commonFields.map(
+      (commonField) &#x3D;&gt;
+        new MemberCommonField({
+          ...commonField,
+          memberId: Member.id,
+          organizationId: this.organizationId,
+        }),
+    );
+
+    await this.memberCommonFieldService.createMany(bulkDto);
+
+    const currentDt &#x3D; DateTime.now();
+    const endDt &#x3D; currentDt.plus(
+      Duration.fromObject({
+        [membershipPlan.renewalDuration]: membershipPlan.renewalDurationCount,
+      }),
+    );
+
+    this.subscriptionService.createOne({
+      organizationId: this.organizationId,
+      memberId: Member.id,
+      membershipPlanId: membershipPlan.id,
+      status: SubscriptionStatus.Pending,
+      currentPeriodStart: currentDt.toJSDate(),
+      currentPeriodEnd: endDt.toJSDate(),
+      cancelAtPeriodEnd: true,
+      defaultPaymentMethod: membershipPlan.paymentMethod,
+    });
+
+    await Member.reload();
+    return Member;
+    */
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AuthService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

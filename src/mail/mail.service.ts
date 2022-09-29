@@ -34,14 +34,14 @@ export class MailService {
     });
   }
 
-  async sendVerificationCode(user: User, code: number | string) {
+  async sendVerificationCode(email: string, code: number | string) {
     return await this.mailerService.send({
-      Recipients: { To: [user.email] },
+      Recipients: { To: [email] },
       Content: {
         Subject: `${APP_NAME} – email verification`,
         TemplateName: ElasticMailTemplateNames.VerifyYourEmail,
         Merge: {
-          name: `${user.firstName}`,
+          name: `${email}`,
           code: `${code}`,
           APP_NAME,
         },

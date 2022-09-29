@@ -1,0 +1,675 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>gembrs-server documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">gembrs-server documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content miscellaneous-variables">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Miscellaneous</li>
+  <li>Variables</li>
+</ol>
+
+<section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#AllowUserWithoutOrganization" title="src/auth/decorators/allow-user-without-organization.decorator.ts" ><b>AllowUserWithoutOrganization</b>&nbsp;&nbsp;&nbsp;(src/.../allow-user-without-organization.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#APP_NAME" title="src/app.constants.ts" ><b>APP_NAME</b>&nbsp;&nbsp;&nbsp;(src/.../app.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#getAuth" title="src/role/role.middleware.ts" ><b>getAuth</b>&nbsp;&nbsp;&nbsp;(src/.../role.middleware.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#IS_PUBLIC_KEY" title="src/auth/decorators/public.decorator.ts" ><b>IS_PUBLIC_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../public.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#jwtConstants" title="src/auth/constants.ts" ><b>jwtConstants</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#MemberSchema" title="src/member/schemas/member.schema.ts" ><b>MemberSchema</b>&nbsp;&nbsp;&nbsp;(src/.../member.schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ORGANIZATION_API_HEADER" title="src/auth/decorators/organization-api.decorator.ts" ><b>ORGANIZATION_API_HEADER</b>&nbsp;&nbsp;&nbsp;(src/.../organization-api.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#OrganizationSchema" title="src/organization/schemas/organization.schema.ts" ><b>OrganizationSchema</b>&nbsp;&nbsp;&nbsp;(src/.../organization.schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Paginate" title="src/shared/paginator/decorator.ts" ><b>Paginate</b>&nbsp;&nbsp;&nbsp;(src/.../decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Public" title="src/auth/decorators/public.decorator.ts" ><b>Public</b>&nbsp;&nbsp;&nbsp;(src/.../public.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ResourceRoleSchema" title="src/resource/schemas/resource-role.schema.ts" ><b>ResourceRoleSchema</b>&nbsp;&nbsp;&nbsp;(src/.../resource-role.schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ResourceSchema" title="src/resource/schemas/resource.schema.ts" ><b>ResourceSchema</b>&nbsp;&nbsp;&nbsp;(src/.../resource.schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#RoleSchema" title="src/role/schemas/role.schema.ts" ><b>RoleSchema</b>&nbsp;&nbsp;&nbsp;(src/.../role.schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#TokenSchema" title="src/auth/schemas/token.schema.ts" ><b>TokenSchema</b>&nbsp;&nbsp;&nbsp;(src/.../token.schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#USER_WITHOUT_ORGANIZATION" title="src/auth/decorators/allow-user-without-organization.decorator.ts" ><b>USER_WITHOUT_ORGANIZATION</b>&nbsp;&nbsp;&nbsp;(src/.../allow-user-without-organization.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#UserSchema" title="src/user/schemas/user.schema.ts" ><b>UserSchema</b>&nbsp;&nbsp;&nbsp;(src/.../user.schema.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <h3>src/auth/decorators/allow-user-without-organization.decorator.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="AllowUserWithoutOrganization"></a>
+                    <span class="name">
+                        <span ><b>AllowUserWithoutOrganization</b></span>
+                        <a href="#AllowUserWithoutOrganization"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; {
+  return applyDecorators(
+    SetMetadata(USER_WITHOUT_ORGANIZATION, true),
+    ApiBearerAuth(),
+  );
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="USER_WITHOUT_ORGANIZATION"></a>
+                    <span class="name">
+                        <span ><b>USER_WITHOUT_ORGANIZATION</b></span>
+                        <a href="#USER_WITHOUT_ORGANIZATION"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;UserWithoutOrganization&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app.constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="APP_NAME"></a>
+                    <span class="name">
+                        <span ><b>APP_NAME</b></span>
+                        <a href="#APP_NAME"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;Gembrs&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/role/role.middleware.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAuth"></a>
+                    <span class="name">
+                        <span ><b>getAuth</b></span>
+                        <a href="#getAuth"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>function (req, res, next) {
+  const token &#x3D; req.headers[&#x27;authorization&#x27;];
+  const db &#x3D; req.app.get(&#x27;db&#x27;);
+  if (req.user) {
+    // query to get the user role&#x27;s  permissions for a resource
+    if (token) {
+      // handle jwt token authenticity and decrypt payload
+
+      // get permission handler
+      db.getPerms({ role_id: req.user.role_id, resource_id: req.resource.id })
+        .then((perms) &#x3D;&gt; {
+          let allow &#x3D; false;
+          // mapping of methods to permissions
+          perms.forEach(function (perm) {
+            if (req.method &#x3D;&#x3D; &#x27;POST&#x27; &amp;&amp; perms.create) allow &#x3D; true;
+            else if (req.method &#x3D;&#x3D; &#x27;GET&#x27; &amp;&amp; perms.read) allow &#x3D; true;
+            else if (req.method &#x3D;&#x3D; &#x27;PUT&#x27; &amp;&amp; perms.write) allow &#x3D; true;
+            else if (req.method &#x3D;&#x3D; &#x27;DELETE&#x27; &amp;&amp; perm.delete) allow &#x3D; true;
+          });
+          if (allow) next();
+          else {
+            res.status(403).send({ error: &#x27;access denied&#x27; });
+          }
+        })
+        .catch((err) &#x3D;&gt; {
+          // handle your reject and catch here
+        });
+    } else {
+      res.status(400).send({ error: &#x27;invalid token&#x27; });
+    }
+  }
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/auth/decorators/public.decorator.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="IS_PUBLIC_KEY"></a>
+                    <span class="name">
+                        <span ><b>IS_PUBLIC_KEY</b></span>
+                        <a href="#IS_PUBLIC_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;isPublic&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Public"></a>
+                    <span class="name">
+                        <span ><b>Public</b></span>
+                        <a href="#Public"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(IS_PUBLIC_KEY, true)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/auth/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="jwtConstants"></a>
+                    <span class="name">
+                        <span ><b>jwtConstants</b></span>
+                        <a href="#jwtConstants"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  secret: process.env.SECRET || &#x27;secret&#x27;,
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/member/schemas/member.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MemberSchema"></a>
+                    <span class="name">
+                        <span ><b>MemberSchema</b></span>
+                        <a href="#MemberSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(Member)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/auth/decorators/organization-api.decorator.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ORGANIZATION_API_HEADER"></a>
+                    <span class="name">
+                        <span ><b>ORGANIZATION_API_HEADER</b></span>
+                        <a href="#ORGANIZATION_API_HEADER"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;x-organization-slug&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/organization/schemas/organization.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="OrganizationSchema"></a>
+                    <span class="name">
+                        <span ><b>OrganizationSchema</b></span>
+                        <a href="#OrganizationSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(Organization)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/shared/paginator/decorator.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Paginate"></a>
+                    <span class="name">
+                        <span ><b>Paginate</b></span>
+                        <a href="#Paginate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>createParamDecorator(
+  (_data: unknown, ctx: ExecutionContext): PaginateQuery &#x3D;&gt; {
+    const request: Request &#x3D; ctx.switchToHttp().getRequest();
+    const { query } &#x3D; request;
+
+    // Determine if Express or Fastify to rebuild the original url and reduce down to protocol, host and base url
+    let originalUrl;
+    if (request.originalUrl) {
+      originalUrl &#x3D;
+        request.protocol + &#x27;://&#x27; + request.get(&#x27;host&#x27;) + request.originalUrl;
+    } else {
+      originalUrl &#x3D; request.protocol + &#x27;://&#x27; + request.hostname + request.url;
+    }
+    const urlParts &#x3D; new URL(originalUrl);
+    const path &#x3D; urlParts.protocol + &#x27;//&#x27; + urlParts.host + urlParts.pathname;
+
+    const sortBy: [string, string][] &#x3D; [];
+    const searchBy: string[] &#x3D; [];
+
+    if (query.sortBy) {
+      const params &#x3D; !Array.isArray(query.sortBy)
+        ? [query.sortBy]
+        : query.sortBy;
+      for (const param of params) {
+        if (isString(param)) {
+          const items &#x3D; (param as string).split(&#x27;:&#x27;);
+          if (items.length &#x3D;&#x3D;&#x3D; 2) {
+            sortBy.push(items as [string, string]);
+          }
+        }
+      }
+    }
+
+    if (query.searchBy) {
+      const params &#x3D; !Array.isArray(query.searchBy)
+        ? [query.searchBy]
+        : query.searchBy;
+      for (const param of params) {
+        if (isString(param)) {
+          searchBy.push(param as string);
+        }
+      }
+    }
+
+    const filter &#x3D; mapKeys(
+      pickBy(
+        query,
+        (param, name) &#x3D;&gt;
+          name.includes(&#x27;filter.&#x27;) &amp;&amp;
+          (isString(param) ||
+            (Array.isArray(param) &amp;&amp;
+              (param as any[]).every((p) &#x3D;&gt; isString(p)))),
+      ) as Dictionary&lt;string | string[]&gt;,
+      (_param, name) &#x3D;&gt; name.replace(&#x27;filter.&#x27;, &#x27;&#x27;),
+    );
+
+    return {
+      page: query.page ? parseInt(query.page.toString(), 10) : undefined,
+      limit: query.limit ? parseInt(query.limit.toString(), 10) : undefined,
+      sortBy: sortBy.length ? sortBy : undefined,
+      search: query.search ? query.search.toString() : undefined,
+      searchBy: searchBy.length ? searchBy : undefined,
+      filter: Object.keys(filter).length ? filter : undefined,
+      path,
+    };
+  },
+)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/resource/schemas/resource-role.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ResourceRoleSchema"></a>
+                    <span class="name">
+                        <span ><b>ResourceRoleSchema</b></span>
+                        <a href="#ResourceRoleSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(ResourceRole)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/resource/schemas/resource.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ResourceSchema"></a>
+                    <span class="name">
+                        <span ><b>ResourceSchema</b></span>
+                        <a href="#ResourceSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(Resource)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/role/schemas/role.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RoleSchema"></a>
+                    <span class="name">
+                        <span ><b>RoleSchema</b></span>
+                        <a href="#RoleSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(Role)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/auth/schemas/token.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TokenSchema"></a>
+                    <span class="name">
+                        <span ><b>TokenSchema</b></span>
+                        <a href="#TokenSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(Token)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/user/schemas/user.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="UserSchema"></a>
+                    <span class="name">
+                        <span ><b>UserSchema</b></span>
+                        <a href="#UserSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(User)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-variables';
+            var COMPODOC_CURRENT_PAGE_URL = 'variables.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

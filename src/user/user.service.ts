@@ -15,17 +15,17 @@ export class UserService extends SharedService<UserRepository> {
     super(repo);
   }
 
-  public async createOne(dto: CreateUserDto) {
+  public async findOrCreate(dto: CreateUserDto) {
     if (!(dto.email || dto.phone)) {
       throw new BadRequestException(
         'You need to enter either your email or phone number',
       );
     }
-    return this.repo.findOrCreateByUsername(dto);
+    return this.repo.findOrCreate(dto);
   }
 
-  public async getUserByUsername(username: string, throwError = true) {
-    const user = await this.repo.findUserByUsername(username);
+  public async findByUsername(username: string, throwError = true) {
+    const user = await this.repo.findByUsername(username);
     if (!user && throwError) {
       throw new NotFoundException(`User not found`);
     }

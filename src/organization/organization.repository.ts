@@ -27,7 +27,7 @@ export class OrganizationRepository extends SharedRepository<
     return await this.setOwner(dto.owner, organization._id);
   }
 
-  public async setOwner(ownerId, organizationId) {
+  public async setOwner(ownerId: string, organizationId: string) {
     await this.userModel.findOneAndUpdate(
       { _id: ownerId },
       { $addToSet: { organizations: organizationId } },
@@ -54,7 +54,7 @@ export class OrganizationRepository extends SharedRepository<
     };
   }
 
-  findBySiteName(siteName: string) {
+  public async findBySiteName(siteName: string) {
     return this.model.findOne({ siteName });
   }
 }

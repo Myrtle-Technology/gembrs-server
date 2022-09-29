@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import { SharedService } from 'src/shared/shared.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';

@@ -20,11 +20,11 @@ export class CreateOrganizationDto {
 
   @IsOptional()
   @IsString()
-  contactEmail: string;
+  contactEmail?: string;
 
   @IsOptional()
   @IsString()
-  contactPhone: string;
+  contactPhone?: string;
 
   @IsOptional()
   @IsString()

@@ -9,7 +9,9 @@ import { RoleModule } from './role/role.module';
 import { ResourceModule } from './resource/resource.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import configuration from './config/configuration';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -23,6 +25,10 @@ import configuration from './config/configuration';
         uri: configService.get<string>('MONGODB_URI'),
       }),
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'documentation'),
+      renderPath: '/documentation',
     }),
     UserModule,
     MemberModule,

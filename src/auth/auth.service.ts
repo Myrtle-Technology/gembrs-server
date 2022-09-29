@@ -14,7 +14,6 @@ import { LoginDto } from './dto/login.dto';
 import { isEmail } from 'class-validator';
 import * as bcrypt from 'bcrypt';
 import { Member } from 'src/member/schemas/member.schema';
-import { Token } from './schemas/token.schema';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { OrganizationService } from 'src/organization/organization.service';
@@ -39,14 +38,16 @@ import { SmsService } from 'src/sms/sms.service';
 // import { PlanRenewalDuration } from 'src/membership-plan/enums/plan-renewal-duration';
 import { DateTime, Duration } from 'luxon';
 import { ObjectId } from 'mongoose';
+import { RegisterMember } from './dto/register-member.dto';
+import { TokenRepository } from './token.repository';
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
-  /*
   private readonly saltRounds = +this.configService.get<number>('SALT_ROUNDS');
   private readonly isDevServer: string =
     this.configService.get<string>('IS_DEV_SERVER');
   constructor(
     @Inject(REQUEST) private request: TokenRequest,
+    private tokenRepo: TokenRepository,
     private mailService: MailService,
     private smsService: SmsService,
     private jwtService: JwtService,
@@ -54,7 +55,7 @@ export class AuthService {
     private userService: UserService,
     private roleService: RoleService,
     private organizationService: OrganizationService,
-    private MemberService: MemberService, // public memberCommonFieldService: MemberCommonFieldService, // public membershipPlanService: MembershipPlanService, // public subscriptionService: SubscriptionService,
+    private memberService: MemberService, // public memberCommonFieldService: MemberCommonFieldService, // public membershipPlanService: MembershipPlanService, // public subscriptionService: SubscriptionService,
   ) {}
 
   get organizationSlug() {
@@ -64,53 +65,56 @@ export class AuthService {
   get organizationId() {
     return this.request.tokenData.organizationId;
   }
+
   async verifyEmailOrPhone(dto: VerifyEmailDto) {
-    const user: User = await this.userService.findOrCreateUserByUsername(
-      dto.username,
-    );
+    // const user = await this.userService.findOrCreate(
+    //   isEmail(dto.username) ? { email: dto.username } : { phone: dto.username },
+    // );
     if (!(this.isDevServer == 'true')) {
       if (isEmail(dto.username)) {
         const code = Math.floor(100000 + Math.random() * 900000);
-        const token = await this.createToken(user, code.toString());
-        await this.mailService.sendVerificationCode(user, token.token);
+        const token = await this.createToken(dto.username, code.toString());
+        await this.mailService.sendVerificationCode(
+          dto.username,
+          token.toObject().token,
+        );
       } else {
-        await this.smsService.sendOTP(user.phone);
+        await this.smsService.sendOTP(dto.username);
       }
     }
-    return user;
+    return { message: 'otp sent to user' };
   }
 
-  async createToken(user: User, code: string) {
-    const token = await Token.findOne({
-      where: { userId: user.id },
-    });
+  async createToken(identifier: string, code: string) {
+    const token = await this.tokenRepo.findOne({ identifier });
     if (token) {
       await token.remove();
     }
-    return await Token.create({
+    return this.tokenRepo.create({
       token: code.toString(),
-      userId: user.id,
-    }).save();
+      identifier: identifier,
+    });
   }
 
   async validateOTP(dto: VerifyOtpDto) {
-    const user = await this.userService.getUserByUsername(dto.username);
-    if (!(this.isDevServer == 'true')) {
-      if (isEmail(dto.username)) {
-        const token = await Token.findOne({
-          where: { token: dto.otp.toString(), userId: user.id },
-        });
-        if (!token) {
-          throw new BadRequestException(
-            `The one time password (OTP) you entered is invalid`,
-          );
-        }
-        await token.remove();
-      } else {
-        this.smsService.verifyOTP(user.phone, dto.otp.toString());
+    const user = await this.userService.findByUsername(dto.username);
+    // if (!(this.isDevServer == 'true')) {
+    if (isEmail(dto.username)) {
+      const token = await this.tokenRepo.findOne({
+        where: { token: dto.otp.toString(), userId: user.id },
+      });
+      if (!token) {
+        throw new BadRequestException(
+          `The one time password (OTP) you entered is invalid`,
+        );
       }
+      await token.remove();
+      user.verifiedEmail = true;
+    } else {
+      this.smsService.verifyOTP(user.phone, dto.otp.toString());
+      user.verifiedPhone = true;
     }
-    user.verified = true;
+    // }
     await user.save();
     const payload = {
       username: user.email || user.phone,
@@ -124,30 +128,33 @@ export class AuthService {
     };
   }
 
+  /** @deprecated use this.createNewAccount instead */
   async updatePersonalDetails(userId: ObjectId | string, dto: UpdateUserDto) {
     // TODO: send a welcome Email to user
     return this.userService.update(userId, dto);
   }
 
-  async createOrganization(userId: number, dto: CreateOrganizationPasswordDto) {
-    dto.ownerId = userId;
-    const user = await this.userService.findOne(userId);
-    const organization = await this.organizationService.create(dto);
+  /** @deprecated use this.createNewAccount instead */
+  async createOrganization(userId: string, dto: CreateOrganizationPasswordDto) {
+    dto.owner = userId;
+    const user = await this.userService.findById(userId);
+    const organization = await this.organizationService.createOne(dto);
     const role = await this.roleService.getDefaultAdminRole();
-    const member = await this.MemberService.createOne({
-      organizationId: organization.id,
-      userId: userId,
-      roleId: role.id,
+    const member = await this.memberService.createOne({
+      organization: organization._id,
+      user: userId,
+      role: role._id,
       password: dto.password,
       officeTitle: dto.officeTitle,
     });
-    delete member.password;
+    const _member = member.toObject<Member>();
+    delete _member.password;
     this.mailService.welcomeRegisteredOrganization(user, organization);
-    return { ...member, organization, user, role };
+    return { ..._member, organization, user, role };
   }
 
   async validateMember(dto: LoginDto) {
-    const user: User = await this.userService.getUserByUsername(dto.username);
+    const user: User = await this.userService.findByUsername(dto.username);
     const organizationSlug = this.request.headers[
       ORGANIZATION_API_HEADER
     ] as string;
@@ -157,7 +164,7 @@ export class AuthService {
       );
     }
 
-    const organization = await this.organizationService.getOrganizationBySlug(
+    const organization = await this.organizationService.findBySiteName(
       organizationSlug,
     );
     if (!organization) {
@@ -166,9 +173,12 @@ export class AuthService {
       );
     }
 
-    const member = await Member.findOne({
-      where: { userId: user.id, organizationId: organization.id },
-    });
+    const member = await (
+      await this.memberService.repo.findOne({
+        user: user._id,
+        organization: organization._id,
+      })
+    ).populate(['organization', 'user', 'role']);
     if (!member) {
       throw new UnauthorizedException(
         `You are not a member of this organization, try joining the organization first.`,
@@ -181,7 +191,7 @@ export class AuthService {
       const { password, ...result } = member;
       return result;
     }
-    return null;
+    return member;
   }
 
   async loginToOrganization(dto: LoginDto) {
@@ -189,58 +199,86 @@ export class AuthService {
     return this.getAuthData(Member, dto);
   }
 
-  async getAuthData(Member: Member, dto?: LoginDto) {
+  async getAuthData(member: Member, dto?: LoginDto) {
     const payload: TokenData = {
-      username: dto?.username || Member.user.email || Member.user.phone,
-      memberId: Member.id,
-      organizationId: Member.organizationId,
-      userId: Member.userId,
-      roleId: Member.roleId,
+      username: dto?.username || member.user.email || member.user.phone,
+      memberId: member._id,
+      organizationId: member.organization._id,
+      userId: member.user._id,
+      roleId: member.role._id,
     };
     return {
       accessToken: this.jwtService.sign(payload),
-      user: Member,
+      user: member,
     };
   }
 
   async findUserOrganizations(dto: FindUserOrganization) {
-    const user = await this.userService.getUserByUsername(dto.username);
+    const user = await this.userService.findByUsername(dto.username);
 
-    const orgMember = await this.MemberService.find({
-      where: { userId: user.id },
-      relations: ['organization'],
-    });
-    return orgMember.map((om) => om.organization);
+    const member = await (
+      await this.memberService.findById(user._id)
+    ).populate('organization');
+    return member.organization;
   }
 
-  async createNewAccount(userId: number, dto: CreateAccountDto) {
-    const user = await this.userService.findOne(userId);
-    user.firstName = dto.firstName;
-    user.lastName = dto.lastName;
-    user.email = user.email ?? dto.email;
-    user.phone = user.phone ?? dto.phone;
-    user.save();
-    const organization = await this.organizationService.create({
-      contactEmail: user.email,
+  async createNewAccount(dto: CreateAccountDto) {
+    const user = (
+      await this.userService.findOrCreate({
+        email: dto.email,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phone: dto.phone,
+      })
+    ).user.toObject<User>();
+    const organization = await this.organizationService.createOne({
+      // contactEmail: user.email,
       name: dto.organizationName,
-      slug: dto.organizationSlug,
-      contactPhone: user.phone,
+      siteName: dto.organizationSiteName,
+      // contactPhone: user.phone,
     });
     const role = await this.roleService.getDefaultAdminRole();
-    const member = await this.MemberService.createOne({
-      organizationId: organization.id,
-      userId: userId,
-      roleId: role.id,
+    const member = await this.memberService.createOne({
+      organization: organization._id,
+      user: user._id,
+      role: role._id,
       password: dto.password,
       officeTitle: dto.officeTitle,
-      contactPhone: user.phone,
+      // contactPhone: user.phone,
     });
-    delete member.password;
     this.mailService.welcomeRegisteredOrganization(user, organization);
-    member.user = user;
-    member.organization = organization;
-    member.role = role;
-    return this.getAuthData(member);
+    return this.getAuthData(
+      await (
+        await this.memberService.findById(member._id)
+      ).populate(['organization', 'user', 'role']),
+    );
+  }
+
+  async validateNewUserOTP(memberId: string, dto: VerifyOtpDto) {
+    const user = await this.userService.findByUsername(dto.username);
+    // if (!(this.isDevServer == 'true')) {
+    if (isEmail(dto.username)) {
+      const token = await this.tokenRepo.findOne({
+        where: { token: dto.otp.toString(), userId: user.id },
+      });
+      if (!token) {
+        throw new BadRequestException(
+          `The one time password (OTP) you entered is invalid`,
+        );
+      }
+      await token.remove();
+      user.verifiedEmail = true;
+    } else {
+      this.smsService.verifyOTP(user.phone, dto.otp.toString());
+      user.verifiedPhone = true;
+    }
+    // }
+    await user.save();
+    return this.getAuthData(
+      await (
+        await this.memberService.findById(memberId)
+      ).populate(['organization', 'user', 'role']),
+    );
   }
 
   async initForgotMemberPassword() {
@@ -255,7 +293,7 @@ export class AuthService {
     //
   }
 
-  async registerMember(dto: RegisterMember): Promise<Member> {
+  async registerMember(dto: RegisterMember) {
     /*
     const membershipPlan = await this.membershipPlanService.findOne(
       dto.membershipPlanId,
@@ -310,7 +348,6 @@ export class AuthService {
 
     await Member.reload();
     return Member;
-    *
+    */
   }
-  */
 }

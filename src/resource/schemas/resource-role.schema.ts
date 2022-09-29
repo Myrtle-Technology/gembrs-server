@@ -5,24 +5,21 @@ import { Role } from 'src/role/schemas/role.schema';
 // export type ResourceRoleDocument = ResourceRole & Document;
 
 @Schema({ timestamps: true })
-export class ResourceRole {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Roles' })
+export class ResourceRole extends Document {
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
   role: Role;
 
-  // @Prop()
-  // roleName: string;
+  @Prop()
+  rCreate: boolean;
 
   @Prop()
-  create: boolean;
+  rDelete: boolean;
 
   @Prop()
-  delete: boolean;
+  rUpdate: boolean;
 
   @Prop()
-  update: boolean;
-
-  @Prop()
-  read: boolean;
+  rRead: boolean;
 }
 
 export const ResourceRoleSchema = SchemaFactory.createForClass(ResourceRole);

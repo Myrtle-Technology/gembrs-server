@@ -30,7 +30,7 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
     @Res() response: Response,
   ) {
-    const user = await this.service.createOne(createUserDto);
+    const user = await this.service.findOrCreate(createUserDto);
     if (user.created) {
       return response.status(201).json(user.user);
     }

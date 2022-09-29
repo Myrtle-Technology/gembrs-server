@@ -9,20 +9,17 @@ import {
 import { AuthService } from './auth.service';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AllowUserWithoutOrganization } from './decorators/allow-user-without-organization.decorator';
 import { FindUserOrganization } from './dto/find-user-organization..dto';
 import { Public } from './decorators/public.decorator';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
-import { CreateOrganizationPasswordDto } from './dto/create-organization-password.dto';
 import { TokenRequest } from './interfaces/token-request.interface';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { OrganizationApi } from './decorators/organization-api.decorator';
 import { CreateAccountDto } from './dto/create-account.dto';
-import { RegisterMember } from './dto/register-member.dto';
 
-@ApiTags('auth')
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -32,7 +29,7 @@ export class AuthController {
   me(@Request() req: TokenRequest) {
     return req.user;
   }
-  /*
+
   @Get('current-organization')
   currentOrganization(@Request() req: TokenRequest) {
     return req.user.organization;
@@ -50,23 +47,23 @@ export class AuthController {
     return this.authService.validateOTP(dto);
   }
 
-  @AllowUserWithoutOrganization()
-  @Post('update-personal-details')
-  updatePersonalDetails(
-    @Request() req: TokenRequest,
-    @Body() dto: UpdateUserDto,
-  ) {
-    return this.authService.updatePersonalDetails(req.tokenData.userId, dto);
-  }
+  // @AllowUserWithoutOrganization()
+  // @Post('update-personal-details')
+  // updatePersonalDetails(
+  //   @Request() req: TokenRequest,
+  //   @Body() dto: UpdateUserDto,
+  // ) {
+  //   return this.authService.updatePersonalDetails(req.tokenData.userId, dto);
+  // }
 
-  @AllowUserWithoutOrganization()
-  @Post('create-organization')
-  createOrganization(
-    @Request() req: TokenRequest,
-    @Body() dto: CreateOrganizationPasswordDto,
-  ) {
-    return this.authService.createOrganization(req.tokenData.userId, dto);
-  }
+  // @AllowUserWithoutOrganization()
+  // @Post('create-organization')
+  // createOrganization(
+  //   @Request() req: TokenRequest,
+  //   @Body() dto: CreateOrganizationPasswordDto,
+  // ) {
+  //   return this.authService.createOrganization(req.tokenData.userId, dto);
+  // }
 
   @OrganizationApi()
   @UseGuards(LocalAuthGuard)
@@ -85,13 +82,18 @@ export class AuthController {
     return this.authService.findUserOrganizations(dto);
   }
 
-  @AllowUserWithoutOrganization()
+  @Public()
   @Post('create-account')
-  createNewAccount(
-    @Request() req: TokenRequest,
-    @Body() dto: CreateAccountDto,
+  createNewAccount(@Body() dto: CreateAccountDto) {
+    return this.authService.createNewAccount(dto);
+  }
+
+  @Post('validate-new-user')
+  validateNewUserOTP(
+    @Request() request: TokenRequest,
+    @Body() dto: VerifyOtpDto,
   ) {
-    return this.authService.createNewAccount(req.tokenData.userId, dto);
+    return this.authService.validateNewUserOTP(request.user._id, dto);
   }
 
   // @Public()
@@ -100,5 +102,4 @@ export class AuthController {
   // registerMember(@Body() dto: RegisterMember) {
   //   return this.authService.registerMember(dto);
   // }
-  */
 }

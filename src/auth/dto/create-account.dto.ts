@@ -26,7 +26,7 @@ export class CreateAccountDto {
   @IsString()
   organizationName: string;
   @IsSlug()
-  organizationSlug: string;
+  organizationSiteName: string;
 
   @MinLength(6)
   @MaxLength(20)

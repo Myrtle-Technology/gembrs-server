@@ -13,12 +13,16 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { RoleModule } from 'src/role/role.module';
 import { SmsModule } from 'src/sms/sms.module';
 import { ConfigModule } from '@nestjs/config';
+import { TokenRepository } from './token.repository';
+import { Token, TokenSchema } from './schemas/token.schema';
+import { MongooseModule } from '@nestjs/mongoose';
 // import { MemberCommonFieldModule } from 'src/member-common-field/member-common-field.module';
 // import { MembershipPlanModule } from 'src/membership-plan/membership-plan.module';
 // import { SubscriptionModule } from 'src/subscription/subscription.module';
 
 @Module({
   imports: [
+    MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }]),
     ConfigModule,
     MailModule,
     SmsModule,
@@ -36,7 +40,13 @@ import { ConfigModule } from '@nestjs/config';
     // SubscriptionModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy],
-  exports: [AuthService, JwtModule, JwtStrategy, LocalStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy, TokenRepository],
+  exports: [
+    AuthService,
+    JwtModule,
+    JwtStrategy,
+    LocalStrategy,
+    TokenRepository,
+  ],
 })
 export class AuthModule {}
