@@ -11,14 +11,18 @@ import {
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-
+import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
+import { Public } from 'src/auth/decorators/public.decorator';
+@ApiBearerAuth()
+@OrganizationApi()
 @ApiTags('Organization')
 @Controller('organization')
 export class OrganizationController {
   constructor(private readonly service: OrganizationService) {}
 
+  @Public()
   @ApiOperation({ summary: 'Find all Organizations' })
   @Get()
   findAll() {
@@ -32,6 +36,7 @@ export class OrganizationController {
     return this.service.createOne(dto);
   }
 
+  @Public()
   @ApiOperation({ summary: 'Find an Organization' })
   @Get(':id')
   findOne(@Param('id') id: string) {

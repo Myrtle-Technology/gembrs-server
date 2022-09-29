@@ -148,7 +148,6 @@ export class AuthService {
       officeTitle: dto.officeTitle,
     });
     const _member = member.toObject<Member>();
-    delete _member.password;
     this.mailService.welcomeRegisteredOrganization(user, organization);
     return { ..._member, organization, user, role };
   }
@@ -173,12 +172,11 @@ export class AuthService {
       );
     }
 
-    const member = await (
-      await this.memberService.repo.findOne({
-        user: user._id,
-        organization: organization._id,
-      })
-    ).populate(['organization', 'user', 'role']);
+    const member = await this.memberService.findWithPassword(
+      organization._id,
+      user._id,
+      ['organization', 'user', 'role'],
+    );
     if (!member) {
       throw new UnauthorizedException(
         `You are not a member of this organization, try joining the organization first.`,

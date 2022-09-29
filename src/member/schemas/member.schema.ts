@@ -26,7 +26,7 @@ export class Member extends Document {
   @Prop()
   officeTitle: string;
 
-  @Prop()
+  @Prop({ select: false })
   password: string;
 
   // @OneToMany(() => MemberCommonField, (c) => c.member, { eager: true })

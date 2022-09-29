@@ -10,9 +10,12 @@ import {
 import { MemberService } from './member.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateMemberPasswordDto } from './dto/update-member-password.dto';
+import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 
+@ApiBearerAuth()
+@OrganizationApi()
 @ApiTags('Member')
 @Controller('member')
 export class MemberController {

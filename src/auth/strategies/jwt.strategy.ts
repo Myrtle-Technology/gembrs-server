@@ -4,10 +4,14 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { jwtConstants } from '../constants';
 import { UserService } from 'src/user/user.service';
 import { Member } from 'src/member/schemas/member.schema';
+import { MemberService } from 'src/member/member.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(public userService: UserService) {
+  constructor(
+    public userService: UserService,
+    public memberService: MemberService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -16,21 +20,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    // const user = await this.userService.getUserByUsername(payload.username);
-    // if (!user) {
-    //   throw new UnauthorizedException();
-    // }
-    // if (payload.organizationId) {
-    //   const member = await Member.findOne({
-    //     where: { userId: user.id, organizationId: payload.organizationId },
-    //     relations: ['role', 'organization', 'user'],
-    //   });
-    //   // workaround for ACGuard
-    //   (member as any).roles = [member.role.slug];
-    //   // ensure password is removed
-    //   delete member.password;
-    //   return member;
-    // }
-    // return user;
+    const user = await this.userService.findByUsername(payload.username);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    if (payload.organizationId) {
+      const member = await this.memberService.findOne(
+        payload.organizationId,
+        user.id,
+        ['role', 'organization', 'user'],
+      );
+      // workaround for ACGuard
+      (member as any).roles = [member.role.slug];
+      return member;
+    }
+    return user;
   }
 }

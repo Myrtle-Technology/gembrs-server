@@ -34,6 +34,32 @@ export class MemberService extends SharedService<MemberRepository> {
     return this.repo.findById(id);
   }
 
+  public async findOne(
+    organizationId: string,
+    memberId: string,
+    relations: string[] = ['role', 'user'],
+  ) {
+    return this.repo.findOne(
+      { organization: organizationId, _id: memberId },
+      null,
+      { populate: relations },
+    );
+  }
+  public async findWithPassword(
+    organizationId: string,
+    memberId: string,
+    relations: string[] = ['role', 'user'],
+  ) {
+    return this.repo.findWithPassword(
+      {
+        organization: organizationId,
+        _id: memberId,
+      },
+      null,
+      { populate: relations },
+    );
+  }
+
   public async update(id: ObjectId | string, dto: UpdateMemberDto) {
     delete dto.password;
     return this.repo.update(id, dto);
