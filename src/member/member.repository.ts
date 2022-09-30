@@ -24,8 +24,15 @@ export class MemberRepository extends SharedRepository<
 
   populateOnFind = ['user', 'role'];
 
-  public async find(options?: any) {
-    return this.model.find(options).exec();
+  public async find(
+    filter: FilterQuery<Member>,
+    projection?: ProjectionType<Member>,
+    options?: QueryOptions<Member>,
+  ) {
+    return this.model
+      .find(filter, projection, options)
+      .populate(this.populateOnFind)
+      .exec();
   }
 
   public async findWithPassword(

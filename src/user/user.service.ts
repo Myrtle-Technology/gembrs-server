@@ -42,10 +42,10 @@ export class UserService extends SharedService<UserRepository> {
 
   public async update(id: ObjectId | string, dto: UpdateUserDto) {
     delete dto.verified; // verification can only happen via auth verifyOTP route
-    return this.repo.update(id, dto);
+    return this.repo.updateById(id, dto);
   }
 
   public async remove(id: ObjectId | string) {
-    return this.repo.delete(id);
+    return this.repo.deleteById(id);
   }
 }

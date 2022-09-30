@@ -63,7 +63,7 @@ export class SharedRepository<
     return createdUser.save(options);
   }
 
-  public async update(
+  public async updateById(
     id: ObjectId | any,
     dto: UpdateDto,
     options?: QueryOptions<Entity>,
@@ -75,8 +75,27 @@ export class SharedRepository<
     });
   }
 
-  public async delete(id?: ObjectId | any, options?: QueryOptions<Entity>) {
+  public async updateOne(
+    filter: FilterQuery<Entity>,
+    dto: UpdateDto,
+    options?: QueryOptions<Entity>,
+  ): Promise<Entity> {
+    return this.model.findOneAndUpdate(filter, dto, {
+      new: true,
+      ...options,
+      populate: this.populateOnFind,
+    });
+  }
+
+  public async deleteById(id?: ObjectId | any, options?: QueryOptions<Entity>) {
     return this.model.findByIdAndRemove(id, options);
+  }
+
+  public async deleteOne(
+    filter: FilterQuery<Entity>,
+    options?: QueryOptions<Entity>,
+  ) {
+    return this.model.findOneAndRemove(filter, options);
   }
 
   public async upsert(id: ObjectId | any, dto: any): Promise<Entity> {

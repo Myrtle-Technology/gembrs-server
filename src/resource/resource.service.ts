@@ -34,10 +34,10 @@ export class ResourceService extends SharedService<ResourceRepository> {
   }
 
   public async update(id: ObjectId | string, dto: UpdateResourceDto) {
-    return this.repo.update(id, dto);
+    return this.repo.updateById(id, dto);
   }
 
   public async remove(id: ObjectId | string) {
-    return this.repo.delete(id);
+    return this.repo.deleteById(id);
   }
 }

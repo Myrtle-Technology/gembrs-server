@@ -233,6 +233,7 @@ export class AuthService {
       // contactEmail: user.email,
       name: dto.organizationName,
       siteName: dto.organizationSiteName,
+      owner: user._id,
       // contactPhone: user.phone,
     });
     const role = await this.roleService.getDefaultAdminRole();
@@ -246,9 +247,11 @@ export class AuthService {
     });
     this.verifyEmailOrPhone({ username: user.email || user.phone });
     return this.getAuthData(
-      await (
-        await this.memberService.findById(member._id)
-      ).populate(['organization', 'user', 'role']),
+      await this.memberService.findById(member._id, [
+        'organization',
+        'user',
+        'role',
+      ]),
     );
   }
 

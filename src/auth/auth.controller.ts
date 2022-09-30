@@ -19,6 +19,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { OrganizationApi } from './decorators/organization-api.decorator';
 import { CreateAccountDto } from './dto/create-account.dto';
 
+@OrganizationApi()
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {

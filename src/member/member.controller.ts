@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { MemberService } from './member.service';
 import { CreateMemberDto } from './dto/create-member.dto';
@@ -13,6 +14,7 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateMemberPasswordDto } from './dto/update-member-password.dto';
 import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
+import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -29,34 +31,39 @@ export class MemberController {
 
   @Get()
   @ApiOperation({ summary: 'Find all Members' })
-  findAll() {
-    return this.service.findAll();
+  findAll(@Req() request: TokenRequest) {
+    return this.service.findAll(request.user.organization?._id);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Find a Member' })
-  findOne(@Param('id') id: string) {
-    return this.service.findById(id);
+  findOne(@Req() request: TokenRequest, @Param('id') id: string) {
+    return this.service.findOne(request.user.organization?._id, id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a Member' })
-  update(@Param('id') id: string, @Body() dto: UpdateMemberDto) {
-    return this.service.update(id, dto);
+  update(
+    @Req() request: TokenRequest,
+    @Param('id') id: string,
+    @Body() dto: UpdateMemberDto,
+  ) {
+    return this.service.update(request.user.organization?._id, id, dto);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: "Update a Member's password" })
   updatePassword(
+    @Req() request: TokenRequest,
     @Param('id') id: string,
     @Body() dto: UpdateMemberPasswordDto,
   ) {
-    return this.service.updatePassword(id, dto);
+    return this.service.updatePassword(request.user.organization?._id, id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a Members' })
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  @ApiOperation({ summary: 'Delete a Member' })
+  remove(@Req() request: TokenRequest, @Param('id') id: string) {
+    return this.service.removeOne(request.user.organization?._id, id);
   }
 }

@@ -26,8 +26,8 @@ export class MemberService extends SharedService<MemberRepository> {
     return this.repo.create(dto);
   }
 
-  public async findAll(filter?: any) {
-    return this.repo.find();
+  public async findAll(organization: string, filter?: any) {
+    return this.repo.find({ organization });
   }
 
   public async findById(id: ObjectId | string, relations = ['user', 'role']) {
@@ -60,21 +60,33 @@ export class MemberService extends SharedService<MemberRepository> {
     );
   }
 
-  public async update(id: ObjectId | string, dto: UpdateMemberDto) {
+  public async update(
+    organization: string,
+    id: ObjectId | string,
+    dto: UpdateMemberDto,
+  ) {
     delete dto.password;
-    return this.repo.update(id, dto);
+    return this.repo.updateOne({ organization, _id: id }, dto);
   }
 
-  public async remove(id: ObjectId | string) {
-    return this.repo.delete(id);
+  public async removeById(id: ObjectId | string) {
+    return this.repo.deleteById(id);
+  }
+
+  public async removeOne(organization: string, id: ObjectId | string) {
+    return this.repo.deleteOne({ organization, _id: id });
   }
 
   public async updatePassword(
+    organization: string,
     id: ObjectId | string,
     dto: UpdateMemberPasswordDto,
   ) {
     dto.password = await bcrypt.hash(dto.password, this.saltRounds);
-    return this.repo.update(id, { password: dto.password });
+    return this.repo.updateOne(
+      { organization, _id: id },
+      { password: dto.password },
+    );
   }
 
   public async inviteMember(dto: InviteMemberDto) {
