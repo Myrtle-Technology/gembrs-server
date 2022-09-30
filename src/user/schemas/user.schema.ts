@@ -6,7 +6,7 @@ import { Member } from 'src/member/schemas/member.schema';
 // import { DuplicateFieldError } from 'src/shared/errors/duplicate-field.error';
 
 // export type UserDocument = User & Document;
-@Schema()
+@Schema({ timestamps: true })
 export class User extends Document {
   @Prop()
   firstName: string;

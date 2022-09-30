@@ -6,7 +6,7 @@ import { User } from 'src/user/schemas/user.schema';
 
 // export type MemberDocument = Member & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Member extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;

@@ -5,6 +5,7 @@ import { jwtConstants } from '../constants';
 import { UserService } from 'src/user/user.service';
 import { Member } from 'src/member/schemas/member.schema';
 import { MemberService } from 'src/member/member.service';
+import { TokenData } from '../dto/token-data.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: TokenData) {
     const user = await this.userService.findByUsername(payload.username);
     if (!user) {
       throw new UnauthorizedException();
@@ -27,9 +28,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (payload.organizationId) {
       const member = await this.memberService.findOne(
         payload.organizationId,
-        user.id,
+        payload.memberId,
         ['role', 'organization', 'user'],
       );
+
+      if (!member) {
+        throw new UnauthorizedException(
+          'Unauthorized, please login to continue',
+        );
+      }
       // workaround for ACGuard
       (member as any).roles = [member.role.slug];
       return member;

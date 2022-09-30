@@ -40,6 +40,7 @@ import { DateTime, Duration } from 'luxon';
 import { ObjectId } from 'mongoose';
 import { RegisterMember } from './dto/register-member.dto';
 import { TokenRepository } from './token.repository';
+import { Organization } from 'src/organization/schemas/organization.schema';
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
   private readonly saltRounds = +this.configService.get<number>('SALT_ROUNDS');
@@ -94,28 +95,29 @@ export class AuthService {
   }
 
   async validateOTP(dto: VerifyOtpDto) {
-    let user;
+    const user = await this.userService.findByUsername(dto.username);
     // if (!(this.isDevServer == 'true')) {
     if (isEmail(dto.username)) {
-      const token = await this.tokenRepo.findOne({
-        token: dto.otp.toString(),
-        identifier: dto.username,
-      });
+      const token = await this.tokenRepo.findByIdentifier(
+        dto.otp,
+        dto.username,
+      );
       if (!token) {
         throw new BadRequestException(
           `The one time password (OTP) you entered is invalid`,
         );
       }
       await token.remove();
-      user = await this.userService.findOrCreate({ email: dto.username });
       user.verifiedEmail = true;
     } else {
       this.smsService.verifyOTP(user.phone, dto.otp.toString());
-      user = await this.userService.findOrCreate({ phone: dto.username });
       user.verifiedPhone = true;
     }
     // }
-    await user.save();
+    await this.userService.repo.updateById(user._id, {
+      verifiedEmail: user.verifiedEmail,
+      verifiedPhone: user.verifiedPhone,
+    });
     const payload = {
       username: user.email || user.phone,
       userId: user.id,
@@ -212,13 +214,14 @@ export class AuthService {
     };
   }
 
-  async findUserOrganizations(dto: FindUserOrganization) {
+  async findUserOrganizations(
+    dto: FindUserOrganization,
+  ): Promise<Organization[]> {
     const user = await this.userService.findByUsername(dto.username);
 
-    const member = await (
-      await this.memberService.findById(user._id)
-    ).populate('organization');
-    return member.organization;
+    return this.organizationService.repo.find({
+      owner: user._id,
+    });
   }
 
   async createNewAccount(dto: CreateAccountDto) {
@@ -260,9 +263,10 @@ export class AuthService {
     const user = await this.userService.findByUsername(dto.username);
     // if (!(this.isDevServer == 'true')) {
     if (isEmail(dto.username)) {
-      const token = await this.tokenRepo.findOne({
-        where: { token: dto.otp.toString(), userId: user.id },
-      });
+      const token = await this.tokenRepo.findByIdentifier(
+        dto.otp,
+        dto.username,
+      );
       if (!token) {
         throw new BadRequestException(
           `The one time password (OTP) you entered is invalid`,
@@ -275,7 +279,10 @@ export class AuthService {
       user.verifiedPhone = true;
     }
     // }
-    await user.save();
+    await this.userService.repo.updateById(user._id, {
+      verifiedEmail: user.verifiedEmail,
+      verifiedPhone: user.verifiedPhone,
+    });
     const member = await this.memberService.findById(memberId, [
       'organization',
       'user',

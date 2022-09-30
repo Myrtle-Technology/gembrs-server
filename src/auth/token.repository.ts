@@ -12,7 +12,11 @@ export class TokenRepository extends SharedRepository<Token, CreateTokenDto> {
     super(model);
   }
 
-  findTokenByUser(userId: string) {
-    return this.model.findOne({ user: userId });
+  findByIdentifier(token: string, identifier: string) {
+    return this.model.findOne({
+      token,
+      identifier,
+      // $and: [{ createdAt: { $gt: new Date() } }],
+    });
   }
 }

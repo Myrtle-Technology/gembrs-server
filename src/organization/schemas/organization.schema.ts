@@ -6,7 +6,7 @@ import { User } from 'src/user/schemas/user.schema';
 
 // export type OrganizationDocument = Organization & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Organization extends Document {
   @Prop({ required: true })
   name: string;
