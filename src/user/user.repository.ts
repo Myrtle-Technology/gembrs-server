@@ -17,7 +17,7 @@ export class UserRepository extends SharedRepository<
     super(model);
   }
 
-  public async findOrCreate(dto: CreateUserDto) {
+  public async findOrCreate(dto: CreateUserDto): Promise<[User, boolean]> {
     const query =
       dto.email && dto.phone
         ? { $or: [{ email: dto.email }, { phone: dto.phone }] }
@@ -29,9 +29,10 @@ export class UserRepository extends SharedRepository<
       new: true,
     });
     if (!user) {
-      return { user: await this.create(dto), created: true };
+      const _user = await this.model.create(dto);
+      return [await this.findById(_user.id), true];
     }
-    return { user, created: false };
+    return [user, false];
   }
 
   findByUsername(username: string) {

@@ -17,6 +17,9 @@ import { MailModule } from './mail/mail.module';
 import { SmsModule } from './sms/sms.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { RolesBuilderFactory } from './role/role.builder';
+import { RoleService } from './role/role.service';
+import { AccessControlModule } from 'nest-access-control';
 
 @Module({
   imports: [
@@ -31,10 +34,10 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
       }),
       inject: [ConfigService],
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'documentation'),
-      renderPath: '/documentation',
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'documentation'),
+    //   renderPath: '/documentation',
+    // }),
     UserModule,
     MemberModule,
     OrganizationModule,
@@ -49,6 +52,11 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     RoleModule,
     ResourceModule,
     AuthModule,
+    AccessControlModule.forRootAsync({
+      imports: [RoleModule],
+      inject: [RoleService],
+      useFactory: RolesBuilderFactory,
+    }),
     SmsModule,
   ],
   controllers: [AppController],

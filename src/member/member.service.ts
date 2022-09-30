@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongoose';
+import { ObjectId, Types } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { SharedService } from 'src/shared/shared.service';
@@ -8,6 +8,7 @@ import { UpdateMemberPasswordDto } from './dto/update-member-password.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberRepository } from './member.repository';
 import { InviteMemberDto } from './dto/invite-member.dto';
+import { Member } from './schemas/member.schema';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -30,7 +31,10 @@ export class MemberService extends SharedService<MemberRepository> {
     return this.repo.find({ organization });
   }
 
-  public async findById(id: ObjectId | string, relations = ['user', 'role']) {
+  public async findById(
+    id: ObjectId | string,
+    relations = ['user', 'role'],
+  ): Promise<Member> {
     return this.repo.findById(id, { populate: relations });
   }
 
@@ -45,15 +49,16 @@ export class MemberService extends SharedService<MemberRepository> {
       { populate: relations },
     );
   }
+
   public async findWithPassword(
     organizationId: string,
-    memberId: string,
+    userId: string,
     relations: string[] = ['role', 'user'],
   ) {
     return this.repo.findWithPassword(
       {
         organization: organizationId,
-        _id: memberId,
+        user: userId,
       },
       null,
       { populate: relations },

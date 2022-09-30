@@ -171,7 +171,6 @@ export class AuthService {
         `We do not have an organization with the site name "${organizationSlug}"`,
       );
     }
-
     const member = await this.memberService.findWithPassword(
       organization._id,
       user._id,
@@ -184,26 +183,28 @@ export class AuthService {
     }
 
     const passwordMatch = await bcrypt.compare(dto.password, member.password);
-    if (passwordMatch) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = member;
-      return result;
+    if (!passwordMatch) {
+      throw new UnauthorizedException(
+        `Invalid username or password, please check your details and try again`,
+      );
     }
-    return member;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = member.toJSON<Member>();
+    return result;
   }
 
   async loginToOrganization(dto: LoginDto) {
-    const Member = (this.request as any).user;
-    return this.getAuthData(Member, dto);
+    const member = (this.request as any).user;
+    return this.getAuthData(member, dto);
   }
 
   async getAuthData(member: Member, dto?: LoginDto) {
     const payload: TokenData = {
       username: dto?.username || member.user.email || member.user.phone,
       memberId: member._id,
-      organizationId: member.organization._id,
-      userId: member.user._id,
-      roleId: member.role._id,
+      organizationId: member.organization?._id ?? member.organization,
+      userId: member.user?._id ?? member.user,
+      roleId: member.role?._id ?? member.role,
     };
     return {
       accessToken: this.jwtService.sign(payload),
@@ -228,7 +229,7 @@ export class AuthService {
         lastName: dto.lastName,
         phone: dto.phone,
       })
-    ).user.toObject<User>();
+    )[0];
     const organization = await this.organizationService.createOne({
       // contactEmail: user.email,
       name: dto.organizationName,

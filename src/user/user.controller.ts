@@ -31,10 +31,10 @@ export class UserController {
     @Res() response: Response,
   ) {
     const user = await this.service.findOrCreate(createUserDto);
-    if (user.created) {
-      return response.status(201).json(user.user);
+    if (user[1]) {
+      return response.status(201).json(user[0]);
     }
-    return response.status(200).json(user.user);
+    return response.status(200).json(user[0]);
   }
 
   @Get(':id')

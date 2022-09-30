@@ -8,6 +8,8 @@ import {
 } from 'class-validator';
 import { IsSlug } from 'src/shared/decorators/is-slug.decorator';
 import { IsEqualTo } from 'src/shared/decorators/is-equal-to.decorator';
+import { IsUnique } from 'src/shared/decorators/is-unique.decorator';
+import { OrganizationSchema } from 'src/organization/schemas/organization.schema';
 
 export class CreateAccountDto {
   @IsString()
@@ -26,6 +28,13 @@ export class CreateAccountDto {
   @IsString()
   organizationName: string;
   @IsSlug()
+  @IsUnique(
+    { name: 'Organization', schema: OrganizationSchema },
+    {
+      message:
+        'the specified site name has already been used, please choose another one',
+    },
+  )
   organizationSiteName: string;
 
   @MinLength(6)
