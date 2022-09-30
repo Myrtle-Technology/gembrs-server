@@ -4,7 +4,8 @@ import { UpdateResourceDto } from './dto/update-resource.dto';
 import { Resource } from './schemas/resource.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
+import { Role } from 'src/role/schemas/role.schema';
 
 @Injectable()
 export class ResourceRepository extends SharedRepository<
@@ -15,6 +16,8 @@ export class ResourceRepository extends SharedRepository<
   constructor(@InjectModel(Resource.name) model: Model<Resource>) {
     super(model);
   }
+
+  populateOnFind = ['resourceRoles'];
 
   public async findOrCreate(dto: CreateResourceDto) {
     const resource = await this.model.findOneAndUpdate(
@@ -32,6 +35,22 @@ export class ResourceRepository extends SharedRepository<
   }
 
   findBySlug(slug: string) {
-    return this.model.findOne({ slug: slug }).exec();
+    return this.model
+      .findOne({ slug: slug })
+      .populate(this.populateOnFind)
+      .exec();
+  }
+
+  public async findOne(
+    filter?: FilterQuery<Role>,
+    projection?: ProjectionType<Role> | null,
+    options?: QueryOptions<Role> | null,
+  ) {
+    return this.model
+      .findOne(filter, projection, {
+        ...options,
+      })
+      .populate(this.populateOnFind)
+      .exec();
   }
 }

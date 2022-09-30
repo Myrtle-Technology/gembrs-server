@@ -30,8 +30,8 @@ export class MemberService extends SharedService<MemberRepository> {
     return this.repo.find();
   }
 
-  public async findById(id: ObjectId | string) {
-    return this.repo.findById(id);
+  public async findById(id: ObjectId | string, relations = ['user', 'role']) {
+    return this.repo.findById(id, { populate: relations });
   }
 
   public async findOne(
@@ -41,7 +41,7 @@ export class MemberService extends SharedService<MemberRepository> {
   ) {
     return this.repo.findOne(
       { organization: organizationId, _id: memberId },
-      null,
+      {},
       { populate: relations },
     );
   }

@@ -15,7 +15,7 @@ export class Resource extends Document {
   @Prop({
     type: [{ type: mongoose.Types.ObjectId, ref: 'ResourceRole' }],
   })
-  resources_roles: ResourceRole[];
+  resourcesRoles: ResourceRole[];
 }
 
 export const ResourceSchema = SchemaFactory.createForClass(Resource);

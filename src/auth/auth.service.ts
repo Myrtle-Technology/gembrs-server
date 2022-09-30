@@ -67,21 +67,18 @@ export class AuthService {
   }
 
   async verifyEmailOrPhone(dto: VerifyEmailDto) {
-    // const user = await this.userService.findOrCreate(
-    //   isEmail(dto.username) ? { email: dto.username } : { phone: dto.username },
-    // );
-    if (!(this.isDevServer == 'true')) {
-      if (isEmail(dto.username)) {
-        const code = Math.floor(100000 + Math.random() * 900000);
-        const token = await this.createToken(dto.username, code.toString());
-        await this.mailService.sendVerificationCode(
-          dto.username,
-          token.toObject().token,
-        );
-      } else {
-        await this.smsService.sendOTP(dto.username);
-      }
+    // if (!(this.isDevServer == 'true')) {
+    if (isEmail(dto.username)) {
+      const code = Math.floor(100000 + Math.random() * 900000);
+      const token = await this.createToken(dto.username, code.toString());
+      await this.mailService.sendVerificationCode(
+        dto.username,
+        token.toObject().token,
+      );
+    } else {
+      await this.smsService.sendOTP(dto.username);
     }
+    // }
     return { message: 'otp sent to user' };
   }
 
@@ -97,11 +94,12 @@ export class AuthService {
   }
 
   async validateOTP(dto: VerifyOtpDto) {
-    const user = await this.userService.findByUsername(dto.username);
+    let user;
     // if (!(this.isDevServer == 'true')) {
     if (isEmail(dto.username)) {
       const token = await this.tokenRepo.findOne({
-        where: { token: dto.otp.toString(), userId: user.id },
+        token: dto.otp.toString(),
+        identifier: dto.username,
       });
       if (!token) {
         throw new BadRequestException(
@@ -109,9 +107,11 @@ export class AuthService {
         );
       }
       await token.remove();
+      user = await this.userService.findOrCreate({ email: dto.username });
       user.verifiedEmail = true;
     } else {
       this.smsService.verifyOTP(user.phone, dto.otp.toString());
+      user = await this.userService.findOrCreate({ phone: dto.username });
       user.verifiedPhone = true;
     }
     // }
@@ -120,8 +120,8 @@ export class AuthService {
       username: user.email || user.phone,
       userId: user.id,
     };
-    // this access token will be used to access only 4 routes
-    // update personal details, create organization, and find User Organizations, create new account
+    // this access token will be used to access only 1 route
+    // find User Organizations
     return {
       accessToken: this.jwtService.sign(payload, { expiresIn: '24h' }),
       user: user,
@@ -244,7 +244,7 @@ export class AuthService {
       officeTitle: dto.officeTitle,
       // contactPhone: user.phone,
     });
-    this.mailService.welcomeRegisteredOrganization(user, organization);
+    this.verifyEmailOrPhone({ username: user.email || user.phone });
     return this.getAuthData(
       await (
         await this.memberService.findById(member._id)
@@ -272,11 +272,13 @@ export class AuthService {
     }
     // }
     await user.save();
-    return this.getAuthData(
-      await (
-        await this.memberService.findById(memberId)
-      ).populate(['organization', 'user', 'role']),
-    );
+    const member = await this.memberService.findById(memberId, [
+      'organization',
+      'user',
+      'role',
+    ]);
+    this.mailService.welcomeRegisteredOrganization(user, member.organization);
+    return this.getAuthData(member);
   }
 
   async initForgotMemberPassword() {
