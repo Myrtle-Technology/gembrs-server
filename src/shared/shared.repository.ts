@@ -16,15 +16,19 @@ export class SharedRepository<
   UpdateDto = CreateDto,
 > {
   constructor(readonly model: Model<Entity>) {}
-  public async find(
-    options?: any,
-  ): Promise<
-    HydratedDocument<Entity, Record<string, unknown>, Record<string, unknown>>[]
-  > {
-    return this.model.find(options).exec();
-  }
 
-  populateOnFind: string[] = [];
+  protected populateOnFind: string[] = [];
+
+  public async find(
+    filter: FilterQuery<Entity> = {},
+    projection?: ProjectionType<Entity>,
+    options?: QueryOptions<Entity>,
+  ): Promise<Entity[]> {
+    return this.model
+      .find(filter, projection, options)
+      .populate(this.populateOnFind)
+      .exec();
+  }
 
   public async findById(id: ObjectId | any, options?: QueryOptions<Entity>) {
     return (

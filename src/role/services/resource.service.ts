@@ -18,7 +18,7 @@ export class ResourceService
 
   async onModuleInit() {
     await Promise.all([
-      ...Object.keys(ResourcesEnum).map(async (key) => {
+      ...Object.values(ResourcesEnum).map(async (key) => {
         const slug = slugify(key, { lower: true });
         await this.findOrCreate({
           name: key,
@@ -42,7 +42,7 @@ export class ResourceService
   }
 
   public async findAll(filter?: any) {
-    return this.repo.find();
+    return this.repo.find(filter);
   }
 
   public async findById(id: ObjectId | string) {

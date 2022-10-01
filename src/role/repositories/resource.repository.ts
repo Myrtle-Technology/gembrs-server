@@ -4,7 +4,13 @@ import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { Resource } from '../schemas/resource.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
+import {
+  FilterQuery,
+  HydratedDocument,
+  Model,
+  ProjectionType,
+  QueryOptions,
+} from 'mongoose';
 import { Role } from 'src/role/schemas/role.schema';
 
 @Injectable()
@@ -17,7 +23,19 @@ export class ResourceRepository extends SharedRepository<
     super(model);
   }
 
-  populateOnFind = ['resourceRoles'];
+  populateOnFind = ['resourcesRoles'];
+
+  public async find(
+    filter: FilterQuery<Resource> = {},
+  ): Promise<
+    HydratedDocument<
+      Resource,
+      Record<string, unknown>,
+      Record<string, unknown>
+    >[]
+  > {
+    return this.model.find(filter).populate(this.populateOnFind).exec();
+  }
 
   public async findOrCreate(dto: CreateResourceDto) {
     const resource = await this.model.findOneAndUpdate(

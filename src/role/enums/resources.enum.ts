@@ -1,9 +1,10 @@
 export enum ResourcesEnum {
-  User = 'user',
-  Organization = 'organization',
-  Member = 'member',
-  Level = 'level',
-  Sms = 'sms',
-  Email = 'email',
-  CustomField = 'custom-database-field',
+  User = 'Contacts',
+  Role = 'Roles',
+  Organization = 'Organizations',
+  Member = 'Members',
+  Level = 'Level',
+  Sms = 'SMS',
+  Email = 'Emails',
+  CustomField = 'Custom Database Fields',
 }

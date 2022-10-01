@@ -19,7 +19,6 @@ import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator'
 @Controller('resource')
 export class ResourceController {
   constructor(private readonly service: ResourceService) {}
-
   @Post()
   @ApiOperation({ summary: 'Find or Create a Resource' })
   create(@Body() dto: CreateResourceDto) {
@@ -44,6 +43,7 @@ export class ResourceController {
     return this.service.findBySlug(slug);
   }
 
+  /*
   @Patch(':id')
   @ApiOperation({ summary: 'Update a Resource' })
   update(@Param('id') id: string, @Body() dto: UpdateResourceDto) {
@@ -55,4 +55,5 @@ export class ResourceController {
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
+  */
 }

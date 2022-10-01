@@ -15,6 +15,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { ResourcesEnum } from 'src/role/enums/resources.enum';
+import { Permit } from 'src/role/decorators/permit.decorator';
 @ApiBearerAuth()
 @OrganizationApi()
 @ApiTags('Organization')
@@ -29,6 +31,11 @@ export class OrganizationController {
     return this.service.findAll();
   }
 
+  @Permit({
+    resource: ResourcesEnum.Organization,
+    action: 'create',
+    possession: 'any',
+  })
   @ApiOperation({ summary: 'Create a Organization' })
   @Post()
   create(@Body() dto: CreateOrganizationDto, @Req() request: Request) {
@@ -43,12 +50,22 @@ export class OrganizationController {
     return this.service.findById(id);
   }
 
+  @Permit({
+    resource: ResourcesEnum.Organization,
+    action: 'update',
+    possession: 'any',
+  })
   @ApiOperation({ summary: 'Update an Organization' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateOrganizationDto) {
     return this.service.update(id, dto);
   }
 
+  @Permit({
+    resource: ResourcesEnum.Organization,
+    action: 'delete',
+    possession: 'any',
+  })
   @ApiOperation({ summary: 'Delete an Organization' })
   @Delete(':id')
   remove(@Param('id') id: string) {
