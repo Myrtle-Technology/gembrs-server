@@ -10,8 +10,11 @@ import {
 import { ResourceService } from './resource.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 
+@ApiBearerAuth()
+@OrganizationApi()
 @ApiTags('Resource')
 @Controller('resource')
 export class ResourceController {

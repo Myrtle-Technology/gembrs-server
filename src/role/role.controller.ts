@@ -21,7 +21,7 @@ export class RoleController {
   constructor(private readonly service: RoleService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Fond or Create a Role' })
+  @ApiOperation({ summary: 'Find or Create a Role' })
   create(@Body() dto: CreateRoleDto) {
     return this.service.findOrCreate(dto);
   }

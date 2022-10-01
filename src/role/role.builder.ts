@@ -1,28 +1,13 @@
+import { uniq } from 'lodash';
 import { RolesBuilder } from 'nest-access-control';
-import slugify from 'slugify';
+import { Permission } from './enums/permission.enum';
 import { ResourcesEnum } from './enums/resources.enum';
 import { RoleEnum } from './enums/role.enum';
+import { ResourceRoleService } from './resource-role.service';
+import { ResourceService } from './resource.service';
 import { RoleService } from './role.service';
 
 export const rolesBuilder: RolesBuilder = new RolesBuilder();
-
-export async function RolesBuilderFactory(
-  roleService: RoleService,
-): Promise<RolesBuilder> {
-  const hashMapOfGrants = rolesBuilder.getGrants();
-  // const roles = await roleService.findAll(); // exclude organization roles
-
-  const _roles = Object.keys(hashMapOfGrants).map(async (roleName) => {
-    const role = await roleService.findOrCreate({
-      name: roleName,
-      slug: slugify(roleName),
-    });
-    // TODO: create resources
-    // TODO: create permissions for each resource and role
-    return roleName;
-  });
-  return rolesBuilder;
-}
 
 /** Members */
 rolesBuilder
@@ -66,3 +51,49 @@ rolesBuilder
   .updateOwn(ResourcesEnum.Sms)
   .createOwn(ResourcesEnum.Sms)
   .deleteOwn(ResourcesEnum.Sms);
+
+export async function RolesBuilderFactory(
+  roleService: RoleService,
+  resourceService: ResourceService,
+  resourceRoleService: ResourceRoleService,
+): Promise<RolesBuilder> {
+  const hashMapOfGrants = rolesBuilder.getGrants();
+  const roles = await roleService.findAll();
+  const resources = await resourceService.findAll();
+  await roleService.onModuleInit();
+  await resourceService.onModuleInit();
+
+  roles.map((role) => {
+    if (!hashMapOfGrants[role.slug]) return;
+    resources.map(async (resource) => {
+      if (['admin', 'member'].includes(role.slug)) {
+        const permissions = uniq(
+          Object.keys(
+            hashMapOfGrants[role.slug][resource.slug] ?? {},
+          ) as Permission[],
+        );
+        await resourceRoleService.findOrCreate({
+          role: role._id,
+          resource: resource._id,
+          permissions,
+        });
+      }
+      const resourceRole = await resourceRoleService.findAll();
+      const permissions: Permission[] = uniq(
+        resourceRole.map((role) => role.permissions).flat(),
+      );
+      // console.log('hashMapOfGrants', role.slug, resource.slug, permissions);
+      permissions.map((action) => {
+        if (action) {
+          rolesBuilder.grant({
+            role: role.slug,
+            resource: resource.slug,
+            action,
+          });
+        }
+      });
+    });
+  });
+
+  return rolesBuilder;
+}

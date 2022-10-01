@@ -1,15 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import slugify from 'slugify';
 import { SharedService } from 'src/shared/shared.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { RoleEnum } from './enums/role.enum';
 import { RoleRepository } from './role.repository';
 
 @Injectable()
-export class RoleService extends SharedService<RoleRepository> {
+export class RoleService
+  extends SharedService<RoleRepository>
+  implements OnModuleInit
+{
   constructor(readonly repo: RoleRepository) {
     super(repo);
+  }
+
+  async onModuleInit() {
+    await Promise.all([
+      ...Object.keys(RoleEnum).map(async (key) => {
+        const slug = slugify(key, { lower: true });
+        await this.findOrCreate({
+          name: key,
+          slug,
+        });
+      }),
+    ]);
   }
 
   public async getDefaultAdminRole() {

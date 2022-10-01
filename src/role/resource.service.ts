@@ -1,15 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import slugify from 'slugify';
 import { SharedService } from 'src/shared/shared.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import { ResourcesEnum } from './enums/resources.enum';
 import { ResourceRepository } from './resource.repository';
 
 @Injectable()
-export class ResourceService extends SharedService<ResourceRepository> {
+export class ResourceService
+  extends SharedService<ResourceRepository>
+  implements OnModuleInit
+{
   constructor(readonly repo: ResourceRepository) {
     super(repo);
+  }
+
+  async onModuleInit() {
+    await Promise.all([
+      ...Object.keys(ResourcesEnum).map(async (key) => {
+        const slug = slugify(key, { lower: true });
+        await this.findOrCreate({
+          name: key,
+          slug,
+        });
+      }),
+    ]);
   }
 
   public async findOrCreate(dto: CreateResourceDto) {

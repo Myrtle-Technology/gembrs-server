@@ -6,7 +6,6 @@ import { UserModule } from './user/user.module';
 import { MemberModule } from './member/member.module';
 import { OrganizationModule } from './organization/organization.module';
 import { RoleModule } from './role/role.module';
-import { ResourceModule } from './resource/resource.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -20,6 +19,8 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesBuilderFactory } from './role/role.builder';
 import { RoleService } from './role/role.service';
 import { AccessControlModule } from 'nest-access-control';
+import { ResourceService } from './role/resource.service';
+import { ResourceRoleService } from './role/resource-role.service';
 
 @Module({
   imports: [
@@ -50,11 +51,10 @@ import { AccessControlModule } from 'nest-access-control';
     }),
     MailModule,
     RoleModule,
-    ResourceModule,
     AuthModule,
     AccessControlModule.forRootAsync({
       imports: [RoleModule],
-      inject: [RoleService],
+      inject: [RoleService, ResourceService, ResourceRoleService],
       useFactory: RolesBuilderFactory,
     }),
     SmsModule,
