@@ -1,7 +1,7 @@
 import { SharedRepository } from 'src/shared/shared.repository';
-import { CreateResourceRoleDto } from './dto/create-resource-role.dto';
-import { UpdateResourceRoleDto } from './dto/update-resource-role.dto';
-import { ResourceRole } from './schemas/resource-role.schema';
+import { CreateResourceRoleDto } from '../dto/create-resource-role.dto';
+import { UpdateResourceRoleDto } from '../dto/update-resource-role.dto';
+import { ResourceRole } from '../schemas/resource-role.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
@@ -35,12 +35,15 @@ export class ResourceRoleRepository extends SharedRepository<
   }
 
   findAllByRole(role: string) {
-    return this.model.findOne({ role }).populate(this.populateOnFind).exec();
+    return this.model.find({ role }).populate(this.populateOnFind).exec();
   }
 
   findAllByResource(resource: string) {
+    return this.model.find({ resource }).populate(this.populateOnFind).exec();
+  }
+  findAllByRoleAndResource(role: string, resource: string) {
     return this.model
-      .findOne({ resource })
+      .find({ role, resource })
       .populate(this.populateOnFind)
       .exec();
   }

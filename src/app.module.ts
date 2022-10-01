@@ -17,10 +17,10 @@ import { SmsModule } from './sms/sms.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesBuilderFactory } from './role/role.builder';
-import { RoleService } from './role/role.service';
+import { RoleService } from './role/services/role.service';
 import { AccessControlModule } from 'nest-access-control';
-import { ResourceService } from './role/resource.service';
-import { ResourceRoleService } from './role/resource-role.service';
+import { ResourceService } from './role/services/resource.service';
+import { ResourceRoleService } from './role/services/resource-role.service';
 
 @Module({
   imports: [

@@ -66,7 +66,6 @@ export class AuthController {
   //   return this.authService.createOrganization(req.tokenData.userId, dto);
   // }
 
-  @OrganizationApi()
   @UseGuards(LocalAuthGuard)
   @Public()
   @Post('login')

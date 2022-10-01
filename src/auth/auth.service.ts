@@ -23,7 +23,7 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { CreateOrganizationPasswordDto } from './dto/create-organization-password.dto';
 import { ConfigService } from '@nestjs/config';
 import { ORGANIZATION_API_HEADER } from './decorators/organization-api.decorator';
-import { RoleService } from 'src/role/role.service';
+import { RoleService } from 'src/role/services/role.service';
 import { TokenData } from './dto/token-data.dto';
 import { TokenRequest } from './interfaces/token-request.interface';
 import { CreateAccountDto } from './dto/create-account.dto';

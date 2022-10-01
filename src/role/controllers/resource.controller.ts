@@ -7,9 +7,9 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ResourceService } from './resource.service';
-import { CreateResourceDto } from './dto/create-resource.dto';
-import { UpdateResourceDto } from './dto/update-resource.dto';
+import { ResourceService } from '../services/resource.service';
+import { CreateResourceDto } from '../dto/create-resource.dto';
+import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 

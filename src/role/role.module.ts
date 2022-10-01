@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
-import { RoleService } from './role.service';
-import { RoleController } from './role.controller';
-import { RoleRepository } from './role.repository';
+import { RoleService } from './services/role.service';
+import { RoleController } from './controllers/role.controller';
+import { RoleRepository } from './repositories/role.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Role, RoleSchema } from './schemas/role.schema';
-import { ResourceController } from './resource.controller';
-import { ResourceRepository } from './resource.repository';
-import { ResourceService } from './resource.service';
+import { ResourceController } from './controllers/resource.controller';
+import { ResourceRepository } from './repositories/resource.repository';
+import { ResourceService } from './services/resource.service';
 import {
   ResourceRole,
   ResourceRoleSchema,
 } from './schemas/resource-role.schema';
 import { Resource, ResourceSchema } from './schemas/resource.schema';
-import { ResourceRoleController } from './resource-role.controller';
-import { ResourceRoleRepository } from './resource-role.repository';
-import { ResourceRoleService } from './resource-role.service';
+import { ResourceRoleController } from './controllers/resource-role.controller';
+import { ResourceRoleRepository } from './repositories/resource-role.repository';
+import { ResourceRoleService } from './services/resource-role.service';
 
 @Module({
   imports: [

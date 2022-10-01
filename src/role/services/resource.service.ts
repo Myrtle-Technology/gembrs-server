@@ -2,23 +2,23 @@ import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import slugify from 'slugify';
 import { SharedService } from 'src/shared/shared.service';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
-import { RoleEnum } from './enums/role.enum';
-import { RoleRepository } from './role.repository';
+import { CreateResourceDto } from '../dto/create-resource.dto';
+import { UpdateResourceDto } from '../dto/update-resource.dto';
+import { ResourcesEnum } from '../enums/resources.enum';
+import { ResourceRepository } from '../repositories/resource.repository';
 
 @Injectable()
-export class RoleService
-  extends SharedService<RoleRepository>
+export class ResourceService
+  extends SharedService<ResourceRepository>
   implements OnModuleInit
 {
-  constructor(readonly repo: RoleRepository) {
+  constructor(readonly repo: ResourceRepository) {
     super(repo);
   }
 
   async onModuleInit() {
     await Promise.all([
-      ...Object.keys(RoleEnum).map(async (key) => {
+      ...Object.keys(ResourcesEnum).map(async (key) => {
         const slug = slugify(key, { lower: true });
         await this.findOrCreate({
           name: key,
@@ -28,25 +28,17 @@ export class RoleService
     ]);
   }
 
-  public async getDefaultAdminRole() {
-    return this.repo.findOne({ slug: 'admin' });
-  }
-
-  public async getDefaultMemberRole() {
-    return this.repo.findOne({ slug: 'member' });
-  }
-
-  public async findOrCreate(dto: CreateRoleDto) {
+  public async findOrCreate(dto: CreateResourceDto) {
     dto.slug = (dto.slug ?? slugify(dto.name)).toLowerCase();
     return this.repo.findOrCreate(dto);
   }
 
   public async findBySlug(slug: string, throwError = true) {
-    const role = await this.repo.findBySlug(slug);
-    if (!role && throwError) {
-      throw new NotFoundException(`Role not found`);
+    const resource = await this.repo.findBySlug(slug);
+    if (!resource && throwError) {
+      throw new NotFoundException(`Resource not found`);
     }
-    return role;
+    return resource;
   }
 
   public async findAll(filter?: any) {
@@ -57,7 +49,7 @@ export class RoleService
     return this.repo.findById(id);
   }
 
-  public async update(id: ObjectId | string, dto: UpdateRoleDto) {
+  public async update(id: ObjectId | string, dto: UpdateResourceDto) {
     return this.repo.updateById(id, dto);
   }
 

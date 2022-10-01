@@ -7,9 +7,9 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ResourceRoleService } from './resource-role.service';
-import { CreateResourceRoleDto } from './dto/create-resource-role.dto';
-import { UpdateResourceRoleDto } from './dto/update-resource-role.dto';
+import { ResourceRoleService } from '../services/resource-role.service';
+import { CreateResourceRoleDto } from '../dto/create-resource-role.dto';
+import { UpdateResourceRoleDto } from '../dto/update-resource-role.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 

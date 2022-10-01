@@ -1,10 +1,11 @@
 import { SharedRepository } from 'src/shared/shared.repository';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
-import { Role } from './schemas/role.schema';
+import { CreateRoleDto } from '../dto/create-role.dto';
+import { UpdateRoleDto } from '../dto/update-role.dto';
+import { Role } from '../schemas/role.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { RoleEnum } from '../enums/role.enum';
 
 @Injectable()
 export class RoleRepository extends SharedRepository<
@@ -27,7 +28,13 @@ export class RoleRepository extends SharedRepository<
     return { role, created: false };
   }
 
-  findBySlug(slug: string) {
-    return this.model.findOne({ slug: slug }).exec();
+  public async findBySlug(organization: string, slug: string) {
+    return this.model
+      .findOne({ organization, slug })
+      .populate(this.populateOnFind)
+      .exec();
+  }
+  public async findDefaultRoles() {
+    return this.model.find({ slug: { $in: Object.values(RoleEnum) } });
   }
 }
