@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BadRequestException } from '@nestjs/common';
 import { isEmail, isPhoneNumber } from 'class-validator';
 import mongoose, { Document } from 'mongoose';
+import MongoPaging from 'mongo-cursor-pagination';
 import { Member } from 'src/member/schemas/member.schema';
 // import { DuplicateFieldError } from 'src/shared/errors/duplicate-field.error';
 
@@ -76,3 +77,5 @@ UserSchema.post('save', function (error, doc, next) {
     next(new BadRequestException('Bad input try again'));
   }
 });
+
+UserSchema.plugin(MongoPaging.mongoosePlugin);
