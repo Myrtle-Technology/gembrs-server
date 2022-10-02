@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { MemberService } from './member.service';
 import { CreateMemberDto } from './dto/create-member.dto';
@@ -17,6 +18,11 @@ import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator'
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 import { ResourcesEnum } from 'src/role/enums/resources.enum';
 import { Permit } from 'src/role/decorators/permit.decorator';
+import { query } from 'express';
+import { PaginationOptions } from 'src/shared/shared.repository';
+import { Member } from './schemas/member.schema';
+import { Paginate } from 'src/shared/paginator/decorator';
+import { PaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -37,14 +43,31 @@ export class MemberController {
   }
 
   @Get()
+  @PaginateQueryOptions()
   @ApiOperation({ summary: 'Find all Members' })
   @Permit({
     resource: ResourcesEnum.Member,
     action: 'read',
     possession: 'own',
   })
-  findAll(@Req() request: TokenRequest) {
-    return this.service.findAll(request.user.organization?._id);
+  findAll(
+    @Req() request: TokenRequest,
+    @Paginate() params: Record<string, string>,
+  ) {
+    return this.service.findAll(request.user.organization?._id, params);
+  }
+
+  private getPaginationOptions(
+    query: Record<string, string>,
+  ): PaginationOptions<Member> {
+    console.log(query.fields);
+    return {
+      // fields: query.fields,
+      limit: +query.limit,
+      sortAscending: query.sort === 'asc',
+      next: query.next,
+      previous: query.previous,
+    };
   }
 
   @Permit({

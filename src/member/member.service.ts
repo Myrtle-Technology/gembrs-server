@@ -9,6 +9,7 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberRepository } from './member.repository';
 import { InviteMemberDto } from './dto/invite-member.dto';
 import { Member } from './schemas/member.schema';
+import { PaginationOptions } from 'src/shared/shared.repository';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -27,8 +28,12 @@ export class MemberService extends SharedService<MemberRepository> {
     return this.repo.create(dto);
   }
 
-  public async findAll(organization: string, filter?: any) {
-    return this.repo.find({ organization });
+  public async findAll(
+    organization: string,
+    params: PaginationOptions<Member>,
+  ) {
+    params.query = { ...params.query, organization };
+    return this.repo.paginate(params);
   }
 
   public async findById(

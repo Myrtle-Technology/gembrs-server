@@ -102,11 +102,37 @@ export class SharedRepository<
     return this.model.findOneAndRemove(filter, options);
   }
 
-  public async paginate(params: PaginationOptions<Entity>): Promise<Entity> {
-    return (this.model as any).paginate(params);
+  public async paginate(
+    params: PaginationOptions<Entity>,
+  ): Promise<PaginationResult<Entity>> {
+    const result: InternalPaginationResult<Entity> = await (
+      this.model as any
+    ).paginate(params);
+    return {
+      data: result.results,
+      meta: {
+        next: result.next,
+        previous: result.previous,
+        hasNext: result.hasNext,
+        hasPrevious: result.hasPrevious,
+      },
+    };
   }
-  public async search(params: PaginationOptions<Entity>): Promise<Entity> {
-    return (this.model as any).search(params);
+  public async search(
+    params: PaginationOptions<Entity>,
+  ): Promise<PaginationResult<Entity>> {
+    const result: InternalPaginationResult<Entity> = await (
+      this.model as any
+    ).search(params);
+    return {
+      data: result.results,
+      meta: {
+        next: result.next,
+        previous: result.previous,
+        hasNext: result.hasNext,
+        hasPrevious: result.hasPrevious,
+      },
+    };
   }
 
   public async paginateSlow({
@@ -166,13 +192,30 @@ export class SharedRepository<
       -previous {String} The value to start querying previous page.
  */
 export interface PaginationOptions<Entity> {
-  query: FilterQuery<Entity>;
+  query?: FilterQuery<Entity>;
   limit?: number;
-  fields: Record<keyof Entity, string | number>; //{_id: 1, timestamp :1}
-  sortAscending: boolean;
-  next: string;
-  previous: string;
+  fields?: Record<keyof Entity, 1 | 0>;
+  sortAscending?: boolean;
+  next?: string;
+  previous?: string;
 }
+export interface InternalPaginationResult<Entity> {
+  previous: string;
+  hasPrevious: boolean;
+  next: string;
+  hasNext: boolean;
+  results: Entity[];
+}
+export interface PaginationResult<Entity> {
+  meta: {
+    previous: string;
+    hasPrevious: boolean;
+    next: string;
+    hasNext: boolean;
+  };
+  data: Entity[];
+}
+
 export interface SlowPaginationOptions<Entity> {
   limit?: number;
   page?: number;

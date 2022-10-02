@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import MongoPaging from 'mongo-cursor-pagination';
+import * as MongoPaging from 'mongo-cursor-pagination';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { Role } from 'src/role/schemas/role.schema';
 import { User } from 'src/user/schemas/user.schema';

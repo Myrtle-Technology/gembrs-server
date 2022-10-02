@@ -20,7 +20,7 @@ export class MembershipController {
   constructor(private readonly service: MembershipService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Find or Create a Membership' })
+  @ApiOperation({ summary: 'Create a Membership' })
   create(@Req() request: TokenRequest, @Body() dto: CreateMembershipDto) {
     dto.organization = request.tokenData.organizationId;
     return this.service.createOne(dto);
