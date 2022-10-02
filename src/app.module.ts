@@ -21,6 +21,7 @@ import { RoleService } from './role/services/role.service';
 import { AccessControlModule } from 'nest-access-control';
 import { ResourceService } from './role/services/resource.service';
 import { ResourceRoleService } from './role/services/resource-role.service';
+import { MembershipModule } from './membership/membership.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ResourceRoleService } from './role/services/resource-role.service';
       useFactory: RolesBuilderFactory,
     }),
     SmsModule,
+    MembershipModule,
   ],
   controllers: [AppController],
   providers: [

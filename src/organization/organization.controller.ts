@@ -20,7 +20,7 @@ import { Permit } from 'src/role/decorators/permit.decorator';
 @ApiBearerAuth()
 @OrganizationApi()
 @ApiTags('Organization')
-@Controller('organization')
+@Controller('organizations')
 export class OrganizationController {
   constructor(private readonly service: OrganizationService) {}
 

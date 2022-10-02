@@ -16,7 +16,7 @@ import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator'
 @ApiBearerAuth()
 @OrganizationApi()
 @ApiTags('ResourceRole')
-@Controller('resource-role')
+@Controller('resource-roles')
 export class ResourceRoleController {
   constructor(private readonly service: ResourceRoleService) {}
 

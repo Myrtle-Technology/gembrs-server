@@ -16,7 +16,7 @@ import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator'
 @ApiBearerAuth()
 @OrganizationApi()
 @ApiTags('Resource')
-@Controller('resource')
+@Controller('resources')
 export class ResourceController {
   constructor(private readonly service: ResourceService) {}
   @Post()

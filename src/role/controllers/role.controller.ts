@@ -18,7 +18,7 @@ import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 @ApiBearerAuth()
 @OrganizationApi()
 @ApiTags('Role')
-@Controller('role')
+@Controller('roles')
 export class RoleController {
   constructor(private readonly service: RoleService) {}
 
