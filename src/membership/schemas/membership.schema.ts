@@ -3,8 +3,13 @@ import mongoose, { Document } from 'mongoose';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { MembershipType } from '../enums/membership-type.enum';
-import { BundleAdminWorkflowSettings } from './bundle-admin-workflow-settings.schema';
+import {
+  BundleAdminWorkflowSettings,
+  BundleAdminWorkflowSettingsSchema,
+} from './bundle-admin-workflow-settings.schema';
 import { RenewalPeriod, RenewalPeriodSchema } from './renewal-period.schema';
+import { ApiProperty } from '@nestjs/swagger';
+import { RenewalReminder } from './renewal-reminder.schema';
 
 // export type MemberDocument = Member & Document;
 
@@ -50,7 +55,29 @@ export class Membership extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
   organization: Organization;
 
+  @ApiProperty({ type: () => BundleAdminWorkflowSettings })
+  @Prop({ type: BundleAdminWorkflowSettingsSchema })
   bundleAdminWorkflowSettings: BundleAdminWorkflowSettings;
+
+  @ApiProperty({ type: () => RenewalReminder })
+  @Prop({ type: RenewalReminder })
+  renewalReminderBefore1: RenewalReminder;
+
+  @ApiProperty({ type: () => RenewalReminder })
+  @Prop({ type: RenewalReminder })
+  renewalReminderBefore2: RenewalReminder;
+
+  @ApiProperty({ type: () => RenewalReminder })
+  @Prop({ type: RenewalReminder })
+  renewalReminderOnDueDate: RenewalReminder;
+
+  @ApiProperty({ type: () => RenewalReminder })
+  @Prop({ type: RenewalReminder })
+  renewalReminderAfter1: RenewalReminder;
+
+  @ApiProperty({ type: () => RenewalReminder })
+  @Prop({ type: RenewalReminder })
+  renewalReminderAfter2: RenewalReminder;
 }
 
 export const MembershipSchema = SchemaFactory.createForClass(Membership);
