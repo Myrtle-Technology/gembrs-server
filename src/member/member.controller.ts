@@ -21,8 +21,8 @@ import { Permit } from 'src/role/decorators/permit.decorator';
 import { query } from 'express';
 import { PaginationOptions } from 'src/shared/shared.repository';
 import { Member } from './schemas/member.schema';
-import { Paginate } from 'src/shared/paginator/decorator';
-import { PaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
+import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
+import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -43,7 +43,7 @@ export class MemberController {
   }
 
   @Get()
-  @PaginateQueryOptions()
+  @CursorPaginateQueryOptions()
   @ApiOperation({ summary: 'Find all Members' })
   @Permit({
     resource: ResourcesEnum.Member,
@@ -52,22 +52,9 @@ export class MemberController {
   })
   findAll(
     @Req() request: TokenRequest,
-    @Paginate() params: Record<string, string>,
+    @CursorPaginateQuery() params: Record<string, string>,
   ) {
     return this.service.findAll(request.user.organization?._id, params);
-  }
-
-  private getPaginationOptions(
-    query: Record<string, string>,
-  ): PaginationOptions<Member> {
-    console.log(query.fields);
-    return {
-      // fields: query.fields,
-      limit: +query.limit,
-      sortAscending: query.sort === 'asc',
-      next: query.next,
-      previous: query.previous,
-    };
   }
 
   @Permit({

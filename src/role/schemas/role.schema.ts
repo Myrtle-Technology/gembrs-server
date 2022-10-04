@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Organization } from 'src/organization/schemas/organization.schema';
-import * as MongoPaging from 'mongo-cursor-pagination';
+import { mongoosePagination } from 'mongoose-paginate-ts';
 
 /* 
   RBAC - role-based access control
@@ -24,4 +24,4 @@ export class Role extends Document {
 
 export const RoleSchema = SchemaFactory.createForClass(Role);
 
-RoleSchema.plugin(MongoPaging.mongoosePlugin);
+RoleSchema.plugin(mongoosePagination);

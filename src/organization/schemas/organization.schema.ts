@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import * as MongoPaging from 'mongo-cursor-pagination';
+import { mongoosePagination, Pagination } from 'mongoose-paginate-ts';
 import { Member } from 'src/member/schemas/member.schema';
 import { Role } from 'src/role/schemas/role.schema';
 import { User } from 'src/user/schemas/user.schema';
@@ -57,4 +57,4 @@ export class Organization extends Document {
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);
 
-OrganizationSchema.plugin(MongoPaging.mongoosePlugin);
+OrganizationSchema.plugin(mongoosePagination);

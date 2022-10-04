@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 
-export function PaginateQueryOptions() {
+export function CursorPaginateQueryOptions() {
   return applyDecorators(
     ApiQuery({ name: 'limit', required: false, type: Number }),
     ApiQuery({ name: 'next', required: false, type: 'string' }),
@@ -12,8 +12,20 @@ export function PaginateQueryOptions() {
       explode: true,
       isArray: true,
       type: 'string',
-      style: 'simple',
     }),
-    ApiQuery({ name: 'sort', required: false, enum: ['asc', 'desc'] }),
+    ApiQuery({
+      name: 'sort',
+      required: false,
+      explode: true,
+      isArray: true,
+      type: 'string',
+    }),
+    ApiQuery({
+      name: 'include',
+      required: false,
+      explode: true,
+      isArray: true,
+      type: 'string',
+    }),
   );
 }

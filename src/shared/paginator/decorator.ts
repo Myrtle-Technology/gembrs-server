@@ -1,7 +1,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 import { pickBy, Dictionary, isString, mapKeys } from 'lodash';
-import { PaginationResult } from '../shared.repository';
+import { PaginationOptions, PaginationResult } from '../shared.repository';
 
 export interface PaginateQuery {
   page?: number;
@@ -13,24 +13,18 @@ export interface PaginateQuery {
   path: string;
 }
 
-export const Paginate = createParamDecorator(
+export const CursorPaginateQuery = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
     const request: Request = ctx.switchToHttp().getRequest();
     const { query } = request;
-
-    const fields = Object.fromEntries(
-      (query.fields as string[]).map((field) => {
-        return [field, 1];
-      }),
-    );
-
-    console.log(query.fields, fields);
-    return {
-      fields: fields,
+    const _query: PaginationOptions<any> = {
+      select: query.fields as string[],
       limit: +query.limit,
-      sortAscending: query.sort === 'asc',
-      next: query.next,
-      previous: query.previous,
+      sort: query.sort as string,
+      startingAfter: query.next,
+      endingBefore: query.previous,
+      populate: query.include as string[],
     };
+    return _query;
   },
 );

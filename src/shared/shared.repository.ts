@@ -8,6 +8,12 @@ import {
   SortOrder,
 } from 'mongoose';
 import { Injectable } from '@nestjs/common';
+import {
+  Pagination,
+  PaginationModel,
+  PaginationOptions as MPaginationOptions,
+} from 'mongoose-paginate-ts';
+import { result, uniq } from 'lodash';
 
 @Injectable()
 export class SharedRepository<
@@ -105,33 +111,13 @@ export class SharedRepository<
   public async paginate(
     params: PaginationOptions<Entity>,
   ): Promise<PaginationResult<Entity>> {
-    const result: InternalPaginationResult<Entity> = await (
-      this.model as any
-    ).paginate(params);
+    params.populate = uniq([...this.populateOnFind, ...params.populate]);
+    const { docs, ...meta } = await (this.model as Pagination<Entity>).paginate(
+      params,
+    );
     return {
-      data: result.results,
-      meta: {
-        next: result.next,
-        previous: result.previous,
-        hasNext: result.hasNext,
-        hasPrevious: result.hasPrevious,
-      },
-    };
-  }
-  public async search(
-    params: PaginationOptions<Entity>,
-  ): Promise<PaginationResult<Entity>> {
-    const result: InternalPaginationResult<Entity> = await (
-      this.model as any
-    ).search(params);
-    return {
-      data: result.results,
-      meta: {
-        next: result.next,
-        previous: result.previous,
-        hasNext: result.hasNext,
-        hasPrevious: result.hasPrevious,
-      },
+      data: docs,
+      meta,
     };
   }
 
@@ -170,49 +156,32 @@ export class SharedRepository<
     throw new Error('Method not implemented.');
   }
 }
-
-/*
- @param {Object} params
-      -query {Object} The find query.
-      -limit {Number} The page size. Must be between 1 and `config.MAX_LIMIT`.
-      -fields {Object} Fields to query in the Mongo object format, e.g. {_id: 1, timestamp :1}.
-        The default is to query all fields.
-      -paginatedField {String} The field name to query the range for. The field must be:
-          1. Orderable. We must sort by this value. If duplicate values for paginatedField field
-            exist, the results will be secondarily ordered by the _id.
-          2. Indexed. For large collections, this should be indexed for query performance.
-          3. Immutable. If the value changes between paged queries, it could appear twice.
-          4. Consistent. All values (except undefined and null values) must be of the same type.
-        The default is to use the Mongo built-in '_id' field, which satisfies the above criteria.
-        The only reason to NOT use the Mongo _id field is if you chose to implement your own ids.
-      -sortAscending {Boolean} True to sort using paginatedField ascending (default is false - descending).
-      -sortCaseInsensitive {boolean} Whether to ignore case when sorting, in which case `paginatedField`
-        must be a string property.
-      -next {String} The value to start querying the page.
-      -previous {String} The value to start querying previous page.
- */
-export interface PaginationOptions<Entity> {
+export interface PaginationOptions<Entity> extends MPaginationOptions {
   query?: FilterQuery<Entity>;
   limit?: number;
-  fields?: Record<keyof Entity, 1 | 0>;
-  sortAscending?: boolean;
-  next?: string;
-  previous?: string;
+  select?: string | string[] | Record<keyof Entity, 1 | 0>;
+  sort?:
+    | string
+    | {
+        [key: string]:
+          | SortOrder
+          | {
+              $meta: 'textScore';
+            };
+      };
+  key?: string;
+  aggregate?: any;
+  populate?: string[];
+  projection?: any;
+  forceCountFunction?: boolean;
+  lean?: boolean;
+  startingAfter?: any;
+  endingBefore?: any;
+  page?: number;
 }
-export interface InternalPaginationResult<Entity> {
-  previous: string;
-  hasPrevious: boolean;
-  next: string;
-  hasNext: boolean;
-  results: Entity[];
-}
+export type InternalPaginationResult<Entity> = PaginationModel<Entity>;
 export interface PaginationResult<Entity> {
-  meta: {
-    previous: string;
-    hasPrevious: boolean;
-    next: string;
-    hasNext: boolean;
-  };
+  meta: Omit<InternalPaginationResult<Entity>, 'docs'>;
   data: Entity[];
 }
 
