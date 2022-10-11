@@ -1,4 +1,5 @@
 import { IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { CreateMemberCustomFieldDto } from './create-member-custom-field.dto';
 
 export class CreateMemberDto {
   user: string;
@@ -21,6 +22,6 @@ export class CreateMemberDto {
   @IsString()
   password?: string;
 
-  // @IsOptional()
-  // commonFields?: CreateMemberCommonFieldDto[];
+  @IsOptional()
+  customFields?: CreateMemberCustomFieldDto[];
 }

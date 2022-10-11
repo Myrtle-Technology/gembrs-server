@@ -4,10 +4,17 @@ import { MemberController } from './member.controller';
 import { MemberRepository } from './member.repository';
 import { Member, MemberSchema } from './schemas/member.schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import {
+  MemberCustomField,
+  MemberCustomFieldSchema,
+} from './schemas/member-custom-field.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Member.name, schema: MemberSchema }]),
+    MongooseModule.forFeature([
+      { name: Member.name, schema: MemberSchema },
+      { name: MemberCustomField.name, schema: MemberCustomFieldSchema },
+    ]),
   ],
   controllers: [MemberController],
   providers: [MemberService, MemberRepository],

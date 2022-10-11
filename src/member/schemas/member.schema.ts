@@ -4,6 +4,10 @@ import { mongoosePagination } from 'mongoose-paginate-ts';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { Role } from 'src/role/schemas/role.schema';
 import { User } from 'src/user/schemas/user.schema';
+import {
+  MemberCustomField,
+  MemberCustomFieldSchema,
+} from './member-custom-field.schema';
 
 // export type MemberDocument = Member & Document;
 
@@ -30,8 +34,8 @@ export class Member extends Document {
   @Prop({ select: false })
   password: string;
 
-  // @OneToMany(() => MemberCommonField, (c) => c.member, { eager: true })
-  // commonFields: MemberCommonField[];
+  @Prop({ type: [{ type: MemberCustomFieldSchema }] })
+  customFields: MemberCustomField[];
 
   // @OneToMany(() => Subscription, (subscription) => subscription.member)
   // subscriptions: Subscription[];
