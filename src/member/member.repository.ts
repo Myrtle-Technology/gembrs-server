@@ -16,7 +16,8 @@ export class MemberRepository extends SharedRepository<
     super(model);
   }
 
-  populateOnFind = ['user', 'role', 'organization'];
+  protected populateOnFind = ['user', 'role', 'organization'];
+  protected excludedFields = ['password'];
 
   public async find(
     filter: FilterQuery<Member>,

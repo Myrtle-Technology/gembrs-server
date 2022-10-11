@@ -15,4 +15,6 @@ export class MembershipRepository extends SharedRepository<
   constructor(@InjectModel(Membership.name) model: Model<Membership>) {
     super(model);
   }
+
+  protected populateOnFind = ['organization', 'changeableTo'];
 }

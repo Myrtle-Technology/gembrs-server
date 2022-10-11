@@ -24,6 +24,7 @@ export class SharedRepository<
   constructor(readonly model: Model<Entity>) {}
 
   protected populateOnFind: string[] = [];
+  protected excludedFields: string[] = [];
 
   public async find(
     filter: FilterQuery<Entity> = {},
@@ -114,6 +115,7 @@ export class SharedRepository<
   public async paginate(
     params: PaginationOptions<Entity>,
   ): Promise<PaginationResult<Entity>> {
+    params.select = this.getSelect(params.select);
     params.populate = uniq([...this.populateOnFind, ...params.populate]);
     const { docs, ...meta } = await (this.model as Pagination<Entity>).paginate(
       params,
@@ -122,6 +124,12 @@ export class SharedRepository<
       data: docs,
       meta,
     };
+  }
+
+  protected getSelect(_select: string | string[]): string[] {
+    if (!_select) return [];
+    const select = Array.isArray(_select) ? _select : [_select];
+    return select.filter((s) => !this.excludedFields.includes(s));
   }
 
   public async paginateSlow({
@@ -162,7 +170,7 @@ export class SharedRepository<
 export interface PaginationOptions<Entity> extends MPaginationOptions {
   query?: FilterQuery<Entity>;
   limit?: number;
-  select?: string | string[] | Record<keyof Entity, 1 | 0>;
+  select?: string | string[];
   sort?:
     | string
     | {

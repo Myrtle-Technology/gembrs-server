@@ -6,7 +6,6 @@ import { SharedService } from 'src/shared/shared.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
 import { MembershipRepository } from './membership.repository';
-import { Membership } from './schemas/membership.schema';
 
 @Injectable()
 export class MembershipService extends SharedService<MembershipRepository> {
