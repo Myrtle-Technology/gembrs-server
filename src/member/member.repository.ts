@@ -4,13 +4,7 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 import { Member } from './schemas/member.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  FilterQuery,
-  HydratedDocument,
-  Model,
-  ProjectionType,
-  QueryOptions,
-} from 'mongoose';
+import { FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
 
 @Injectable()
 export class MemberRepository extends SharedRepository<
@@ -22,7 +16,7 @@ export class MemberRepository extends SharedRepository<
     super(model);
   }
 
-  populateOnFind = ['user', 'role'];
+  populateOnFind = ['user', 'role', 'organization'];
 
   public async find(
     filter: FilterQuery<Member>,

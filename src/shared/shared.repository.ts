@@ -36,7 +36,10 @@ export class SharedRepository<
       .exec();
   }
 
-  public async findById(id: ObjectId | any, options?: QueryOptions<Entity>) {
+  public async findById(
+    id: ObjectId | any,
+    options?: QueryOptions<Entity>,
+  ): Promise<Entity> {
     return (
       this.model
         .findById(
@@ -56,7 +59,7 @@ export class SharedRepository<
     filter?: FilterQuery<Entity>,
     projection?: ProjectionType<Entity> | null,
     options?: QueryOptions<Entity> | null,
-  ) {
+  ): Promise<Entity> {
     return (
       this.model
         .findOne(filter, projection, {

@@ -17,13 +17,14 @@ export const CursorPaginateQuery = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
     const request: Request = ctx.switchToHttp().getRequest();
     const { query } = request;
+    console.log(query.sort);
     const _query: PaginationOptions<any> = {
-      select: query.fields as string[],
+      select: query.fields ? (query.fields as string[]) : [],
       limit: +query.limit,
       sort: query.sort as string,
-      startingAfter: query.next,
-      endingBefore: query.previous,
-      populate: query.include as string[],
+      startingAfter: query.cursor as string,
+      // endingBefore: query.previous,
+      populate: query.include ? (query.include as string[]) : [],
     };
     return _query;
   },
