@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { mongoosePagination, Pagination } from 'mongoose-paginate-ts';
+import { mongoosePagination } from 'mongoose-paginate-ts';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { MembershipType } from '../enums/membership-type.enum';
@@ -84,3 +84,8 @@ export class Membership extends Document {
 export const MembershipSchema = SchemaFactory.createForClass(Membership);
 
 MembershipSchema.plugin(mongoosePagination);
+
+MembershipSchema.index(
+  { organization: 1, name: 1 },
+  { unique: true, name: 'membership_name' },
+);
