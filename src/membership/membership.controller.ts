@@ -22,8 +22,7 @@ export class MembershipController {
   @Post()
   @ApiOperation({ summary: 'Create a Membership' })
   create(@Req() request: TokenRequest, @Body() dto: CreateMembershipDto) {
-    dto.organization = request.tokenData.organizationId;
-    return this.service.createOne(dto);
+    return this.service.createOne(request.tokenData.organizationId, dto);
   }
 
   @Get()

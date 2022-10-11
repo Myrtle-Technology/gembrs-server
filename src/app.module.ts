@@ -22,6 +22,9 @@ import { AccessControlModule } from 'nest-access-control';
 import { ResourceService } from './role/services/resource.service';
 import { ResourceRoleService } from './role/services/resource-role.service';
 import { MembershipModule } from './membership/membership.module';
+import { CustomFieldModule } from './custom-field/custom-field.module';
+import { SubscriptionModule } from './subscription/subscription.module';
+import { InvitationModule } from './invitation/invitation.module';
 
 @Module({
   imports: [
@@ -60,6 +63,9 @@ import { MembershipModule } from './membership/membership.module';
     }),
     SmsModule,
     MembershipModule,
+    CustomFieldModule,
+    SubscriptionModule,
+    InvitationModule,
   ],
   controllers: [AppController],
   providers: [

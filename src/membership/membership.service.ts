@@ -13,7 +13,8 @@ export class MembershipService extends SharedService<MembershipRepository> {
     super(repo);
   }
 
-  public async createOne(dto: CreateMembershipDto) {
+  public async createOne(organization: string, dto: CreateMembershipDto) {
+    dto.organization = organization;
     return this.repo.create(dto);
   }
 
@@ -30,6 +31,7 @@ export class MembershipService extends SharedService<MembershipRepository> {
     id: ObjectId | string,
     dto: UpdateMembershipDto,
   ) {
+    dto.organization = organization;
     return this.repo.updateOne({ organization, _id: id }, dto);
   }
 
