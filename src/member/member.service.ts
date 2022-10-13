@@ -10,12 +10,18 @@ import { MemberRepository } from './member.repository';
 import { InviteMemberDto } from './dto/invite-member.dto';
 import { Member } from './schemas/member.schema';
 import { PaginationOptions } from 'src/shared/shared.repository';
+import { UserService } from 'src/user/user.service';
+import { RoleService } from 'src/role/services/role.service';
+import { InvitationService } from 'src/invitation/invitation.service';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
   private readonly saltRounds = +this.configService.get<number>('SALT_ROUNDS');
   constructor(
     readonly repo: MemberRepository,
+    readonly userService: UserService,
+    readonly roleService: RoleService,
+    readonly invitationService: InvitationService,
     private configService: ConfigService,
   ) {
     super(repo);
@@ -101,11 +107,18 @@ export class MemberService extends SharedService<MemberRepository> {
 
   public async inviteMember(dto: InviteMemberDto) {
     // create a new user
-    // create new subscription to a membership plan
+    const [user] = await this.userService.findOrCreate(dto);
     // get member Role
-    // create a member without password
-    // create invitation
+    const role = await this.roleService.getDefaultMemberRole();
+    // create invitation (include membership plan id)
+    const invitation = await this.invitationService.createOne({
+      user: user._id,
+      role: role._id,
+      organization: dto.organization,
+      membership: dto.membership,
+      token: new Types.ObjectId().toHexString(),
+    });
     // send member an invite email
-    return this.repo.create(dto as any);
+    return this.invitationService.sendInviteEmail(invitation.id);
   }
 }

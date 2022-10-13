@@ -37,4 +37,12 @@ export class RoleRepository extends SharedRepository<
   public async findDefaultRoles() {
     return this.model.find({ slug: { $in: Object.values(RoleEnum) } });
   }
+
+  public async getDefaultAdminRole() {
+    return this.findOne({ slug: RoleEnum.Admin });
+  }
+
+  public async getDefaultMemberRole() {
+    return this.findOne({ slug: RoleEnum.Member });
+  }
 }

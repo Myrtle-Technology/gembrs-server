@@ -7,10 +7,8 @@ import {
   Param,
   Delete,
   Req,
-  Query,
 } from '@nestjs/common';
 import { MemberService } from './member.service';
-import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateMemberPasswordDto } from './dto/update-member-password.dto';
@@ -18,11 +16,9 @@ import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator'
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 import { ResourcesEnum } from 'src/role/enums/resources.enum';
 import { Permit } from 'src/role/decorators/permit.decorator';
-import { query } from 'express';
-import { PaginationOptions } from 'src/shared/shared.repository';
-import { Member } from './schemas/member.schema';
 import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
 import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
+import { InviteMemberDto } from './dto/invite-member.dto';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -38,8 +34,8 @@ export class MemberController {
   })
   @Post()
   @ApiOperation({ summary: 'Create a Member' })
-  create(@Body() dto: CreateMemberDto) {
-    return this.service.createOne(dto);
+  create(@Body() dto: InviteMemberDto) {
+    return this.service.inviteMember(dto);
   }
 
   @Get()
@@ -88,7 +84,7 @@ export class MemberController {
     action: 'update',
     possession: 'own',
   })
-  @Patch(':id')
+  @Patch(':id/password')
   @ApiOperation({ summary: "Update a Member's password" })
   updatePassword(
     @Req() request: TokenRequest,

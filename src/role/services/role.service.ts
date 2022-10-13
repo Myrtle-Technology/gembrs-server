@@ -29,11 +29,11 @@ export class RoleService
   }
 
   public async getDefaultAdminRole() {
-    return this.repo.findOne({ slug: 'admin' });
+    return this.repo.getDefaultAdminRole();
   }
 
   public async getDefaultMemberRole() {
-    return this.repo.findOne({ slug: 'member' });
+    return this.repo.getDefaultMemberRole();
   }
 
   public async findDefaultRoles() {

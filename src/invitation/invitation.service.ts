@@ -1,26 +1,74 @@
 import { Injectable } from '@nestjs/common';
+import { ObjectId } from 'mongoose';
+import { SharedService } from 'src/shared/shared.service';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { UpdateInvitationDto } from './dto/update-invitation.dto';
+import { InvitationRepository } from './invitation.repository';
+import { Invitation } from './schemas/invitation.schema';
+import { PaginationOptions } from 'src/shared/shared.repository';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
-export class InvitationService {
-  create(createInvitationDto: CreateInvitationDto) {
-    return 'This action adds a new invitation';
+export class InvitationService extends SharedService<InvitationRepository> {
+  constructor(
+    readonly repo: InvitationRepository,
+    readonly mailService: MailService,
+  ) {
+    super(repo);
   }
 
-  findAll() {
-    return `This action returns all invitation`;
+  public async createOne(dto: CreateInvitationDto) {
+    return this.repo.create(dto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} invitation`;
+  public async findAll(
+    organization: string,
+    params: PaginationOptions<Invitation>,
+  ) {
+    params.query = { ...params.query, organization };
+    return this.repo.paginate(params);
   }
 
-  update(id: number, updateInvitationDto: UpdateInvitationDto) {
-    return `This action updates a #${id} invitation`;
+  public async findById(
+    id: ObjectId | string,
+    relations = ['user', 'role'],
+  ): Promise<Invitation> {
+    return this.repo.findById(id, { populate: relations });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} invitation`;
+  public async findOne(
+    organizationId: string,
+    invitationId: string,
+    relations: string[] = ['organization', 'member'],
+  ) {
+    return this.repo.findOne(
+      { organization: organizationId, _id: invitationId },
+      {},
+      { populate: relations },
+    );
+  }
+
+  public async update(
+    organization: string,
+    id: ObjectId | string,
+    dto: UpdateInvitationDto,
+  ) {
+    return this.repo.updateOne({ organization, _id: id }, dto);
+  }
+
+  public async removeById(id: ObjectId | string) {
+    return this.repo.deleteById(id);
+  }
+
+  public async removeOne(organization: string, id: ObjectId | string) {
+    return this.repo.deleteOne({ organization, _id: id });
+  }
+
+  public async sendInviteEmail(_invitation: string) {
+    const invitation = await this.repo.findById(_invitation, {
+      populate: ['member', 'organization', 'member.role', 'member.user'],
+    });
+    await this.mailService.sendMemberInviteEmail(invitation);
+    return invitation;
   }
 }

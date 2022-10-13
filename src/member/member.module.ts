@@ -8,9 +8,15 @@ import {
   MemberCustomField,
   MemberCustomFieldSchema,
 } from './schemas/member-custom-field.schema';
+import { UserModule } from 'src/user/user.module';
+import { RoleModule } from 'src/role/role.module';
+import { InvitationModule } from 'src/invitation/invitation.module';
 
 @Module({
   imports: [
+    UserModule,
+    RoleModule,
+    InvitationModule,
     MongooseModule.forFeature([
       { name: Member.name, schema: MemberSchema },
       { name: MemberCustomField.name, schema: MemberCustomFieldSchema },

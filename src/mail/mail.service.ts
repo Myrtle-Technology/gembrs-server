@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_NAME } from 'src/app.constants';
+import { Invitation } from 'src/invitation/schemas/invitation.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { User } from './../user/schemas/user.schema';
 import { ElasticMailService } from './elastic-mail.service';
@@ -90,6 +91,23 @@ export class MailService {
         TemplateName: './confirm-email.template.hbs', // `.hbs` extension is appended automatically
         Merge: {
           name: `${user.firstName}`,
+          url,
+          APP_NAME,
+        },
+      },
+    });
+  }
+
+  public async sendMemberInviteEmail(invitation: Invitation) {
+    const url = `${this.clientURL}?token=${invitation.token}`;
+
+    await this.mailerService.send({
+      Recipients: { To: [invitation.user.email] },
+      Content: {
+        Subject: `You have been invited to join ${invitation.organization.name}`,
+        TemplateName: ElasticMailTemplateNames.MemberInvite, // `.hbs` extension is appended automatically
+        Merge: {
+          name: `${invitation.user.firstName || invitation.user.email}`,
           url,
           APP_NAME,
         },

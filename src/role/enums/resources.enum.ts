@@ -7,4 +7,5 @@ export enum ResourcesEnum {
   Sms = 'SMS',
   Email = 'Emails',
   CustomField = 'Custom Database Fields',
+  Invitation = 'Invitation',
 }
