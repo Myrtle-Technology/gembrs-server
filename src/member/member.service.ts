@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ObjectId, Types } from 'mongoose';
+import { ObjectId } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { SharedService } from 'src/shared/shared.service';
@@ -25,6 +25,13 @@ export class MemberService extends SharedService<MemberRepository> {
     private configService: ConfigService,
   ) {
     super(repo);
+  }
+
+  public async create(dto: CreateMemberDto) {
+    if (dto.password) {
+      dto.password = await bcrypt.hash(dto.password, this.saltRounds);
+    }
+    return this.repo.create(dto);
   }
 
   public async createOne(dto: CreateMemberDto) {
@@ -105,7 +112,7 @@ export class MemberService extends SharedService<MemberRepository> {
     );
   }
 
-  public async inviteMember(dto: InviteMemberDto) {
+  public async inviteMember(dto: InviteMemberDto, baseUrl: string) {
     // create a new user
     const [user] = await this.userService.findOrCreate(dto);
     // get member Role
@@ -116,9 +123,8 @@ export class MemberService extends SharedService<MemberRepository> {
       role: role._id,
       organization: dto.organization,
       membership: dto.membership,
-      token: new Types.ObjectId().toHexString(),
     });
     // send member an invite email
-    return this.invitationService.sendInviteEmail(invitation.id);
+    return this.invitationService.sendInviteEmailOrSMS(invitation.id, baseUrl);
   }
 }

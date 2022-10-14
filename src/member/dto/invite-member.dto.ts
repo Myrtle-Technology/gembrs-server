@@ -1,5 +1,4 @@
 import { IsEmail, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
-import { CreateMemberCustomFieldDto } from './create-member-custom-field.dto';
 
 export class InviteMemberDto {
   organization?: string;
@@ -21,17 +20,6 @@ export class InviteMemberDto {
   @IsPhoneNumber()
   phone: string;
 
-  @IsString()
-  @IsOptional()
-  officeTitle?: string;
-
-  @IsOptional()
-  @IsString()
-  password?: string;
-
   @IsOptional()
   membership?: string;
-
-  @IsOptional()
-  customFields?: CreateMemberCustomFieldDto[];
 }

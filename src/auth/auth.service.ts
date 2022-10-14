@@ -142,7 +142,7 @@ export class AuthService {
     const user = await this.userService.findById(userId);
     const organization = await this.organizationService.createOne(dto);
     const role = await this.roleService.getDefaultAdminRole();
-    const member = await this.memberService.createOne({
+    const member = await this.memberService.create({
       organization: organization._id,
       user: userId,
       role: role._id,
@@ -241,7 +241,7 @@ export class AuthService {
       // contactPhone: user.phone,
     });
     const role = await this.roleService.getDefaultAdminRole();
-    const member = await this.memberService.createOne({
+    const member = await this.memberService.create({
       organization: organization._id,
       user: user._id,
       role: role._id,

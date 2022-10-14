@@ -19,6 +19,9 @@ import { Permit } from 'src/role/decorators/permit.decorator';
 import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
 import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
 import { InviteMemberDto } from './dto/invite-member.dto';
+import { Request } from 'express';
+import { getSeverBaseUrl } from 'src/shared/helpers/get-server-base-url.helper';
+import { CreateMemberDto } from './dto/create-member.dto';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -34,8 +37,19 @@ export class MemberController {
   })
   @Post()
   @ApiOperation({ summary: 'Create a Member' })
-  create(@Body() dto: InviteMemberDto) {
-    return this.service.inviteMember(dto);
+  create(@Body() dto: CreateMemberDto) {
+    return this.service.createOne(dto);
+  }
+
+  @Permit({
+    resource: ResourcesEnum.Member,
+    action: 'create',
+    possession: 'own',
+  })
+  @Post()
+  @ApiOperation({ summary: 'Invite a Member' })
+  invite(@Body() dto: InviteMemberDto, @Req() request: Request) {
+    return this.service.inviteMember(dto, getSeverBaseUrl(request));
   }
 
   @Get()

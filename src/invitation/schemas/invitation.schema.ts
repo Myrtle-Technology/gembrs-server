@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { Membership } from 'src/membership/schemas/membership.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { Role } from 'src/role/schemas/role.schema';
@@ -7,7 +7,7 @@ import { User } from 'src/user/schemas/user.schema';
 import { InvitationStatus } from '../enums/invitation-status.enum';
 
 @Schema({ timestamps: true })
-export class Invitation {
+export class Invitation extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
@@ -19,9 +19,6 @@ export class Invitation {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Membership' })
   membership: Membership;
-
-  @Prop()
-  token: string;
 
   @Prop({
     type: String,

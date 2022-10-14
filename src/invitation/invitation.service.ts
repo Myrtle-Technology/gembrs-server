@@ -7,12 +7,15 @@ import { InvitationRepository } from './invitation.repository';
 import { Invitation } from './schemas/invitation.schema';
 import { PaginationOptions } from 'src/shared/shared.repository';
 import { MailService } from 'src/mail/mail.service';
+import { SmsService } from 'src/sms/sms.service';
+import { getSeverBaseUrl } from 'src/shared/helpers/get-server-base-url.helper';
 
 @Injectable()
 export class InvitationService extends SharedService<InvitationRepository> {
   constructor(
     readonly repo: InvitationRepository,
     readonly mailService: MailService,
+    readonly smsService: SmsService,
   ) {
     super(repo);
   }
@@ -64,11 +67,26 @@ export class InvitationService extends SharedService<InvitationRepository> {
     return this.repo.deleteOne({ organization, _id: id });
   }
 
-  public async sendInviteEmail(_invitation: string) {
+  public async sendInviteEmailOrSMS(_invitation: string, baseUrl: string) {
     const invitation = await this.repo.findById(_invitation, {
       populate: ['member', 'organization', 'member.role', 'member.user'],
     });
-    await this.mailService.sendMemberInviteEmail(invitation);
+    // generate short link to invitation
+    const shortLink = this.generateInviteLink(invitation, baseUrl);
+    if (invitation.user.email) {
+      await this.mailService.sendMemberInviteEmail(invitation, shortLink);
+    } else {
+      // send text message
+      await this.smsService.sendMemberInviteSMS(invitation, shortLink);
+    }
     return invitation;
+  }
+
+  generateInviteLink(invitation: Invitation, baseUrl: string) {
+    const { _id, organization } = invitation;
+    const shortLink = `${baseUrl}/invitations/${
+      organization?._id || organization
+    }/${_id}`;
+    return shortLink;
   }
 }

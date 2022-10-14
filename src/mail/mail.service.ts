@@ -98,9 +98,7 @@ export class MailService {
     });
   }
 
-  public async sendMemberInviteEmail(invitation: Invitation) {
-    const url = `${this.clientURL}?token=${invitation.token}`;
-
+  public async sendMemberInviteEmail(invitation: Invitation, link: string) {
     await this.mailerService.send({
       Recipients: { To: [invitation.user.email] },
       Content: {
@@ -108,7 +106,7 @@ export class MailService {
         TemplateName: ElasticMailTemplateNames.MemberInvite, // `.hbs` extension is appended automatically
         Merge: {
           name: `${invitation.user.firstName || invitation.user.email}`,
-          url,
+          link,
           APP_NAME,
         },
       },
