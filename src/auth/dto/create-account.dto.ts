@@ -21,8 +21,8 @@ export class CreateAccountDto {
   @IsEmail()
   email: string;
 
-  @IsOptional()
   @IsPhoneNumber()
+  @IsOptional()
   phone: string;
 
   @IsString()
@@ -47,5 +47,6 @@ export class CreateAccountDto {
   confirmPassword: string;
 
   @IsString()
+  @IsOptional()
   officeTitle: string;
 }
