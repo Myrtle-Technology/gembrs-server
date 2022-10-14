@@ -17,10 +17,11 @@ export function IsUnique(
       validator: {
         async validate(value: any) {
           await mongoose.connect(process.env.MONGODB_URI);
-          const organization = await mongoose
-            .model(model.name, model.schema)
-            .findOne({ [propertyName]: value });
-          return !organization;
+          const entityModel = mongoose.model(model.name, model.schema);
+          const dataExists = await entityModel.countDocuments({
+            [model.property]: value,
+          });
+          return !dataExists;
         },
       },
     });
@@ -30,4 +31,5 @@ export function IsUnique(
 export interface IDoesNotExistParams {
   name: string;
   schema?: mongoose.Schema;
+  property: string;
 }

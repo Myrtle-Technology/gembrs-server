@@ -29,7 +29,7 @@ export class CreateAccountDto {
   organizationName: string;
   @IsSlug()
   @IsUnique(
-    { name: 'Organization', schema: OrganizationSchema },
+    { property: 'siteName', name: 'Organization', schema: OrganizationSchema },
     {
       message:
         'the specified site name has already been used, please choose another one',
