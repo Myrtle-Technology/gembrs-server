@@ -31,23 +31,30 @@ export class OrganizationController {
     return this.service.findAll();
   }
 
-  @Permit({
-    resource: ResourcesEnum.Organization,
-    action: 'create',
-    possession: 'any',
-  })
-  @ApiOperation({ summary: 'Create a Organization' })
-  @Post()
-  create(@Body() dto: CreateOrganizationDto, @Req() request: Request) {
-    // dto.ownerId = request.user.id;
-    return this.service.createOne(dto);
-  }
+  // @Permit({
+  //   resource: ResourcesEnum.Organization,
+  //   action: 'create',
+  //   possession: 'any',
+  // })
+  // @ApiOperation({ summary: 'Create a Organization' })
+  // @Post()
+  // create(@Body() dto: CreateOrganizationDto, @Req() request: Request) {
+  //   // dto.ownerId = request.user.id;
+  //   return this.service.createOne(dto);
+  // }
 
   @Public()
   @ApiOperation({ summary: 'Find an Organization' })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.service.findById(id);
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Find an Organization by siteName' })
+  @Get(':siteName')
+  findBySiteName(@Param('siteName') siteName: string) {
+    return this.service.findBySiteName(siteName);
   }
 
   @Permit({
