@@ -52,7 +52,7 @@ export class OrganizationController {
 
   @Public()
   @ApiOperation({ summary: 'Find an Organization by siteName' })
-  @Get(':siteName')
+  @Get('/site-name/:siteName')
   findBySiteName(@Param('siteName') siteName: string) {
     return this.service.findBySiteName(siteName);
   }

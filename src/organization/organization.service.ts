@@ -15,12 +15,12 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
     return this.repo.create(dto);
   }
 
-  public async findBySiteName(username: string, throwError = true) {
-    const user = await this.repo.findBySiteName(username);
-    if (!user && throwError) {
+  public async findBySiteName(siteName: string, throwError = true) {
+    const organization = await this.repo.findBySiteName(siteName);
+    if (!organization && throwError) {
       throw new NotFoundException(`Organization not found`);
     }
-    return user;
+    return organization;
   }
 
   public async findAll(filter?: any) {
