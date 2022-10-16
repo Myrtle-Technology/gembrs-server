@@ -59,7 +59,7 @@ export class Membership extends Document {
   @Prop({ default: true })
   active: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => Membership, isArray: true })
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Membership' }] })
   changeableTo: Membership[];
 

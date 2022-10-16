@@ -5,6 +5,8 @@ import { SwaggerTheme } from 'swagger-themes';
 import { ValidationPipe } from '@nestjs/common';
 import { QueryErrorFilter } from './shared/filters/query-error.filter';
 import { AllErrorFilter } from './shared/filters/all-error.filter';
+// import { join } from 'path';
+// import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,10 +32,10 @@ async function bootstrap() {
     customCss: theme.getBuffer('flattop'),
   };
   const document = SwaggerModule.createDocument(app, config);
-  /*fs.writeFileSync(
-    join(__dirname, '..', 'api-docs', 'gembrs.json'),
-    JSON.stringify(document),
-  );*/
+  // fs.writeFileSync(
+  //   join(__dirname, '..', 'api-docs', 'gembrs.json'),
+  //   JSON.stringify(document),
+  // );
   SwaggerModule.setup('docs', app, document, options);
   await app.listen(process.env.PORT || 5000);
 }
