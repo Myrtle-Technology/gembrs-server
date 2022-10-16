@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_NAME } from 'src/app.constants';
 import { Invitation } from 'src/invitation/schemas/invitation.schema';
+import { Member } from 'src/member/schemas/member.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { User } from './../user/schemas/user.schema';
 import { ElasticMailService } from './elastic-mail.service';
@@ -16,7 +17,9 @@ export class MailService {
   ) {}
 
   async welcomeRegisteredOrganization(user: User, organization: Organization) {
-    const memberUrl = `https://${organization.siteName}.${this.clientURL}`;
+    const memberUrl = `https://${organization.siteName}.${this.clientURL
+      .replace('https://', '')
+      .replace('http://', '')}`;
     const adminUrl = `${memberUrl}/admin`;
 
     await this.mailerService.send({
@@ -108,6 +111,29 @@ export class MailService {
           name: `${invitation.user.firstName || invitation.user.email}`,
           link,
           APP_NAME,
+        },
+      },
+    });
+  }
+
+  async welcomeNewUser(member: Member) {
+    // TODO: Get template set by organization and send email
+    const organizationUrl = `https://${
+      member.organization.siteName
+    }.${this.clientURL.replace('https://', '').replace('http://', '')}`;
+    const profileUrl = `${organizationUrl}/profile`;
+
+    await this.mailerService.send({
+      Recipients: { To: [member.user.email] },
+      Content: {
+        Subject: `Welcome to ${APP_NAME}! Make yourself at home`,
+        TemplateName: ElasticMailTemplateNames.WelcomeToGembrs,
+        Merge: {
+          name: `${member.user.firstName}`,
+          organizationUrl,
+          profileUrl,
+          APP_NAME,
+          organization: `${member.organization.name}`,
         },
       },
     });

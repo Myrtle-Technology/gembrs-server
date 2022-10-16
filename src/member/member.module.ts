@@ -12,6 +12,7 @@ import { UserModule } from 'src/user/user.module';
 import { RoleModule } from 'src/role/role.module';
 import { MembershipModule } from 'src/membership/membership.module';
 import { SubscriptionModule } from 'src/subscription/subscription.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SubscriptionModule } from 'src/subscription/subscription.module';
     RoleModule,
     MembershipModule,
     SubscriptionModule,
+    MailModule,
     MongooseModule.forFeature([
       { name: Member.name, schema: MemberSchema },
       { name: MemberCustomField.name, schema: MemberCustomFieldSchema },

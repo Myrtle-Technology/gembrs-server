@@ -12,12 +12,11 @@ import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { ResourcesEnum } from 'src/role/enums/resources.enum';
 import { Permit } from 'src/role/decorators/permit.decorator';
-@ApiBearerAuth()
+
 @OrganizationApi()
 @ApiTags('Organization')
 @Controller('organizations')
@@ -29,6 +28,13 @@ export class OrganizationController {
   @Get()
   findAll() {
     return this.service.findAll();
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Find all Organization Memberships' })
+  @Get('/:id/memberships')
+  findAllMemberships(@Param('id') id: string) {
+    return this.service.findAllMemberships(id);
   }
 
   // @Permit({
@@ -57,6 +63,7 @@ export class OrganizationController {
     return this.service.findBySiteName(siteName);
   }
 
+  @ApiBearerAuth()
   @Permit({
     resource: ResourcesEnum.Organization,
     action: 'update',
@@ -68,6 +75,7 @@ export class OrganizationController {
     return this.service.update(id, dto);
   }
 
+  @ApiBearerAuth()
   @Permit({
     resource: ResourcesEnum.Organization,
     action: 'delete',

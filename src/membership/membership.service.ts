@@ -7,6 +7,7 @@ import { MembershipRepository } from './membership.repository';
 import { DateTime, Duration } from 'luxon';
 import { Membership } from './schemas/membership.schema';
 import { RenewalPeriodDuration } from './enums/renewal-period-duration.enum';
+import { PaginationOptions } from 'src/shared/shared.repository';
 
 @Injectable()
 export class MembershipService extends SharedService<MembershipRepository> {
@@ -17,6 +18,14 @@ export class MembershipService extends SharedService<MembershipRepository> {
   public async createOne(organization: string, dto: CreateMembershipDto) {
     dto.organization = organization;
     return this.repo.create(dto);
+  }
+
+  public async paginate(
+    organization: string,
+    params: PaginationOptions<Membership>,
+  ) {
+    params.query = { ...params.query, organization };
+    return this.repo.paginate(params);
   }
 
   public async findAll(organization: string, filter?: any) {

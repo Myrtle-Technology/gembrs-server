@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BadRequestException } from '@nestjs/common';
 import { isEmail, isPhoneNumber } from 'class-validator';
-import mongoose, { Document } from 'mongoose';
+import { Document } from 'mongoose';
 import { mongoosePagination } from 'mongoose-paginate-ts';
-import { Member } from 'src/member/schemas/member.schema';
 import { ApiProperty } from '@nestjs/swagger';
 // import { DuplicateFieldError } from 'src/shared/errors/duplicate-field.error';
 
@@ -57,10 +56,6 @@ export class User extends Document {
   @ApiProperty()
   @Prop(Boolean)
   verifiedPhone: boolean;
-
-  @ApiProperty()
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Member' }] })
-  memberships: Member[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -2,8 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import mongoose, { Document } from 'mongoose';
 import { mongoosePagination } from 'mongoose-paginate-ts';
-import { Member } from 'src/member/schemas/member.schema';
-import { Role } from 'src/role/schemas/role.schema';
 import { User } from 'src/user/schemas/user.schema';
 
 // export type OrganizationDocument = Organization & Document;
@@ -53,20 +51,6 @@ export class Organization extends Document {
   @ApiProperty()
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: User;
-
-  @ApiProperty()
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Member' }] })
-  members: Member[];
-
-  @ApiProperty()
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role' }] })
-  roles: Role[];
-
-  // @OneToMany(() => CommonField, (commonField) => commonField.organization)
-  // commonFields: CommonField[];
-
-  // @OneToMany(() => MembershipPlan, (mp) => mp.organization, { eager: true })
-  // membershipPlans: MembershipPlan[];
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);

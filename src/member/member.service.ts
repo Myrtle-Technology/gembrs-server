@@ -19,6 +19,7 @@ import { SubscriptionService } from 'src/subscription/subscription.service';
 import { SubscriptionStatus } from 'src/subscription/enums/subscription-status.enum';
 import { RenewalPeriodDuration } from 'src/membership/enums/renewal-period-duration.enum';
 import { Membership } from 'src/membership/schemas/membership.schema';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -29,6 +30,7 @@ export class MemberService extends SharedService<MemberRepository> {
     private readonly roleService: RoleService,
     private readonly membershipService: MembershipService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly mailService: MailService,
     private configService: ConfigService,
   ) {
     super(repo);
@@ -62,6 +64,7 @@ export class MemberService extends SharedService<MemberRepository> {
       bio: dto.bio,
     })) as Member;
     await this.createMemberSubscription(membership, organization, member);
+    if (dto.notifyMember) this.mailService.welcomeNewUser(member);
     return this.findById(member._id);
   }
 

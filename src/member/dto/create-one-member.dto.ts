@@ -43,4 +43,5 @@ export class CreateOneMemberDto {
   membership: string;
 
   role?: string;
+  notifyMember?: boolean;
 }
