@@ -4,17 +4,21 @@ import { isEmail, isPhoneNumber } from 'class-validator';
 import mongoose, { Document } from 'mongoose';
 import { mongoosePagination } from 'mongoose-paginate-ts';
 import { Member } from 'src/member/schemas/member.schema';
+import { ApiProperty } from '@nestjs/swagger';
 // import { DuplicateFieldError } from 'src/shared/errors/duplicate-field.error';
 
 // export type UserDocument = User & Document;
 @Schema({ timestamps: true })
 export class User extends Document {
+  @ApiProperty()
   @Prop()
   firstName: string;
 
+  @ApiProperty()
   @Prop()
   lastName: string;
 
+  @ApiProperty()
   @Prop({
     lowercase: true,
     validate: async function (value) {
@@ -31,6 +35,7 @@ export class User extends Document {
   })
   email: string;
 
+  @ApiProperty()
   @Prop({
     validate: async function (value) {
       if (!value) return true;
@@ -45,12 +50,15 @@ export class User extends Document {
   })
   phone: string;
 
+  @ApiProperty()
   @Prop(Boolean)
   verifiedEmail: boolean;
 
+  @ApiProperty()
   @Prop(Boolean)
   verifiedPhone: boolean;
 
+  @ApiProperty()
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Member' }] })
   memberships: Member[];
 }

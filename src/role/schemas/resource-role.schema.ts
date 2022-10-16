@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 import { uniq } from 'lodash';
 import mongoose, { Document } from 'mongoose';
 import { Organization } from 'src/organization/schemas/organization.schema';
@@ -10,9 +11,11 @@ import { Resource } from './resource.schema';
 
 @Schema({ timestamps: true })
 export class ResourceRole extends Document {
+  @ApiProperty()
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
   role: Role;
 
+  @ApiProperty()
   @Prop({
     required: true,
     type: mongoose.Schema.Types.ObjectId,
@@ -20,9 +23,11 @@ export class ResourceRole extends Document {
   })
   resource: Resource;
 
+  @ApiProperty()
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
   organization: Organization;
 
+  @ApiProperty()
   @Prop({ required: true, type: [String], enum: Permission })
   permissions: Permission[];
 }

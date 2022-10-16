@@ -25,16 +25,16 @@ import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-
 export class SubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 
-  @Permit({
-    resource: ResourcesEnum.Subscription,
-    action: 'create',
-    possession: 'own',
-  })
-  @Post()
-  @ApiOperation({ summary: 'Create a Subscription' })
-  create(@Body() dto: CreateSubscriptionDto) {
-    return this.service.createOne(dto);
-  }
+  // @Permit({
+  //   resource: ResourcesEnum.Subscription,
+  //   action: 'create',
+  //   possession: 'own',
+  // })
+  // @Post()
+  // @ApiOperation({ summary: 'Create a Subscription' })
+  // create(@Body() dto: CreateSubscriptionDto) {
+  //   return this.service.createOne(dto);
+  // }
 
   @Get()
   @CursorPaginateQueryOptions()
@@ -62,29 +62,29 @@ export class SubscriptionController {
     return this.service.findOne(request.user.organization?._id, id);
   }
 
-  @Permit({
-    resource: ResourcesEnum.Subscription,
-    action: 'update',
-    possession: 'own',
-  })
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update a Subscription' })
-  update(
-    @Req() request: TokenRequest,
-    @Param('id') id: string,
-    @Body() dto: UpdateSubscriptionDto,
-  ) {
-    return this.service.update(request.user.organization?._id, id, dto);
-  }
+  // @Permit({
+  //   resource: ResourcesEnum.Subscription,
+  //   action: 'update',
+  //   possession: 'own',
+  // })
+  // @Patch(':id')
+  // @ApiOperation({ summary: 'Update a Subscription' })
+  // update(
+  //   @Req() request: TokenRequest,
+  //   @Param('id') id: string,
+  //   @Body() dto: UpdateSubscriptionDto,
+  // ) {
+  //   return this.service.update(request.user.organization?._id, id, dto);
+  // }
 
-  @Permit({
-    resource: ResourcesEnum.Subscription,
-    action: 'delete',
-    possession: 'own',
-  })
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a Subscription' })
-  remove(@Req() request: TokenRequest, @Param('id') id: string) {
-    return this.service.removeOne(request.user.organization?._id, id);
-  }
+  // @Permit({
+  //   resource: ResourcesEnum.Subscription,
+  //   action: 'delete',
+  //   possession: 'own',
+  // })
+  // @Delete(':id')
+  // @ApiOperation({ summary: 'Delete a Subscription' })
+  // remove(@Req() request: TokenRequest, @Param('id') id: string) {
+  //   return this.service.removeOne(request.user.organization?._id, id);
+  // }
 }

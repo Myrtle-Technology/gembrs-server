@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 import mongoose, { Document } from 'mongoose';
 import { mongoosePagination } from 'mongoose-paginate-ts';
 import { Organization } from 'src/organization/schemas/organization.schema';
@@ -13,27 +14,35 @@ import {
 
 @Schema({ timestamps: true })
 export class Member extends Document {
+  @ApiProperty()
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
+  @ApiProperty()
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
   organization: Organization;
 
+  @ApiProperty()
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
   role: Role;
 
+  @ApiProperty()
   @Prop()
   bio: string;
 
+  @ApiProperty()
   @Prop()
   contactPhone: string;
 
+  @ApiProperty()
   @Prop()
   officeTitle: string;
 
+  @ApiProperty()
   @Prop({ select: false })
   password: string;
 
+  @ApiProperty()
   @Prop({ type: [{ type: MemberCustomFieldSchema }] })
   customFields: MemberCustomField[];
 

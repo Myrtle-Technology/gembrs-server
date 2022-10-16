@@ -5,6 +5,7 @@ import { RenewalReminderWhen } from '../enums/renewal-reminder-when.enum';
 
 @Schema()
 export class RenewalReminder {
+  @ApiProperty()
   @Prop()
   noOfDays: number;
 
@@ -16,9 +17,11 @@ export class RenewalReminder {
   })
   when: RenewalReminderWhen;
 
+  @ApiProperty()
   @Prop()
   sendEmail: boolean;
 
+  @ApiProperty()
   @Prop({
     type: [String],
     enum: RenewalReminderEmailRecipients,
@@ -26,6 +29,7 @@ export class RenewalReminder {
   })
   sendEmailTo: RenewalReminderEmailRecipients[];
 
+  @ApiProperty()
   @Prop()
   changeMembershipLevelTo: number;
 }

@@ -16,15 +16,19 @@ import { RenewalReminder } from './renewal-reminder.schema';
 
 @Schema({ timestamps: true })
 export class Membership extends Document {
+  @ApiProperty()
   @Prop()
   name: string;
 
+  @ApiProperty()
   @Prop()
   description: string;
 
+  @ApiProperty()
   @Prop()
   fee: string;
 
+  @ApiProperty()
   @Prop({
     type: String,
     enum: PaymentMethod,
@@ -32,51 +36,64 @@ export class Membership extends Document {
   })
   paymentMethod: PaymentMethod;
 
+  @ApiProperty()
   @Prop({
     type: String,
     enum: PaymentMethod,
     default: PaymentMethod.Offline,
   })
   type: MembershipType;
+  @ApiProperty()
   @Prop()
   isPublic: boolean;
 
+  @ApiProperty()
   @Prop({ type: RenewalPeriodSchema })
   renewalPeriod: RenewalPeriod;
 
+  @ApiProperty()
   @Prop({ default: false })
   approveApplication: boolean;
 
+  @ApiProperty()
   @Prop({ default: true })
   active: boolean;
 
+  @ApiProperty()
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Membership' }] })
   changeableTo: Membership[];
 
+  @ApiProperty()
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
   organization: Organization;
 
   @ApiProperty({ type: () => BundleAdminWorkflowSettings })
+  @ApiProperty()
   @Prop({ type: BundleAdminWorkflowSettingsSchema })
   bundleAdminWorkflowSettings: BundleAdminWorkflowSettings;
 
   @ApiProperty({ type: () => RenewalReminder })
+  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderBefore1: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
+  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderBefore2: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
+  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderOnDueDate: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
+  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderAfter1: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
+  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderAfter2: RenewalReminder;
 }
