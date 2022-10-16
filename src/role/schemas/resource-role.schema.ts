@@ -24,7 +24,11 @@ export class ResourceRole extends Document {
   resource: Resource;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',
+  })
   organization: Organization;
 
   @ApiProperty()

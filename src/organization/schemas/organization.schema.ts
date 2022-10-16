@@ -49,7 +49,11 @@ export class Organization extends Document {
   currency: string;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  })
   owner: User;
 }
 

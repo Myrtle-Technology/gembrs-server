@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongoose';
+import { FilterQuery, ObjectId } from 'mongoose';
 import { PaginationOptions } from 'mongoose-paginate-ts';
 import { SharedService } from 'src/shared/shared.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
@@ -17,9 +17,16 @@ export class SubscriptionService extends SharedService<SubscriptionRepository> {
     return this.repo.create(dto);
   }
 
-  public async findAll(organization: string, params: PaginationOptions) {
+  public async paginate(organization: string, params: PaginationOptions) {
     params.query = { ...params.query, organization };
     return this.repo.paginate(params);
+  }
+
+  public async findAll(
+    organization: string,
+    filter: FilterQuery<Subscription>,
+  ) {
+    return this.repo.find({ ...filter, organization });
   }
 
   public async findById(
@@ -31,11 +38,11 @@ export class SubscriptionService extends SharedService<SubscriptionRepository> {
 
   public async findOne(
     organization: string,
-    id: string,
+    filter: FilterQuery<Subscription>,
     relations: string[] = ['organization', 'member', 'membership'],
   ) {
     return this.repo.findOne(
-      { organization: organization, _id: id },
+      { ...filter, organization: organization },
       {},
       { populate: relations },
     );

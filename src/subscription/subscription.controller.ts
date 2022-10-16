@@ -48,7 +48,7 @@ export class SubscriptionController {
     @Req() request: TokenRequest,
     @CursorPaginateQuery() params: Record<string, string>,
   ) {
-    return this.service.findAll(request.user.organization?._id, params);
+    return this.service.paginate(request.user.organization?._id, params);
   }
 
   @Permit({
@@ -58,8 +58,8 @@ export class SubscriptionController {
   })
   @Get(':id')
   @ApiOperation({ summary: 'Find a Subscription' })
-  findOne(@Req() request: TokenRequest, @Param('id') id: string) {
-    return this.service.findOne(request.user.organization?._id, id);
+  findOne(@Req() request: TokenRequest, @Param('id') _id: string) {
+    return this.service.findOne(request.user.organization?._id, { _id });
   }
 
   // @Permit({

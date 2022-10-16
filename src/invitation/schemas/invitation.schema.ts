@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import mongoose, { Document } from 'mongoose';
+import { mongoosePagination } from 'mongoose-paginate-ts';
 import { Membership } from 'src/membership/schemas/membership.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { Role } from 'src/role/schemas/role.schema';
@@ -10,19 +11,27 @@ import { InvitationStatus } from '../enums/invitation-status.enum';
 @Schema({ timestamps: true })
 export class Invitation extends Document {
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
   role: Role;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',
+  })
   organization: Organization;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Membership' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Membership',
+  })
   membership: Membership;
 
   @ApiProperty()
@@ -42,3 +51,5 @@ export class Invitation extends Document {
 }
 
 export const InvitationSchema = SchemaFactory.createForClass(Invitation);
+
+InvitationSchema.plugin(mongoosePagination);

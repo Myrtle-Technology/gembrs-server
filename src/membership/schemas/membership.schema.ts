@@ -10,7 +10,14 @@ import {
 } from './bundle-admin-workflow-settings.schema';
 import { RenewalPeriod, RenewalPeriodSchema } from './renewal-period.schema';
 import { ApiProperty } from '@nestjs/swagger';
-import { RenewalReminder } from './renewal-reminder.schema';
+import {
+  RenewalReminder,
+  renewalReminderAfter1,
+  renewalReminderAfter2,
+  renewalReminderBefore1,
+  renewalReminderBefore2,
+  renewalReminderOnDueDate,
+} from './renewal-reminder.schema';
 
 // export type MemberDocument = Member & Document;
 
@@ -64,7 +71,11 @@ export class Membership extends Document {
   changeableTo: Membership[];
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',
+  })
   organization: Organization;
 
   @ApiProperty({ type: () => BundleAdminWorkflowSettings })
@@ -72,23 +83,23 @@ export class Membership extends Document {
   bundleAdminWorkflowSettings: BundleAdminWorkflowSettings;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder })
+  @Prop({ type: RenewalReminder, default: renewalReminderBefore1 })
   renewalReminderBefore1: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder })
+  @Prop({ type: RenewalReminder, default: renewalReminderBefore2 })
   renewalReminderBefore2: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder })
+  @Prop({ type: RenewalReminder, default: renewalReminderOnDueDate })
   renewalReminderOnDueDate: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder })
+  @Prop({ type: RenewalReminder, default: renewalReminderAfter1 })
   renewalReminderAfter1: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder })
+  @Prop({ type: RenewalReminder, default: renewalReminderAfter2 })
   renewalReminderAfter2: RenewalReminder;
 }
 

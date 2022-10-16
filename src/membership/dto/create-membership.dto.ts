@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { IsUnique } from 'src/shared/decorators/is-unique.decorator';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { BundleAdminWorkflowSettings } from '../schemas/bundle-admin-workflow-settings.schema';
 import { RenewalPeriod } from '../schemas/renewal-period.schema';
@@ -45,21 +46,27 @@ export class CreateMembershipDto {
   @IsOptional()
   organization: string;
 
+  @IsOptional()
   @ApiProperty({ type: () => BundleAdminWorkflowSettings })
   bundleAdminWorkflowSettings: BundleAdminWorkflowSettings;
 
+  @IsOptional()
   @ApiProperty({ type: () => RenewalReminder })
   renewalReminderAfter1: RenewalReminder;
 
+  @IsOptional()
   @ApiProperty({ type: () => RenewalReminder })
   renewalReminderAfter2: RenewalReminder;
 
+  @IsOptional()
   @ApiProperty({ type: () => RenewalReminder })
   renewalReminderBefore1: RenewalReminder;
 
+  @IsOptional()
   @ApiProperty({ type: () => RenewalReminder })
   renewalReminderBefore2: RenewalReminder;
 
+  @IsOptional()
   @ApiProperty({ type: () => RenewalReminder })
   renewalReminderOnDueDate: RenewalReminder;
 }

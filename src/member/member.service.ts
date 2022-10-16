@@ -77,8 +77,8 @@ export class MemberService extends SharedService<MemberRepository> {
       this.membershipService.getMemberShipStartAndEndDate(membership);
     return this.subscriptionService.createOne({
       organization: organization,
-      memberId: member._id,
-      membershipId: membership.id,
+      member: member._id,
+      membership: membership.id,
       status: SubscriptionStatus.Pending,
       currentPeriodStart: startDateTime.toJSDate(),
       currentPeriodEnd: endDateTime.toJSDate(),
@@ -157,5 +157,24 @@ export class MemberService extends SharedService<MemberRepository> {
       { organization, _id: id },
       { password: dto.password },
     );
+  }
+
+  public async findAllMemberSubscriptions(
+    organization: string,
+    member: string,
+  ) {
+    return this.subscriptionService.findAll(organization, {
+      member,
+    });
+  }
+
+  public async findActiveMemberSubscription(
+    organization: string,
+    member: string,
+  ) {
+    return this.subscriptionService.findOne(organization, {
+      member,
+      active: true,
+    });
   }
 }

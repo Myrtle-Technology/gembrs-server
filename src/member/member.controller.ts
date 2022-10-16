@@ -66,6 +66,40 @@ export class MemberController {
 
   @Permit({
     resource: ResourcesEnum.Member,
+    action: 'read',
+    possession: 'own',
+  })
+  @Get(':id/subscription')
+  @ApiOperation({ summary: "Find a Member's Subscription" })
+  findAllMemberSubscriptions(
+    @Req() request: TokenRequest,
+    @Param('id') id: string,
+  ) {
+    return this.service.findAllMemberSubscriptions(
+      request.tokenData.organizationId,
+      id,
+    );
+  }
+
+  @Permit({
+    resource: ResourcesEnum.Member,
+    action: 'read',
+    possession: 'own',
+  })
+  @Get(':id/subscription/active')
+  @ApiOperation({ summary: 'Find a Member`s active Subscription' })
+  findActiveMemberSubscription(
+    @Req() request: TokenRequest,
+    @Param('id') id: string,
+  ) {
+    return this.service.findActiveMemberSubscription(
+      request.tokenData.organizationId,
+      id,
+    );
+  }
+
+  @Permit({
+    resource: ResourcesEnum.Member,
     action: 'update',
     possession: 'own',
   })

@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import mongoose from 'mongoose';
+import { mongoosePagination } from 'mongoose-paginate-ts';
 import { Member } from 'src/member/schemas/member.schema';
 import { PaymentMethod } from 'src/membership/enums/payment-method.enum';
 import { Membership } from 'src/membership/schemas/membership.schema';
@@ -46,16 +47,26 @@ export class Subscription {
   defaultPaymentMethod: PaymentMethod;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',
+  })
   organization: Organization;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Membership' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Membership',
+  })
   membership: Membership;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Member' })
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Member' })
   member: Member;
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(Subscription);
+
+SubscriptionSchema.plugin(mongoosePagination);

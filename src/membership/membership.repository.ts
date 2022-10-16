@@ -16,5 +16,5 @@ export class MembershipRepository extends SharedRepository<
     super(model);
   }
 
-  protected populateOnFind = ['organization', 'changeableTo'];
+  protected populateOnFind = ['changeableTo'];
 }

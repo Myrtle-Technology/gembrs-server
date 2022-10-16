@@ -50,11 +50,21 @@ rolesBuilder
   .updateOwn(ResourcesEnum.Email)
   .createOwn(ResourcesEnum.Email)
   .deleteOwn(ResourcesEnum.Email)
-  // membership plans
+  // SMS
   .readOwn(ResourcesEnum.Sms)
   .updateOwn(ResourcesEnum.Sms)
   .createOwn(ResourcesEnum.Sms)
-  .deleteOwn(ResourcesEnum.Sms);
+  .deleteOwn(ResourcesEnum.Sms)
+  // Invitations
+  .readOwn(ResourcesEnum.Invitation)
+  .updateOwn(ResourcesEnum.Invitation)
+  .createOwn(ResourcesEnum.Invitation)
+  .deleteOwn(ResourcesEnum.Invitation)
+  // subscriptions
+  .readOwn(ResourcesEnum.Subscription)
+  .updateOwn(ResourcesEnum.Subscription)
+  .createOwn(ResourcesEnum.Subscription)
+  .deleteOwn(ResourcesEnum.Subscription);
 
 export async function RolesBuilderFactory(
   roleService: RoleService,

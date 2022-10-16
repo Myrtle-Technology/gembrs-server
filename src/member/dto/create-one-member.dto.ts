@@ -20,6 +20,7 @@ export class CreateOneMemberDto {
   email: string;
 
   @IsPhoneNumber()
+  @IsOptional()
   phone: string;
 
   @MinLength(6)
@@ -27,6 +28,7 @@ export class CreateOneMemberDto {
   password?: string;
 
   @IsString()
+  @IsOptional()
   bio?: string;
 
   @IsPhoneNumber()

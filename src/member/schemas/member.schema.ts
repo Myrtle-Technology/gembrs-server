@@ -15,15 +15,19 @@ import {
 @Schema({ timestamps: true })
 export class Member extends Document {
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',
+  })
   organization: Organization;
 
   @ApiProperty()
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
   role: Role;
 
   @ApiProperty()

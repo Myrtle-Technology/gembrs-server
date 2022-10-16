@@ -58,11 +58,17 @@ export class RoleService
   }
 
   public async findAll(organization: string, filter?: any) {
-    return this.repo.find({ ...filter, organization });
+    return this.repo.find({
+      ...filter,
+      organization: { $in: [null, organization] },
+    });
   }
 
   public async findOne(organization: string, id: ObjectId | string) {
-    return this.repo.findOne({ _id: id, organization });
+    return this.repo.findOne({
+      _id: id,
+      organization: { $in: [null, organization] },
+    });
   }
 
   public async updateOne(

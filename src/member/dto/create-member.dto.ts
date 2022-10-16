@@ -9,6 +9,7 @@ export class CreateMemberDto {
   role: string;
 
   @IsString()
+  @IsOptional()
   bio?: string;
 
   @IsPhoneNumber()
