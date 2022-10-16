@@ -31,7 +31,7 @@ export class RenewalReminder {
 
   @ApiProperty()
   @Prop()
-  changeMembershipLevelTo: number;
+  changeMembershipLevelTo: string;
 }
 
 export const RenewalReminderSchema =

@@ -68,32 +68,26 @@ export class Membership extends Document {
   organization: Organization;
 
   @ApiProperty({ type: () => BundleAdminWorkflowSettings })
-  @ApiProperty()
   @Prop({ type: BundleAdminWorkflowSettingsSchema })
   bundleAdminWorkflowSettings: BundleAdminWorkflowSettings;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderBefore1: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderBefore2: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderOnDueDate: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderAfter1: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @ApiProperty()
   @Prop({ type: RenewalReminder })
   renewalReminderAfter2: RenewalReminder;
 }
