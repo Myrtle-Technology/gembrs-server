@@ -5,7 +5,6 @@ import {
   Request,
   UseGuards,
   Get,
-  Query,
   Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -51,24 +50,6 @@ export class AuthController {
     return this.authService.validateOTP(dto);
   }
 
-  // @AllowUserWithoutOrganization()
-  // @Post('update-personal-details')
-  // updatePersonalDetails(
-  //   @Request() req: TokenRequest,
-  //   @Body() dto: UpdateUserDto,
-  // ) {
-  //   return this.authService.updatePersonalDetails(req.tokenData.userId, dto);
-  // }
-
-  // @AllowUserWithoutOrganization()
-  // @Post('create-organization')
-  // createOrganization(
-  //   @Request() req: TokenRequest,
-  //   @Body() dto: CreateOrganizationPasswordDto,
-  // ) {
-  //   return this.authService.createOrganization(req.tokenData.userId, dto);
-  // }
-
   @UseGuards(LocalAuthGuard)
   @Public()
   @Post('login')
@@ -100,7 +81,6 @@ export class AuthController {
   }
 
   @Public()
-  @OrganizationApi()
   @Post('register-member')
   registerMember(
     @Request() request: TokenRequest,
@@ -113,12 +93,20 @@ export class AuthController {
   }
 
   @Public()
-  @OrganizationApi()
   @Post('accept-invite/:organization/:invitation')
   acceptOrganizationInvite(
     @Param('organization') organization: string,
     @Param('invitation') invitation: string,
   ) {
     return this.authService.acceptOrganizationInvite(organization, invitation);
+  }
+
+  @Public()
+  @Post('decline-invite/:organization/:invitation')
+  declineOrganizationInvite(
+    @Param('organization') organization: string,
+    @Param('invitation') invitation: string,
+  ) {
+    return this.authService.declineOrganizationInvite(organization, invitation);
   }
 }

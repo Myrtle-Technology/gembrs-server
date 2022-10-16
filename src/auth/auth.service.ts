@@ -273,6 +273,13 @@ export class AuthService {
     );
   }
 
+  async declineOrganizationInvite(organization: string, invitation: string) {
+    return this.invitationService.declineOrganizationInvite(
+      organization,
+      invitation,
+    );
+  }
+
   async registerMember(organization: string, dto: CreateOneMemberDto) {
     return this.memberService.createOne(organization, dto);
   }

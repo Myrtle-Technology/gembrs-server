@@ -112,9 +112,12 @@ export class InvitationService extends SharedService<InvitationRepository> {
     const today = DateTime.now();
     const difference = Interval.fromDateTimes(today, expiresAt).count('days');
     if (difference <= 0) {
-      this.update(organization, invitation._id, {
+      await this.update(organization, invitation._id, {
         status: InvitationStatus.Expired,
       });
+      throw new BadRequestException(
+        `Sorry the Invitation status is now: '${invitation.status}', we can't accept the invitation any more`,
+      );
     }
     // create member
     const member = (await this.memberService.create({
@@ -128,7 +131,7 @@ export class InvitationService extends SharedService<InvitationRepository> {
       organization,
       member,
     );
-    this.update(organization, invitation._id, {
+    await this.update(organization, invitation._id, {
       status: InvitationStatus.Accepted,
     });
     return this.memberService.findById(member._id);
@@ -154,10 +157,10 @@ export class InvitationService extends SharedService<InvitationRepository> {
 
   private generateInviteLink(invitation: Invitation, serverBaseUrl: string) {
     const { _id, organization } = invitation;
-    const shortLink = `${serverBaseUrl}/invitations/${
+    const link = `${serverBaseUrl}/invitations/${
       organization?._id || organization
     }/${_id}`;
-    return shortLink;
+    return link;
   }
 
   public async inviteMember(
@@ -173,7 +176,6 @@ export class InvitationService extends SharedService<InvitationRepository> {
       organization: organization,
       membership: dto.membership,
     });
-    // TODO: setup cron job to change invitation from pending to expired
     return this.sendInviteEmailOrSMS(invitation.id, serverBaseUrl);
   }
 }
