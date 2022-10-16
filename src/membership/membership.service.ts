@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ObjectId, Types } from 'mongoose';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
+import { ObjectId } from 'mongoose';
 import { SharedService } from 'src/shared/shared.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
 import { MembershipRepository } from './membership.repository';
+import { DateTime, Duration } from 'luxon';
+import { Membership } from './schemas/membership.schema';
+import { RenewalPeriodDuration } from './enums/renewal-period-duration.enum';
 
 @Injectable()
 export class MembershipService extends SharedService<MembershipRepository> {
@@ -37,5 +38,19 @@ export class MembershipService extends SharedService<MembershipRepository> {
 
   public async removeOne(organization: string, id: ObjectId | string) {
     return this.repo.deleteOne({ organization, _id: id });
+  }
+
+  public getMemberShipStartAndEndDate(membership: Membership) {
+    const startDateTime = DateTime.now();
+    if (membership.renewalPeriod.duration == RenewalPeriodDuration.Never) {
+      return [startDateTime, null];
+    }
+    const endDateTime = startDateTime.plus(
+      Duration.fromObject({
+        [membership.renewalPeriod.duration]: membership.renewalPeriod.length,
+      }),
+    );
+
+    return [startDateTime, endDateTime];
   }
 }

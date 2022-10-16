@@ -7,7 +7,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { User } from 'src/user/schemas/user.schema';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
@@ -20,7 +19,6 @@ import { OrganizationService } from 'src/organization/organization.service';
 import { FindUserOrganization } from './dto/find-user-organization..dto';
 import { MemberService } from 'src/member/member.service';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
-import { CreateOrganizationPasswordDto } from './dto/create-organization-password.dto';
 import { ConfigService } from '@nestjs/config';
 import { ORGANIZATION_API_HEADER } from './decorators/organization-api.decorator';
 import { RoleService } from 'src/role/services/role.service';
@@ -29,21 +27,12 @@ import { TokenRequest } from './interfaces/token-request.interface';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { MailService } from 'src/mail/mail.service';
 import { SmsService } from 'src/sms/sms.service';
-// import { MemberCommonField } from 'src/member-common-field/schemas/member-common-field.schema';
-// import { MemberCommonFieldService } from 'src/member-common-field/member-common-field.service';
-// import { MembershipPlanService } from 'src/membership-plan/membership-plan.service';
-// import { RegisterMember } from './dto/register-member.dto';
-// import { SubscriptionService } from 'src/subscription/subscription.service';
-// import { SubscriptionStatus } from 'src/subscription/enums/subscription-status.enum';
-// import { PlanRenewalDuration } from 'src/membership-plan/enums/plan-renewal-duration';
-import { DateTime, Duration } from 'luxon';
-import { ObjectId } from 'mongoose';
-import { RegisterMember } from './dto/register-member.dto';
 import { TokenRepository } from './token.repository';
 import { Organization } from 'src/organization/schemas/organization.schema';
+import { CreateOneMemberDto } from 'src/member/dto/create-one-member.dto';
+import { InvitationService } from 'src/invitation/invitation.service';
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
-  private readonly saltRounds = +this.configService.get<number>('SALT_ROUNDS');
   private readonly isDevServer: string =
     this.configService.get<string>('IS_DEV_SERVER');
   constructor(
@@ -56,7 +45,8 @@ export class AuthService {
     private userService: UserService,
     private roleService: RoleService,
     private organizationService: OrganizationService,
-    private memberService: MemberService, // public memberCommonFieldService: MemberCommonFieldService, // public membershipPlanService: MembershipPlanService, // public subscriptionService: SubscriptionService,
+    private memberService: MemberService,
+    private invitationService: InvitationService,
   ) {}
 
   get organizationSlug() {
@@ -128,30 +118,6 @@ export class AuthService {
       accessToken: this.jwtService.sign(payload, { expiresIn: '24h' }),
       user: user,
     };
-  }
-
-  /** @deprecated use this.createNewAccount instead */
-  async updatePersonalDetails(userId: ObjectId | string, dto: UpdateUserDto) {
-    // TODO: send a welcome Email to user
-    return this.userService.update(userId, dto);
-  }
-
-  /** @deprecated use this.createNewAccount instead */
-  async createOrganization(userId: string, dto: CreateOrganizationPasswordDto) {
-    dto.owner = userId;
-    const user = await this.userService.findById(userId);
-    const organization = await this.organizationService.createOne(dto);
-    const role = await this.roleService.getDefaultAdminRole();
-    const member = await this.memberService.create({
-      organization: organization._id,
-      user: userId,
-      role: role._id,
-      password: dto.password,
-      officeTitle: dto.officeTitle,
-    });
-    const _member = member.toObject<Member>();
-    this.mailService.welcomeRegisteredOrganization(user, organization);
-    return { ..._member, organization, user, role };
   }
 
   async validateMember(dto: LoginDto) {
@@ -300,65 +266,14 @@ export class AuthService {
     //
   }
 
-  async acceptOrganizationInvite() {
-    //
+  async acceptOrganizationInvite(organization: string, invitation: string) {
+    return this.invitationService.acceptOrganizationInvite(
+      organization,
+      invitation,
+    );
   }
 
-  async registerMember(dto: RegisterMember) {
-    /*
-    const membershipPlan = await this.membershipPlanService.findOne(
-      dto.membershipPlanId,
-    );
-    if (!membershipPlan) {
-      throw new BadRequestException('Membership level not found');
-    }
-
-    let user = await this.userService.findOrCreateUserByUsername(dto.username);
-    user = await this.userService.updateOne(user.id, {
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-    });
-
-    const Member = await this.MemberService.createOne(
-      new Member({
-        userId: user.id,
-        organizationId: this.organizationId,
-        password: dto.password, // password is hashed in this method.
-      }),
-    );
-
-    // save all fields that are not default fields
-    const bulkDto: MemberCommonField[] = dto.commonFields.map(
-      (commonField) =>
-        new MemberCommonField({
-          ...commonField,
-          memberId: Member.id,
-          organizationId: this.organizationId,
-        }),
-    );
-
-    await this.memberCommonFieldService.createMany(bulkDto);
-
-    const currentDt = DateTime.now();
-    const endDt = currentDt.plus(
-      Duration.fromObject({
-        [membershipPlan.renewalDuration]: membershipPlan.renewalDurationCount,
-      }),
-    );
-
-    this.subscriptionService.createOne({
-      organizationId: this.organizationId,
-      memberId: Member.id,
-      membershipPlanId: membershipPlan.id,
-      status: SubscriptionStatus.Pending,
-      currentPeriodStart: currentDt.toJSDate(),
-      currentPeriodEnd: endDt.toJSDate(),
-      cancelAtPeriodEnd: true,
-      defaultPaymentMethod: membershipPlan.paymentMethod,
-    });
-
-    await Member.reload();
-    return Member;
-    */
+  async registerMember(organization: string, dto: CreateOneMemberDto) {
+    return this.memberService.createOne(organization, dto);
   }
 }

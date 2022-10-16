@@ -25,6 +25,20 @@ export class SharedRepository<
 
   protected populateOnFind: string[] = [];
   protected excludedFields: string[] = [];
+  protected defaults: {
+    filter: FilterQuery<Entity>;
+    projection: ProjectionType<Entity>;
+    options: QueryOptions<Entity>;
+  };
+
+  public scope(
+    filter: FilterQuery<Entity> = {},
+    projection?: ProjectionType<Entity>,
+    options?: QueryOptions<Entity>,
+  ) {
+    this.defaults = { filter, projection, options };
+    return this;
+  }
 
   public async find(
     filter: FilterQuery<Entity> = {},

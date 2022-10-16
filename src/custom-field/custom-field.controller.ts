@@ -8,12 +8,16 @@ import {
   Delete,
   Req,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 import { CustomFieldService } from './custom-field.service';
 import { CreateCustomFieldDto } from './dto/create-custom-field.dto';
 import { UpdateCustomFieldDto } from './dto/update-custom-field.dto';
 
+@ApiBearerAuth()
+@OrganizationApi()
+@ApiTags('Custom Fields')
 @Controller('custom-field')
 export class CustomFieldController {
   constructor(private readonly service: CustomFieldService) {}

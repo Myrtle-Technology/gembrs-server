@@ -12,9 +12,13 @@ import {
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
+import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 
+@ApiBearerAuth()
+@OrganizationApi()
+@ApiTags('Membership')
 @Controller('memberships')
 export class MembershipController {
   constructor(private readonly service: MembershipService) {}

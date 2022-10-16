@@ -5,6 +5,8 @@ import {
   Request,
   UseGuards,
   Get,
+  Query,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { VerifyEmailDto } from './dto/verify-email.dto';
@@ -18,6 +20,7 @@ import { TokenRequest } from './interfaces/token-request.interface';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { OrganizationApi } from './decorators/organization-api.decorator';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { CreateOneMemberDto } from 'src/member/dto/create-one-member.dto';
 
 @OrganizationApi()
 @ApiTags('Authentication')
@@ -96,10 +99,26 @@ export class AuthController {
     return this.authService.validateNewUserOTP(request.user._id, dto);
   }
 
-  // @Public()
-  // @OrganizationApi()
-  // @Post('register-member')
-  // registerMember(@Body() dto: RegisterMember) {
-  //   return this.authService.registerMember(dto);
-  // }
+  @Public()
+  @OrganizationApi()
+  @Post('register-member')
+  registerMember(
+    @Request() request: TokenRequest,
+    @Body() dto: CreateOneMemberDto,
+  ) {
+    return this.authService.registerMember(
+      request.tokenData.organizationId,
+      dto,
+    );
+  }
+
+  @Public()
+  @OrganizationApi()
+  @Post('accept-invite/:organization/:invitation')
+  acceptOrganizationInvite(
+    @Param('organization') organization: string,
+    @Param('invitation') invitation: string,
+  ) {
+    return this.authService.acceptOrganizationInvite(organization, invitation);
+  }
 }

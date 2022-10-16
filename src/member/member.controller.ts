@@ -18,10 +18,7 @@ import { ResourcesEnum } from 'src/role/enums/resources.enum';
 import { Permit } from 'src/role/decorators/permit.decorator';
 import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
 import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
-import { InviteMemberDto } from './dto/invite-member.dto';
-import { Request } from 'express';
-import { getSeverBaseUrl } from 'src/shared/helpers/get-server-base-url.helper';
-import { CreateMemberDto } from './dto/create-member.dto';
+import { CreateOneMemberDto } from './dto/create-one-member.dto';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -37,19 +34,8 @@ export class MemberController {
   })
   @Post()
   @ApiOperation({ summary: 'Create a Member' })
-  create(@Body() dto: CreateMemberDto) {
-    return this.service.createOne(dto);
-  }
-
-  @Permit({
-    resource: ResourcesEnum.Member,
-    action: 'create',
-    possession: 'own',
-  })
-  @Post()
-  @ApiOperation({ summary: 'Invite a Member' })
-  invite(@Body() dto: InviteMemberDto, @Req() request: Request) {
-    return this.service.inviteMember(dto, getSeverBaseUrl(request));
+  create(@Req() request: TokenRequest, @Body() dto: CreateOneMemberDto) {
+    return this.service.createOne(request.tokenData.organizationId, dto);
   }
 
   @Get()
@@ -64,7 +50,7 @@ export class MemberController {
     @Req() request: TokenRequest,
     @CursorPaginateQuery() params: Record<string, string>,
   ) {
-    return this.service.findAll(request.user.organization?._id, params);
+    return this.service.findAll(request.tokenData.organizationId, params);
   }
 
   @Permit({
@@ -75,7 +61,7 @@ export class MemberController {
   @Get(':id')
   @ApiOperation({ summary: 'Find a Member' })
   findOne(@Req() request: TokenRequest, @Param('id') id: string) {
-    return this.service.findOne(request.user.organization?._id, id);
+    return this.service.findOne(request.tokenData.organizationId, id);
   }
 
   @Permit({
@@ -90,7 +76,7 @@ export class MemberController {
     @Param('id') id: string,
     @Body() dto: UpdateMemberDto,
   ) {
-    return this.service.update(request.user.organization?._id, id, dto);
+    return this.service.update(request.tokenData.organizationId, id, dto);
   }
 
   @Permit({
@@ -105,7 +91,11 @@ export class MemberController {
     @Param('id') id: string,
     @Body() dto: UpdateMemberPasswordDto,
   ) {
-    return this.service.updatePassword(request.user.organization?._id, id, dto);
+    return this.service.updatePassword(
+      request.tokenData.organizationId,
+      id,
+      dto,
+    );
   }
 
   @Permit({
@@ -116,6 +106,6 @@ export class MemberController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a Member' })
   remove(@Req() request: TokenRequest, @Param('id') id: string) {
-    return this.service.removeOne(request.user.organization?._id, id);
+    return this.service.removeOne(request.tokenData.organizationId, id);
   }
 }

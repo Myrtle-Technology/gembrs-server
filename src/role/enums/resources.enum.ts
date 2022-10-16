@@ -8,4 +8,5 @@ export enum ResourcesEnum {
   Email = 'Emails',
   CustomField = 'Custom Database Fields',
   Invitation = 'Invitation',
+  Subscription = 'Subscription',
 }

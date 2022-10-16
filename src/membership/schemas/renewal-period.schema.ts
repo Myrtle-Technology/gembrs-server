@@ -11,7 +11,7 @@ export class RenewalPeriod {
     enum: RenewalPeriodDuration,
     default: RenewalPeriodDuration.Never,
   })
-  period: RenewalPeriodDuration;
+  duration: RenewalPeriodDuration;
 }
 
 export const RenewalPeriodSchema = SchemaFactory.createForClass(RenewalPeriod);

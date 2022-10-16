@@ -18,6 +18,8 @@ import { ResourcesEnum } from 'src/role/enums/resources.enum';
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
 import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
+import { InviteMemberDto } from 'src/member/dto/invite-member.dto';
+import { getSeverBaseUrl } from 'src/shared/helpers/get-server-base-url.helper';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -80,11 +82,6 @@ export class InvitationController {
 
   @Permit({
     resource: ResourcesEnum.Invitation,
-    action: 'update',
-    possession: 'own',
-  })
-  @Permit({
-    resource: ResourcesEnum.Invitation,
     action: 'delete',
     possession: 'own',
   })
@@ -92,5 +89,20 @@ export class InvitationController {
   @ApiOperation({ summary: 'Delete a Invitation' })
   remove(@Req() request: TokenRequest, @Param('id') id: string) {
     return this.service.removeOne(request.user.organization?._id, id);
+  }
+
+  @Permit({
+    resource: ResourcesEnum.Member,
+    action: 'create',
+    possession: 'own',
+  })
+  @Post()
+  @ApiOperation({ summary: 'Invite a Member' })
+  invite(@Body() dto: InviteMemberDto, @Req() request: TokenRequest) {
+    return this.service.inviteMember(
+      request.tokenData.organizationId,
+      dto,
+      getSeverBaseUrl(request),
+    );
   }
 }

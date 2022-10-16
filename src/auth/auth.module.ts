@@ -16,9 +16,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TokenRepository } from './token.repository';
 import { Token, TokenSchema } from './schemas/token.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-// import { MemberCommonFieldModule } from 'src/member-common-field/member-common-field.module';
-// import { MembershipPlanModule } from 'src/membership-plan/membership-plan.module';
-// import { SubscriptionModule } from 'src/subscription/subscription.module';
+import { InvitationModule } from 'src/invitation/invitation.module';
 
 @Module({
   imports: [
@@ -35,6 +33,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     RoleModule,
     OrganizationModule,
     MemberModule,
+    InvitationModule,
     // MemberCommonFieldModule,
     // MembershipPlanModule,
     // SubscriptionModule,

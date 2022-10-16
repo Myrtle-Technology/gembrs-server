@@ -10,13 +10,15 @@ import {
 } from './schemas/member-custom-field.schema';
 import { UserModule } from 'src/user/user.module';
 import { RoleModule } from 'src/role/role.module';
-import { InvitationModule } from 'src/invitation/invitation.module';
+import { MembershipModule } from 'src/membership/membership.module';
+import { SubscriptionModule } from 'src/subscription/subscription.module';
 
 @Module({
   imports: [
     UserModule,
     RoleModule,
-    InvitationModule,
+    MembershipModule,
+    SubscriptionModule,
     MongooseModule.forFeature([
       { name: Member.name, schema: MemberSchema },
       { name: MemberCustomField.name, schema: MemberCustomFieldSchema },

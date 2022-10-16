@@ -1,34 +1,90 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+} from '@nestjs/common';
 import { SubscriptionService } from './subscription.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
+import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
+import { Permit } from 'src/role/decorators/permit.decorator';
+import { ResourcesEnum } from 'src/role/enums/resources.enum';
+import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
+import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
+@ApiBearerAuth()
+@OrganizationApi()
+@ApiTags('Subscription')
 @Controller('subscription')
 export class SubscriptionController {
-  constructor(private readonly subscriptionService: SubscriptionService) {}
+  constructor(private readonly service: SubscriptionService) {}
 
+  @Permit({
+    resource: ResourcesEnum.Subscription,
+    action: 'create',
+    possession: 'own',
+  })
   @Post()
-  create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
-    return this.subscriptionService.create(createSubscriptionDto);
+  @ApiOperation({ summary: 'Create a Subscription' })
+  create(@Body() dto: CreateSubscriptionDto) {
+    return this.service.createOne(dto);
   }
 
   @Get()
-  findAll() {
-    return this.subscriptionService.findAll();
+  @CursorPaginateQueryOptions()
+  @ApiOperation({ summary: 'Find all Subscriptions' })
+  @Permit({
+    resource: ResourcesEnum.Subscription,
+    action: 'read',
+    possession: 'own',
+  })
+  findAll(
+    @Req() request: TokenRequest,
+    @CursorPaginateQuery() params: Record<string, string>,
+  ) {
+    return this.service.findAll(request.user.organization?._id, params);
   }
 
+  @Permit({
+    resource: ResourcesEnum.Subscription,
+    action: 'update',
+    possession: 'own',
+  })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subscriptionService.findOne(+id);
+  @ApiOperation({ summary: 'Find a Subscription' })
+  findOne(@Req() request: TokenRequest, @Param('id') id: string) {
+    return this.service.findOne(request.user.organization?._id, id);
   }
 
+  @Permit({
+    resource: ResourcesEnum.Subscription,
+    action: 'update',
+    possession: 'own',
+  })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSubscriptionDto: UpdateSubscriptionDto) {
-    return this.subscriptionService.update(+id, updateSubscriptionDto);
+  @ApiOperation({ summary: 'Update a Subscription' })
+  update(
+    @Req() request: TokenRequest,
+    @Param('id') id: string,
+    @Body() dto: UpdateSubscriptionDto,
+  ) {
+    return this.service.update(request.user.organization?._id, id, dto);
   }
 
+  @Permit({
+    resource: ResourcesEnum.Subscription,
+    action: 'delete',
+    possession: 'own',
+  })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.subscriptionService.remove(+id);
+  @ApiOperation({ summary: 'Delete a Subscription' })
+  remove(@Req() request: TokenRequest, @Param('id') id: string) {
+    return this.service.removeOne(request.user.organization?._id, id);
   }
 }
