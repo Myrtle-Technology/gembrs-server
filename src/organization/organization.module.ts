@@ -9,10 +9,12 @@ import {
 import { OrganizationRepository } from './organization.repository';
 import { User, UserSchema } from 'src/user/schemas/user.schema';
 import { MembershipModule } from 'src/membership/membership.module';
+import { CustomFieldModule } from 'src/custom-field/custom-field.module';
 
 @Module({
   imports: [
     MembershipModule,
+    CustomFieldModule,
     MongooseModule.forFeature([
       { name: Organization.name, schema: OrganizationSchema },
       { name: User.name, schema: UserSchema },
