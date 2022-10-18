@@ -53,7 +53,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             throw new NotFoundException(
               'No organization with the specified site name was found',
             );
-          request.organizationId = organization.id;
+          request.organization = organization;
           return !!organization;
         });
     }

@@ -25,6 +25,13 @@ export class OrganizationController {
   constructor(private readonly service: OrganizationService) {}
 
   @Public()
+  @ApiOperation({ summary: 'Find an Organization Registration Form Fields' })
+  @Get('/registration-form')
+  getRegistrationFormFields(@Req() request: TokenRequest) {
+    return this.service.getRegistrationFormFields(request.organization._id);
+  }
+
+  @Public()
   @ApiOperation({ summary: 'Find all Organizations' })
   @Get()
   findAll() {
@@ -62,15 +69,6 @@ export class OrganizationController {
   @Get('/site-name/:siteName')
   findBySiteName(@Param('siteName') siteName: string) {
     return this.service.findBySiteName(siteName);
-  }
-
-  @Public()
-  @ApiOperation({ summary: 'Find an Organization by siteName' })
-  @Get('/registration-form')
-  getRegistrationFormFields(@Req() request: TokenRequest) {
-    return this.service.getRegistrationFormFields(
-      request.tokenData.organizationId,
-    );
   }
 
   @ApiBearerAuth()

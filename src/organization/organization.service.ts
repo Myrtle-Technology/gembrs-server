@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { uniqBy } from 'lodash';
 import { FilterQuery, ObjectId } from 'mongoose';
 import { CustomFieldDefaults } from 'src/custom-field/custom-field.defaults';
 import { CustomFieldService } from 'src/custom-field/custom-field.service';
@@ -22,6 +23,7 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
   }
 
   private defaultFields: CustomField[] = [
+    CustomFieldDefaults.MembershipId,
     CustomFieldDefaults.FirstName,
     CustomFieldDefaults.LastName,
     CustomFieldDefaults.Email,
@@ -68,6 +70,8 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
     const customFields = await this.customFieldService.findAll(organization, {
       active: true,
     });
-    return [...this.defaultFields, ...customFields];
+    return [...this.defaultFields, ...customFields].sort(
+      (a, b) => a.order - b.order,
+    );
   }
 }
