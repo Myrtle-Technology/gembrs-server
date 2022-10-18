@@ -7,12 +7,10 @@ import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberPasswordDto } from './dto/update-member-password.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberRepository } from './member.repository';
-import { InviteMemberDto } from './dto/invite-member.dto';
 import { Member } from './schemas/member.schema';
 import { PaginationOptions } from 'src/shared/shared.repository';
 import { UserService } from 'src/user/user.service';
 import { RoleService } from 'src/role/services/role.service';
-import { InvitationService } from 'src/invitation/invitation.service';
 import { CreateOneMemberDto } from './dto/create-one-member.dto';
 import { MembershipService } from 'src/membership/membership.service';
 import { SubscriptionService } from 'src/subscription/subscription.service';
@@ -20,6 +18,8 @@ import { SubscriptionStatus } from 'src/subscription/enums/subscription-status.e
 import { RenewalPeriodDuration } from 'src/membership/enums/renewal-period-duration.enum';
 import { Membership } from 'src/membership/schemas/membership.schema';
 import { MailService } from 'src/mail/mail.service';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { MemberCreatedEvent } from './events/member-created.event';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -31,11 +31,17 @@ export class MemberService extends SharedService<MemberRepository> {
     private readonly membershipService: MembershipService,
     private readonly subscriptionService: SubscriptionService,
     private readonly mailService: MailService,
+    private readonly eventEmitter: EventEmitter2,
     private configService: ConfigService,
   ) {
     super(repo);
   }
 
+  /**
+   * Only use In App, not to be exposed for consumption
+   * @param dto {CreateMemberDto}
+   * @returns Member
+   */
   public async create(dto: CreateMemberDto) {
     if (dto.password) {
       dto.password = await bcrypt.hash(dto.password, this.saltRounds);
@@ -64,8 +70,21 @@ export class MemberService extends SharedService<MemberRepository> {
       bio: dto.bio,
     })) as Member;
     await this.createMemberSubscription(membership, organization, member);
-    if (dto.notifyMember) this.mailService.welcomeNewUser(member);
+    this.eventEmitter.emit(
+      MemberCreatedEvent.eventName,
+      new MemberCreatedEvent(member, dto.notifyMember),
+    );
     return this.findById(member._id);
+  }
+
+  @OnEvent(MemberCreatedEvent.eventName, { async: true })
+  protected async handleMemberCreatedEvent({
+    member,
+    notifyMember,
+  }: MemberCreatedEvent) {
+    if (notifyMember) {
+      await this.mailService.welcomeNewUser(member);
+    }
   }
 
   public async createMemberSubscription(
@@ -74,7 +93,7 @@ export class MemberService extends SharedService<MemberRepository> {
     member: Member,
   ) {
     const [startDateTime, endDateTime] =
-      this.membershipService.getMemberShipStartAndEndDate(membership);
+      this.membershipService.getMembershipStartAndEndDate(membership);
     return this.subscriptionService.createOne({
       organization: organization,
       member: member._id,

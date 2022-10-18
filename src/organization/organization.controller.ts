@@ -16,6 +16,7 @@ import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator'
 import { Public } from 'src/auth/decorators/public.decorator';
 import { ResourcesEnum } from 'src/role/enums/resources.enum';
 import { Permit } from 'src/role/decorators/permit.decorator';
+import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 
 @OrganizationApi()
 @ApiTags('Organization')
@@ -61,6 +62,15 @@ export class OrganizationController {
   @Get('/site-name/:siteName')
   findBySiteName(@Param('siteName') siteName: string) {
     return this.service.findBySiteName(siteName);
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Find an Organization by siteName' })
+  @Get('/registration-form')
+  getRegistrationFormFields(@Req() request: TokenRequest) {
+    return this.service.getRegistrationFormFields(
+      request.tokenData.organizationId,
+    );
   }
 
   @ApiBearerAuth()

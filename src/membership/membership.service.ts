@@ -49,7 +49,7 @@ export class MembershipService extends SharedService<MembershipRepository> {
     return this.repo.deleteOne({ organization, _id: id });
   }
 
-  public getMemberShipStartAndEndDate(membership: Membership) {
+  public getMembershipStartAndEndDate(membership: Membership) {
     const startDateTime = DateTime.now();
     if (membership.renewalPeriod.duration == RenewalPeriodDuration.Never) {
       return [startDateTime, null];

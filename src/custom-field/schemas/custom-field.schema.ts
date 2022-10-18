@@ -28,7 +28,7 @@ export class CustomField {
   @Prop({
     type: String,
     enum: CustomFieldType,
-    default: CustomFieldType.text,
+    default: CustomFieldType.Text,
   })
   type: CustomFieldType;
 
@@ -53,6 +53,10 @@ export class CustomField {
   order: number;
 
   @ApiProperty()
+  @Prop({ default: true })
+  active: boolean;
+
+  @ApiProperty()
   @Prop({ type: mongoose.Schema.Types.Mixed })
   attributes: CustomFieldAttributes;
 
@@ -68,6 +72,15 @@ export class CustomField {
   // @ApiProperty()
   // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Form' })
   // form: Form;
+
+  constructor(data?: Partial<CustomField>) {
+    // super();
+    if (data) {
+      Object.assign(this, data);
+      this.options = this.options || [];
+      this.attributes = this.attributes || {};
+    }
+  }
 }
 
 export const CustomFieldSchema = SchemaFactory.createForClass(CustomField);

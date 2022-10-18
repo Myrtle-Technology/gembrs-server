@@ -10,6 +10,9 @@ import { CreateMemberCustomFieldDto } from './create-member-custom-field.dto';
 
 export class CreateOneMemberDto {
   @IsString()
+  membership: string;
+
+  @IsString()
   firstName: string;
 
   @IsString()
@@ -41,8 +44,6 @@ export class CreateOneMemberDto {
 
   @IsOptional()
   customFields?: CreateMemberCustomFieldDto[];
-
-  membership: string;
 
   role?: string;
   notifyMember?: boolean;
