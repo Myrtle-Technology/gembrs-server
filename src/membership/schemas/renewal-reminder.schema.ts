@@ -40,7 +40,7 @@ export const RenewalReminderSchema =
   SchemaFactory.createForClass(RenewalReminder);
 
 // defaults
-export const renewalReminderBefore1: RenewalReminder = {
+export const defaultRenewalReminderBefore1: RenewalReminder = {
   noOfDays: 7,
   sendEmail: true,
   sendEmailTo: [RenewalReminderEmailRecipients.Member],
@@ -48,7 +48,7 @@ export const renewalReminderBefore1: RenewalReminder = {
   changeMembershipLevelTo: null,
 };
 
-export const renewalReminderBefore2: RenewalReminder = {
+export const defaultRenewalReminderBefore2: RenewalReminder = {
   noOfDays: 14,
   sendEmail: true,
   sendEmailTo: [RenewalReminderEmailRecipients.Member],
@@ -56,7 +56,7 @@ export const renewalReminderBefore2: RenewalReminder = {
   changeMembershipLevelTo: null,
 };
 
-export const renewalReminderOnDueDate: RenewalReminder = {
+export const defaultRenewalReminderOnDueDate: RenewalReminder = {
   noOfDays: 7,
   sendEmail: true,
   sendEmailTo: [RenewalReminderEmailRecipients.Member],
@@ -64,7 +64,7 @@ export const renewalReminderOnDueDate: RenewalReminder = {
   changeMembershipLevelTo: null,
 };
 
-export const renewalReminderAfter1: RenewalReminder = {
+export const defaultRenewalReminderAfter1: RenewalReminder = {
   noOfDays: 7,
   sendEmail: true,
   sendEmailTo: [RenewalReminderEmailRecipients.Member],
@@ -72,7 +72,7 @@ export const renewalReminderAfter1: RenewalReminder = {
   changeMembershipLevelTo: null,
 };
 
-export const renewalReminderAfter2: RenewalReminder = {
+export const defaultRenewalReminderAfter2: RenewalReminder = {
   noOfDays: 14,
   sendEmail: true,
   sendEmailTo: [RenewalReminderEmailRecipients.Member],

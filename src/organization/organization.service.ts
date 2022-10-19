@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { uniqBy } from 'lodash';
 import { FilterQuery, ObjectId } from 'mongoose';
 import { CustomFieldDefaults } from 'src/custom-field/custom-field.defaults';
 import { CustomFieldService } from 'src/custom-field/custom-field.service';
-import { CustomFieldType } from 'src/custom-field/enums/custom-field-type.enum';
 import { CustomField } from 'src/custom-field/schemas/custom-field.schema';
 import { MembershipService } from 'src/membership/membership.service';
 import { SharedService } from 'src/shared/shared.service';

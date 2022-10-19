@@ -12,11 +12,11 @@ import { RenewalPeriod, RenewalPeriodSchema } from './renewal-period.schema';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   RenewalReminder,
-  renewalReminderAfter1,
-  renewalReminderAfter2,
-  renewalReminderBefore1,
-  renewalReminderBefore2,
-  renewalReminderOnDueDate,
+  defaultRenewalReminderAfter1,
+  defaultRenewalReminderAfter2,
+  defaultRenewalReminderBefore1,
+  defaultRenewalReminderBefore2,
+  defaultRenewalReminderOnDueDate,
 } from './renewal-reminder.schema';
 
 // export type MemberDocument = Member & Document;
@@ -33,7 +33,7 @@ export class Membership extends Document {
 
   @ApiProperty()
   @Prop()
-  fee: string;
+  fee: number;
 
   @ApiProperty()
   @Prop({
@@ -46,10 +46,11 @@ export class Membership extends Document {
   @ApiProperty()
   @Prop({
     type: String,
-    enum: PaymentMethod,
-    default: PaymentMethod.Offline,
+    default: MembershipType.Individual,
+    enum: MembershipType,
   })
   type: MembershipType;
+
   @ApiProperty()
   @Prop()
   isPublic: boolean;
@@ -83,23 +84,23 @@ export class Membership extends Document {
   bundleAdminWorkflowSettings: BundleAdminWorkflowSettings;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder, default: renewalReminderBefore1 })
+  @Prop({ type: RenewalReminder, default: defaultRenewalReminderBefore1 })
   renewalReminderBefore1: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder, default: renewalReminderBefore2 })
+  @Prop({ type: RenewalReminder, default: defaultRenewalReminderBefore2 })
   renewalReminderBefore2: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder, default: renewalReminderOnDueDate })
+  @Prop({ type: RenewalReminder, default: defaultRenewalReminderOnDueDate })
   renewalReminderOnDueDate: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder, default: renewalReminderAfter1 })
+  @Prop({ type: RenewalReminder, default: defaultRenewalReminderAfter1 })
   renewalReminderAfter1: RenewalReminder;
 
   @ApiProperty({ type: () => RenewalReminder })
-  @Prop({ type: RenewalReminder, default: renewalReminderAfter2 })
+  @Prop({ type: RenewalReminder, default: defaultRenewalReminderAfter2 })
   renewalReminderAfter2: RenewalReminder;
 }
 

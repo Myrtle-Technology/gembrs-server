@@ -8,6 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 import { IsUnique } from 'src/shared/decorators/is-unique.decorator';
+import { MembershipType } from '../enums/membership-type.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { BundleAdminWorkflowSettings } from '../schemas/bundle-admin-workflow-settings.schema';
 import { RenewalPeriod } from '../schemas/renewal-period.schema';
@@ -22,10 +23,13 @@ export class CreateMembershipDto {
   description: string;
 
   @IsNumber()
-  membershipFee: number;
+  fee: number;
 
   @IsEnum(PaymentMethod)
   paymentMethod: PaymentMethod;
+
+  @IsEnum(MembershipType)
+  type: MembershipType;
 
   @IsBoolean()
   isPublic: boolean;
