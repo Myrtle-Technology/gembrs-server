@@ -8,6 +8,9 @@ export class CustomFieldDefaults {
     type: CustomFieldType.Text,
     required: true,
     order: -1,
+    attributes: {
+      hidden: true,
+    },
   });
   static FirstName = new CustomField({
     name: 'firstName',
@@ -29,6 +32,9 @@ export class CustomFieldDefaults {
     type: CustomFieldType.Email,
     required: false, // the service will make it required
     order: 3,
+    attributes: {
+      placeholder: 'example@email.com',
+    },
   });
   static PhoneNumber = new CustomField({
     name: 'phone',
