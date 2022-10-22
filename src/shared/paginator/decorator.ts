@@ -17,7 +17,7 @@ export const CursorPaginateQuery = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
     const request: Request = ctx.switchToHttp().getRequest();
     const { query } = request;
-    console.log(query.sort);
+    // console.log(query.sort);
     const _query: PaginationOptions<any> = {
       select: query.fields ? (query.fields as string[]) : [],
       limit: +query.limit,
