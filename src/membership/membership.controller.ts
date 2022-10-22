@@ -15,6 +15,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
 import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
+import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -30,6 +31,7 @@ export class MembershipController {
   }
 
   @Get()
+  @CursorPaginateQueryOptions()
   @ApiOperation({ summary: 'Find all Memberships' })
   findAll(
     @Req() request: TokenRequest,
