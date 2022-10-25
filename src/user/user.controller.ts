@@ -7,11 +7,13 @@ import {
   Delete,
   Query,
   Res,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Response } from 'express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('User')
 @Controller('users')
@@ -43,10 +45,11 @@ export class UserController {
     return this.service.findById(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-  //   return this.userService.update(id, dto);
-  // }
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update User Profile' })
+  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    return this.service.update(id, dto);
+  }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a User' })
