@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsEnum,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -39,6 +40,7 @@ export class CreateMembershipDto {
   changeableTo: string[];
 
   @ApiProperty({ type: () => RenewalPeriod })
+  @IsObject()
   renewalPeriod: RenewalPeriod;
 
   @IsOptional()
