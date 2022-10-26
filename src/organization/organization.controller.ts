@@ -87,7 +87,7 @@ export class OrganizationController {
   @Permit({
     resource: ResourcesEnum.Organization,
     action: 'update',
-    possession: 'any',
+    possession: 'own',
   })
   @ApiOperation({ summary: 'Update Loggedin Organization' })
   @Patch(':id')
