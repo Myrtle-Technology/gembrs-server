@@ -71,16 +71,31 @@ export class OrganizationController {
     return this.service.findBySiteName(siteName);
   }
 
+  // @ApiBearerAuth()
+  // @Permit({
+  //   resource: ResourcesEnum.Organization,
+  //   action: 'update',
+  //   possession: 'any',
+  // })
+  // @ApiOperation({ summary: 'Update an Organization' })
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() dto: UpdateOrganizationDto) {
+  //   return this.service.update(id, dto);
+  // }
+
   @ApiBearerAuth()
   @Permit({
     resource: ResourcesEnum.Organization,
     action: 'update',
     possession: 'any',
   })
-  @ApiOperation({ summary: 'Update an Organization' })
+  @ApiOperation({ summary: 'Update Loggedin Organization' })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateOrganizationDto) {
-    return this.service.update(id, dto);
+  updateCurrentOrganization(
+    @Req() request: TokenRequest,
+    @Body() dto: UpdateOrganizationDto,
+  ) {
+    return this.service.update(request.organization._id, dto);
   }
 
   @ApiBearerAuth()
