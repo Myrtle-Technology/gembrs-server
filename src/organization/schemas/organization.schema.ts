@@ -26,7 +26,7 @@ export class Organization extends Document {
 
   @ApiProperty()
   @Prop()
-  bio: number;
+  bio: string;
 
   @ApiProperty()
   @Prop()
