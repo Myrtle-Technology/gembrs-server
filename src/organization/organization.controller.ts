@@ -90,12 +90,12 @@ export class OrganizationController {
     possession: 'own',
   })
   @ApiOperation({ summary: 'Update Loggedin Organization' })
-  @Patch(':id')
+  @Patch('current')
   updateCurrentOrganization(
     @Req() request: TokenRequest,
     @Body() dto: UpdateOrganizationDto,
   ) {
-    return this.service.update(request.organization._id, dto);
+    return this.service.update(request.tokenData.organizationId, dto);
   }
 
   @ApiBearerAuth()
