@@ -117,7 +117,7 @@ export class MemberService extends SharedService<MemberRepository> {
 
   public async findById(
     id: ObjectId | string,
-    relations = ['user', 'role', 'organization'],
+    relations = ['user', 'role', 'organization', 'customFields.field'],
   ): Promise<Member> {
     return this.repo.findById(id, { populate: relations });
   }
@@ -125,7 +125,12 @@ export class MemberService extends SharedService<MemberRepository> {
   public async findOne(
     organizationId: string,
     memberId: string,
-    relations: string[] = ['role', 'user'],
+    relations: string[] = [
+      'role',
+      'user',
+      'organization',
+      'customFields.field',
+    ],
   ) {
     return this.repo.findOne(
       { organization: organizationId, _id: memberId },
