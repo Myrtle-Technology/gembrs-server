@@ -18,6 +18,10 @@ import {
   defaultRenewalReminderBefore2,
   defaultRenewalReminderOnDueDate,
 } from './renewal-reminder.schema';
+import {
+  CustomField,
+  CustomFieldSchema,
+} from 'src/custom-field/schemas/custom-field.schema';
 
 // export type MemberDocument = Member & Document;
 
@@ -30,6 +34,10 @@ export class Membership extends Document {
   @ApiProperty()
   @Prop()
   description: string;
+
+  @ApiProperty()
+  @Prop()
+  color: string;
 
   @ApiProperty()
   @Prop()
@@ -78,6 +86,12 @@ export class Membership extends Document {
     ref: 'Organization',
   })
   organization: Organization;
+
+  @ApiProperty({ type: () => CustomField, isArray: true })
+  @Prop({
+    type: [{ type: CustomFieldSchema }],
+  })
+  questions: CustomField[];
 
   @ApiProperty({ type: () => BundleAdminWorkflowSettings })
   @Prop({ type: BundleAdminWorkflowSettingsSchema })

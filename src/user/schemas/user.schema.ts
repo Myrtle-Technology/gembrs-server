@@ -18,6 +18,10 @@ export class User extends Document {
   lastName: string;
 
   @ApiProperty()
+  @Prop()
+  imageUrl: string;
+
+  @ApiProperty()
   @Prop({
     lowercase: true,
     validate: async function (value) {

@@ -8,7 +8,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { IsUnique } from 'src/shared/decorators/is-unique.decorator';
+import { CreateCustomFieldDto } from 'src/custom-field/dto/create-custom-field.dto';
 import { MembershipType } from '../enums/membership-type.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { BundleAdminWorkflowSettings } from '../schemas/bundle-admin-workflow-settings.schema';
@@ -22,6 +22,10 @@ export class CreateMembershipDto {
   @IsString()
   @IsOptional()
   description: string;
+
+  @IsString()
+  @IsOptional()
+  color: string;
 
   @IsNumber()
   fee: number;
@@ -38,6 +42,10 @@ export class CreateMembershipDto {
   @IsOptional()
   @IsArray()
   changeableTo: string[];
+
+  @IsOptional()
+  @IsArray()
+  questions: CreateCustomFieldDto[];
 
   @ApiProperty({ type: () => RenewalPeriod })
   @IsObject()
