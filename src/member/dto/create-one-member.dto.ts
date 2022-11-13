@@ -26,8 +26,7 @@ export class CreateOneMemberDto {
   @IsOptional()
   phone: string;
 
-  @MinLength(6)
-  @MaxLength(20)
+  @IsOptional()
   password?: string;
 
   @IsString()
