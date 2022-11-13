@@ -11,6 +11,10 @@ export class MemberCustomField {
   value: any;
 
   @ApiProperty()
+  @Prop({ required: true })
+  label: string;
+
+  @ApiProperty()
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'CustomField',

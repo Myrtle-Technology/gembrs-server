@@ -1,11 +1,4 @@
-import {
-  IsEmail,
-  IsOptional,
-  IsPhoneNumber,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 import { CreateMemberCustomFieldDto } from './create-member-custom-field.dto';
 
 export class CreateOneMemberDto {
