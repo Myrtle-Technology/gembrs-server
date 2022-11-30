@@ -7,14 +7,82 @@ import { Organization } from 'src/organization/schemas/organization.schema';
 import { User } from './../user/schemas/user.schema';
 import { ElasticMailService } from './elastic-mail.service';
 import { ElasticMailTemplateNames } from './elastic-mail.templates';
+import { MailerService, ISendMailOptions } from '@nestjs-modules/mailer';
+import { SendMailDto } from './dto/send-mail.dto';
+import { TemplateService } from 'src/template/template.service';
+import { MemberService } from 'src/member/member.service';
 
 @Injectable()
 export class MailService {
   private readonly clientURL = this.configService.get('CLIENT_URL');
   constructor(
-    private mailerService: ElasticMailService,
+    private mailerService: MailerService,
+    private elasticMailService: ElasticMailService,
     private configService: ConfigService,
+    private templateService: TemplateService,
+    private memberService: MemberService,
   ) {}
+
+  async send({ html, context, ...options }: ISendMailOptions) {
+    const template = Handlebars.compile(html);
+    return this.mailerService.sendMail({ ...options, html: template(context) });
+  }
+
+  // Move to campaigns later -- not tested
+  async sendMail(
+    owner: 'user' | 'organization',
+    ownerId: string,
+    dto: SendMailDto,
+  ) {
+    const template = await this.templateService.findOne(
+      owner,
+      ownerId,
+      dto.template,
+    );
+    if (owner == 'organization') {
+      const contacts = await this.memberService.findAll(ownerId, {
+        _id: { $in: dto.contacts },
+      });
+      // send emails in chunks of 50
+
+      const emailsToBeSent: ISendMailOptions[] = contacts
+        .filter((c) => !!c.user.email) // work with users that have emails
+        .map((contact) => ({
+          html: template.html,
+          context: { ...contact.user },
+          to: {
+            address: contact.user.email,
+            name: `${contact.user.firstName} ${contact.user.lastName}`,
+          },
+        }));
+
+      this.processEmailSending(emailsToBeSent);
+    }
+  }
+
+  chunkEmails<T = unknown>(arr: T[], chunkSize: number): T[][] {
+    return Array.from(Array(Math.ceil(arr.length / chunkSize)), (_, i) =>
+      arr.slice(i * chunkSize, i * chunkSize + chunkSize),
+    );
+  }
+
+  // run this and figure out a way to give delivery reports
+  // see if you can schedule it after every 30 mins
+  async processEmailSending(options: ISendMailOptions[]) {
+    const chunks = this.chunkEmails(options, 50);
+    chunks.forEach((chunk) => {
+      const mailSendingProcesses: Promise<void>[] = chunk.map((option) =>
+        this.send(option),
+      );
+      Promise.all(mailSendingProcesses)
+        .then((data) => {
+          console.log('Email sent:', data);
+        })
+        .catch((reason) => {
+          console.error('Some email failed to send', reason);
+        });
+    });
+  }
 
   async welcomeRegisteredOrganization(user: User, organization: Organization) {
     const memberUrl = `https://${organization.siteName}.${this.clientURL
@@ -22,7 +90,7 @@ export class MailService {
       .replace('http://', '')}`;
     const adminUrl = `${memberUrl}/admin`;
 
-    await this.mailerService.send({
+    await this.elasticMailService.send({
       Recipients: { To: [user.email] },
       Content: {
         Subject: `Welcome to ${APP_NAME}! Make yourself at home`,
@@ -39,7 +107,7 @@ export class MailService {
   }
 
   async sendVerificationCode(email: string, code: number | string) {
-    return await this.mailerService.send({
+    return await this.elasticMailService.send({
       Recipients: { To: [email] },
       Content: {
         Subject: `${APP_NAME} – email verification`,
@@ -54,7 +122,7 @@ export class MailService {
   }
 
   async resetPasswordRequest(user: User, link: string) {
-    return await this.mailerService.send({
+    return await this.elasticMailService.send({
       Recipients: { To: [user.email] },
       Content: {
         Subject: 'You requested for a Password reset!',
@@ -69,7 +137,7 @@ export class MailService {
 
   async resetPassword(user: User) {
     const link = this.clientURL;
-    return await this.mailerService.send({
+    return await this.elasticMailService.send({
       Recipients: { To: [user.email] },
       Content: {
         Subject: 'Password Reset Successfully!',
@@ -86,7 +154,7 @@ export class MailService {
   async confirmUserEmail(user: User, token: string) {
     const url = `${this.clientURL}?token=${token}`;
 
-    await this.mailerService.send({
+    await this.elasticMailService.send({
       Recipients: { To: [user.email] },
       Content: {
         // from: '"Support Team" <support@example.com>', // override default from
@@ -102,7 +170,7 @@ export class MailService {
   }
 
   public async sendMemberInviteEmail(invitation: Invitation, link: string) {
-    await this.mailerService.send({
+    await this.elasticMailService.send({
       Recipients: { To: [invitation.user.email] },
       Content: {
         Subject: `You have been invited to join ${invitation.organization.name}`,
@@ -123,7 +191,7 @@ export class MailService {
     }.${this.clientURL.replace('https://', '').replace('http://', '')}`;
     const profileUrl = `${organizationUrl}/profile`;
 
-    await this.mailerService.send({
+    await this.elasticMailService.send({
       Recipients: { To: [member.user.email] },
       Content: {
         Subject: `Welcome to ${APP_NAME}! Make yourself at home`,

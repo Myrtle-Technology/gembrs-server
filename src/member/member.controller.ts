@@ -50,7 +50,10 @@ export class MemberController {
     @Req() request: TokenRequest,
     @CursorPaginateQuery() params: Record<string, string>,
   ) {
-    return this.service.findAll(request.tokenData.organizationId, params);
+    return this.service.findAndPaginate(
+      request.tokenData.organizationId,
+      params,
+    );
   }
 
   @Permit({

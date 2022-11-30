@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongoose';
+import { FilterQuery, ObjectId, ProjectionType, QueryOptions } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { SharedService } from 'src/shared/shared.service';
@@ -107,12 +107,20 @@ export class MemberService extends SharedService<MemberRepository> {
     });
   }
 
-  public async findAll(
+  public async findAndPaginate(
     organization: string,
     params: PaginationOptions<Member>,
   ) {
     params.query = { ...params.query, organization };
     return this.repo.paginate(params);
+  }
+  public async findAll(
+    organization: string,
+    filter: FilterQuery<Member>,
+    projection?: ProjectionType<Member>,
+    options?: QueryOptions<Member>,
+  ) {
+    return this.repo.find({ ...filter, organization }, projection, options);
   }
 
   public async findById(

@@ -25,6 +25,9 @@ import { MembershipModule } from './membership/membership.module';
 import { CustomFieldModule } from './custom-field/custom-field.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { InvitationModule } from './invitation/invitation.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { TemplateModule } from './template/template.module';
 
 @Module({
   imports: [
@@ -66,6 +69,31 @@ import { InvitationModule } from './invitation/invitation.module';
     CustomFieldModule,
     SubscriptionModule,
     InvitationModule,
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
+        transport: {
+          host: config.get('MAIL_HOST'),
+          secure: false,
+          auth: {
+            user: config.get('MAIL_USER'),
+            pass: config.get('MAIL_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: config.get('MAIL_USER'),
+        },
+        template: {
+          dir: join(__dirname, './templates'),
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    TemplateModule,
   ],
   controllers: [AppController],
   providers: [
