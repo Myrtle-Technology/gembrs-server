@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { FilterQuery, ObjectId, ProjectionType, QueryOptions } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -30,6 +35,7 @@ export class MemberService extends SharedService<MemberRepository> {
     private readonly roleService: RoleService,
     private readonly membershipService: MembershipService,
     private readonly subscriptionService: SubscriptionService,
+    @Inject(forwardRef(() => MailService))
     private readonly mailService: MailService,
     private readonly eventEmitter: EventEmitter2,
     private configService: ConfigService,

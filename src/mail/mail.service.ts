@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_NAME } from 'src/app.constants';
 import { Invitation } from 'src/invitation/schemas/invitation.schema';
@@ -20,6 +20,7 @@ export class MailService {
     private elasticMailService: ElasticMailService,
     private configService: ConfigService,
     private templateService: TemplateService,
+    @Inject(forwardRef(() => MemberService))
     private memberService: MemberService,
   ) {}
 
@@ -28,7 +29,7 @@ export class MailService {
     return this.mailerService.sendMail({ ...options, html: template(context) });
   }
 
-  // Move to campaigns later -- not tested
+  // Move to newsletters later -- not tested
   async sendMail(
     owner: 'user' | 'organization',
     ownerId: string,
