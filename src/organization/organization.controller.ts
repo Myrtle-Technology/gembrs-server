@@ -19,7 +19,7 @@ import { Permit } from 'src/role/decorators/permit.decorator';
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 
 @OrganizationApi()
-@ApiTags('Organization')
+@ApiTags('Organization or Community')
 @Controller('organizations')
 export class OrganizationController {
   constructor(private readonly service: OrganizationService) {}

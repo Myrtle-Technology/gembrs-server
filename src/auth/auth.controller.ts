@@ -10,7 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AllowUserWithoutOrganization } from './decorators/allow-user-without-organization.decorator';
 import { FindUserOrganization } from './dto/find-user-organization..dto';
 import { Public } from './decorators/public.decorator';
@@ -20,6 +20,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { OrganizationApi } from './decorators/organization-api.decorator';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { CreateOneMemberDto } from 'src/member/dto/create-one-member.dto';
+import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 @OrganizationApi()
 @ApiTags('Authentication')
@@ -68,8 +70,27 @@ export class AuthController {
 
   @Public()
   @Post('create-account')
+  @ApiOperation({ deprecated: true })
   createNewAccount(@Body() dto: CreateAccountDto) {
     return this.authService.createNewAccount(dto);
+  }
+
+  @AllowUserWithoutOrganization()
+  @Post('update-personal-details')
+  updatePersonalDetails(
+    @Request() req: TokenRequest,
+    @Body() dto: UpdateUserDto,
+  ) {
+    return this.authService.updatePersonalDetails(req.tokenData.userId, dto);
+  }
+
+  @AllowUserWithoutOrganization()
+  @Post('create-organization')
+  createOrganization(
+    @Request() req: TokenRequest,
+    @Body() dto: CreateOrganizationDto,
+  ) {
+    return this.authService.createOrganization(req.tokenData.userId, dto);
   }
 
   @Post('validate-new-user')
