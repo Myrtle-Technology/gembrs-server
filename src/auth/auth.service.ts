@@ -31,6 +31,9 @@ import { TokenRepository } from './token.repository';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { CreateOneMemberDto } from 'src/member/dto/create-one-member.dto';
 import { InvitationService } from 'src/invitation/invitation.service';
+import { ObjectId } from 'mongoose';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
   private readonly isDevServer: string =
@@ -82,6 +85,27 @@ export class AuthService {
       token: code.toString(),
       identifier: identifier,
     });
+  }
+
+  async updatePersonalDetails(userId: ObjectId | string, dto: UpdateUserDto) {
+    // TODO: send a welcome Email to user
+    return this.userService.update(userId, dto);
+  }
+
+  async createOrganization(userId: string, dto: CreateOrganizationDto) {
+    dto.owner = userId;
+    const user = await this.userService.findById(userId);
+    const organization = await this.organizationService.createOne(dto);
+    const role = await this.roleService.getDefaultAdminRole();
+    const member = await this.memberService.create({
+      organization: organization._id,
+      user: userId,
+      role: role._id,
+      officeTitle: 'Host',
+    });
+    const _member = member.toObject<Member>();
+    this.mailService.welcomeRegisteredOrganization(user, organization);
+    return { ..._member, organization, user, role };
   }
 
   async validateOTP(dto: VerifyOtpDto) {
@@ -189,7 +213,7 @@ export class AuthService {
       owner: user._id,
     });
   }
-
+  /** @deprecated use {@link AuthService.updatePersonalDetails} and {@link AuthService.createOrganization} instead */
   async createNewAccount(dto: CreateAccountDto) {
     const user = (
       await this.userService.findOrCreate({
