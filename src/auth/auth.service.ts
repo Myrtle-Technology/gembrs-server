@@ -34,6 +34,7 @@ import { InvitationService } from 'src/invitation/invitation.service';
 import { ObjectId } from 'mongoose';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
   private readonly isDevServer: string =
@@ -88,8 +89,8 @@ export class AuthService {
   }
 
   async updatePersonalDetails(userId: ObjectId | string, dto: UpdateUserDto) {
-    // TODO: send a welcome Email to user
-    return this.userService.update(userId, dto);
+    await this.userService.update(userId, dto);
+    return this.getUserAuthData(await this.userService.findById(userId));
   }
 
   async createOrganization(userId: string, dto: CreateOrganizationDto) {
@@ -104,14 +105,15 @@ export class AuthService {
       officeTitle: 'Host',
     });
     const _member = member.toObject<Member>();
-    this.mailService.welcomeRegisteredOrganization(user, organization);
-    return { ..._member, organization, user, role };
+    this.mailService.welcomeRegisteredUserAndOrganization(user, organization);
+    return this.getMemberAuthData(_member);
   }
 
   async validateOTP(dto: VerifyOtpDto) {
-    const user = await this.userService.findByUsername(dto.username);
+    let userDto: CreateUserDto;
+    const usernameIsEmail = isEmail(dto.username);
     // if (!(this.isDevServer == 'true')) {
-    if (isEmail(dto.username)) {
+    if (usernameIsEmail) {
       const token = await this.tokenRepo.findByIdentifier(
         dto.otp,
         dto.username,
@@ -122,28 +124,43 @@ export class AuthService {
         );
       }
       await token.remove();
-      user.verifiedEmail = true;
+      userDto = { email: dto.username, verifiedEmail: true };
     } else {
-      this.smsService.verifyOTP(user.phone, dto.otp.toString());
-      user.verifiedPhone = true;
+      this.smsService.verifyOTP(dto.username, dto.otp.toString());
+      userDto = { phone: dto.username, verifiedPhone: true };
     }
     // }
-    await this.userService.repo.updateById(user._id, {
-      verifiedEmail: user.verifiedEmail,
-      verifiedPhone: user.verifiedPhone,
+    const [user] = await this.userService.findOrCreate(userDto);
+    return this.getUserAuthData(user);
+  }
+
+  async getUserAuthData(user: User) {
+    const organizations = this.organizationService.repo.find({
+      owner: user._id,
     });
     const payload = {
       username: user.email || user.phone,
       userId: user.id,
     };
-    // this access token will be used to access only 1 route
+    // this access token will be used to access only user routes routes
     // find User Organizations
     return {
-      accessToken: this.jwtService.sign(payload, { expiresIn: '24h' }),
+      accessToken: this.jwtService.sign(payload, { expiresIn: '30d' }),
       user: user,
+      organizations,
     };
   }
 
+  async setCurrentOrganization(user: string, organization: string) {
+    const member = await this.memberService.findByUserOrganization(
+      user,
+      organization,
+    );
+
+    return this.getMemberAuthData(member);
+  }
+
+  /** @deprecated No more password login */
   async validateMember(dto: LoginDto) {
     const user: User = await this.userService.findByUsername(dto.username);
     const organizationSlug = this.request.headers[
@@ -185,12 +202,13 @@ export class AuthService {
     return result;
   }
 
+  /** @deprecated No more password login */
   async loginToOrganization(dto: LoginDto) {
     const member = (this.request as any).user;
-    return this.getAuthData(member, dto);
+    return this.getMemberAuthData(member, dto);
   }
 
-  async getAuthData(member: Member, dto?: LoginDto) {
+  async getMemberAuthData(member: Member, dto?: LoginDto) {
     const payload: TokenData = {
       username: dto?.username || member.user.email || member.user.phone,
       memberId: member._id,
@@ -240,7 +258,7 @@ export class AuthService {
       // contactPhone: user.phone,
     });
     this.verifyEmailOrPhone({ username: user.email || user.phone });
-    return this.getAuthData(
+    return this.getMemberAuthData(
       await this.memberService.findById(member._id, [
         'organization',
         'user',
@@ -249,6 +267,7 @@ export class AuthService {
     );
   }
 
+  /** @deprecated Not needed anymore */
   async validateNewUserOTP(memberId: string, dto: VerifyOtpDto) {
     const user = await this.userService.findByUsername(dto.username);
     // if (!(this.isDevServer == 'true')) {
@@ -278,8 +297,11 @@ export class AuthService {
       'user',
       'role',
     ]);
-    this.mailService.welcomeRegisteredOrganization(user, member.organization);
-    return this.getAuthData(member);
+    this.mailService.welcomeRegisteredUserAndOrganization(
+      user,
+      member.organization,
+    );
+    return this.getMemberAuthData(member);
   }
 
   async initForgotMemberPassword() {

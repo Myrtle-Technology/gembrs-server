@@ -22,6 +22,7 @@ import { CreateAccountDto } from './dto/create-account.dto';
 import { CreateOneMemberDto } from 'src/member/dto/create-one-member.dto';
 import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { SetOrganizationDto } from './dto/set-organization.dto';
 
 @OrganizationApi()
 @ApiTags('Authentication')
@@ -55,6 +56,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Public()
   @Post('login')
+  @ApiOperation({ deprecated: true })
   login(@Body() dto: LoginDto) {
     return this.authService.loginToOrganization(dto);
   }
@@ -93,7 +95,20 @@ export class AuthController {
     return this.authService.createOrganization(req.tokenData.userId, dto);
   }
 
+  @AllowUserWithoutOrganization()
+  @Post('set-organization')
+  setCurrentOrganization(
+    @Request() req: TokenRequest,
+    @Body() dto: SetOrganizationDto,
+  ) {
+    return this.authService.setCurrentOrganization(
+      req.tokenData.userId,
+      dto.organization,
+    );
+  }
+
   @Post('validate-new-user')
+  @ApiOperation({ deprecated: true })
   validateNewUserOTP(
     @Request() request: TokenRequest,
     @Body() dto: VerifyOtpDto,

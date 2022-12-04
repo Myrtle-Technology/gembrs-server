@@ -85,7 +85,10 @@ export class MailService {
     });
   }
 
-  async welcomeRegisteredOrganization(user: User, organization: Organization) {
+  async welcomeRegisteredUserAndOrganization(
+    user: User,
+    organization: Organization,
+  ) {
     const memberUrl = `https://${organization.siteName}.${this.clientURL
       .replace('https://', '')
       .replace('http://', '')}`;

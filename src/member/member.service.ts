@@ -168,6 +168,16 @@ export class MemberService extends SharedService<MemberRepository> {
     );
   }
 
+  public async findByUserOrganization(
+    user: string,
+    organization: string,
+    relations: string[] = ['role', 'user', 'organization'],
+  ) {
+    return this.repo.findOne({ organization, user }, null, {
+      populate: relations,
+    });
+  }
+
   public async update(
     organization: string,
     id: ObjectId | string,
