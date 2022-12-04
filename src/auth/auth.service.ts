@@ -16,7 +16,6 @@ import { Member } from 'src/member/schemas/member.schema';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { OrganizationService } from 'src/organization/organization.service';
-import { FindUserOrganization } from './dto/find-user-organization..dto';
 import { MemberService } from 'src/member/member.service';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ConfigService } from '@nestjs/config';
@@ -222,10 +221,8 @@ export class AuthService {
     };
   }
 
-  async findUserOrganizations(
-    dto: FindUserOrganization,
-  ): Promise<Organization[]> {
-    const user = await this.userService.findByUsername(dto.username);
+  async findUserOrganizations(username: string): Promise<Organization[]> {
+    const user = await this.userService.findByUsername(username);
 
     return this.organizationService.repo.find({
       owner: user._id,

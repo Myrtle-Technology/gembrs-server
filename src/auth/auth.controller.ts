@@ -12,7 +12,6 @@ import { VerifyEmailDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AllowUserWithoutOrganization } from './decorators/allow-user-without-organization.decorator';
-import { FindUserOrganization } from './dto/find-user-organization..dto';
 import { Public } from './decorators/public.decorator';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { TokenRequest } from './interfaces/token-request.interface';
@@ -63,11 +62,8 @@ export class AuthController {
 
   @AllowUserWithoutOrganization()
   @Post('find-organizations')
-  findUserOrganizations(
-    @Request() req: TokenRequest,
-    @Body() dto: FindUserOrganization,
-  ) {
-    return this.authService.findUserOrganizations(dto);
+  findUserOrganizations(@Request() req: TokenRequest) {
+    return this.authService.findUserOrganizations(req.tokenData.username);
   }
 
   @Public()
