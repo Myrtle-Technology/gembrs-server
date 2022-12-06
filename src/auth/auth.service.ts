@@ -60,7 +60,7 @@ export class AuthService {
     return this.request.tokenData.organizationId;
   }
 
-  async verifyEmailOrPhone(dto: VerifyEmailDto) {
+  async sendOtpToEmailOrPhone(dto: VerifyEmailDto) {
     // if (!(this.isDevServer == 'true')) {
     if (isEmail(dto.username)) {
       const code = Math.floor(100000 + Math.random() * 900000);
@@ -72,7 +72,7 @@ export class AuthService {
     } else {
       const response = await this.smsService.sendOTP(dto.username);
       console.log('AuthService', response.data);
-      const token = await this.createToken(dto.username, response.pin_id);
+      await this.createToken(dto.username, response.pin_id);
     }
     // }
     return { message: 'otp sent to user' };
@@ -115,10 +115,10 @@ export class AuthService {
     const usernameIsEmail = isEmail(dto.username);
     // if (!(this.isDevServer == 'true')) {
     if (usernameIsEmail) {
-      const token = await this.tokenRepo.findByIdentifier(
-        dto.otp,
-        dto.username,
-      );
+      const token = await this.tokenRepo.findByIdentifier({
+        token: dto.otp,
+        identifier: dto.username,
+      });
       if (!token) {
         throw new BadRequestException(
           `The one time password (OTP) you entered is invalid`,
@@ -127,7 +127,10 @@ export class AuthService {
       await token.remove();
       userDto = { email: dto.username, verifiedEmail: true };
     } else {
-      this.smsService.verifyOTP(dto.username, dto.otp.toString());
+      const token = await this.tokenRepo.findByIdentifier({
+        identifier: dto.username,
+      });
+      this.smsService.verifyOTP(token.token, dto.otp.toString());
       userDto = { phone: dto.username, verifiedPhone: true };
     }
     // }
@@ -256,7 +259,7 @@ export class AuthService {
       officeTitle: dto.officeTitle,
       // contactPhone: user.phone,
     });
-    this.verifyEmailOrPhone({ username: user.email || user.phone });
+    this.sendOtpToEmailOrPhone({ username: user.email || user.phone });
     return this.getMemberAuthData(
       await this.memberService.findById(member._id, [
         'organization',
@@ -271,10 +274,10 @@ export class AuthService {
     const user = await this.userService.findByUsername(dto.username);
     // if (!(this.isDevServer == 'true')) {
     if (isEmail(dto.username)) {
-      const token = await this.tokenRepo.findByIdentifier(
-        dto.otp,
-        dto.username,
-      );
+      const token = await this.tokenRepo.findByIdentifier({
+        token: dto.otp,
+        identifier: dto.username,
+      });
       if (!token) {
         throw new BadRequestException(
           `The one time password (OTP) you entered is invalid`,

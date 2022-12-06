@@ -43,7 +43,7 @@ export class AuthController {
   @Public()
   @Post('verify-email-or-phone')
   verifyEmailOrPhone(@Body() dto: VerifyEmailDto) {
-    return this.authService.verifyEmailOrPhone(dto);
+    return this.authService.sendOtpToEmailOrPhone(dto);
   }
 
   @Public()

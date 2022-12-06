@@ -40,11 +40,8 @@ export class SmsService {
     );
   }
 
-  verifyOTP(phone: string, otp: string) {
-    if (!isPhoneNumber(phone)) {
-      throw Error('Invalid phone number');
-    }
-    return this.termii.verifyOtp(phone.replace('+', ''), otp);
+  verifyOTP(pinId: string, otp: string) {
+    return this.termii.verifyOtp(pinId, otp);
   }
 
   sendOTP(phone: string) {
