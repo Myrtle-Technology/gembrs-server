@@ -63,7 +63,7 @@ export class MemberService extends SharedService<MemberRepository> {
     if (!membership) {
       throw new BadRequestException('Membership level not found');
     }
-    const [user] = await this.userService.findOrCreate(dto);
+    const [user] = await this.userService.findUpdateOrCreate(dto);
     const role = await this.roleService.getDefaultMemberRole();
     const member = (await this.create({
       user: user._id,

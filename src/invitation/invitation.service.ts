@@ -168,7 +168,7 @@ export class InvitationService extends SharedService<InvitationRepository> {
     dto: InviteMemberDto,
     serverBaseUrl: string,
   ) {
-    const [user] = await this.userService.findOrCreate(dto);
+    const [user] = await this.userService.findUpdateOrCreate(dto);
     const role = await this.roleService.getDefaultMemberRole();
     const invitation = await this.createOne({
       user: user._id,

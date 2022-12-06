@@ -15,13 +15,13 @@ export class UserService extends SharedService<UserRepository> {
     super(repo);
   }
 
-  public async findOrCreate(dto: CreateUserDto) {
+  public async findUpdateOrCreate(dto: CreateUserDto) {
     if (!(dto.email || dto.phone)) {
       throw new BadRequestException(
         'You need to enter either your email or phone number',
       );
     }
-    return this.repo.findOrCreate(dto);
+    return this.repo.findOneAndUpdateOrCreate(dto);
   }
 
   public async findByUsername(username: string, throwError = true) {

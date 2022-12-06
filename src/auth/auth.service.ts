@@ -134,7 +134,9 @@ export class AuthService {
       userDto = { phone: dto.username, verifiedPhone: true };
     }
     // }
-    const [user, isNewUser] = await this.userService.findOrCreate(userDto);
+    const [user, isNewUser] = await this.userService.findUpdateOrCreate(
+      userDto,
+    );
     return this.getUserAuthData(user, isNewUser);
   }
 
@@ -236,7 +238,7 @@ export class AuthService {
   /** @deprecated use {@link AuthService.updatePersonalDetails} and {@link AuthService.createOrganization} instead */
   async createNewAccount(dto: CreateAccountDto) {
     const user = (
-      await this.userService.findOrCreate({
+      await this.userService.findUpdateOrCreate({
         email: dto.email,
         firstName: dto.firstName,
         lastName: dto.lastName,

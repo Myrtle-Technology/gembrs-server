@@ -17,7 +17,9 @@ export class UserRepository extends SharedRepository<
     super(model);
   }
 
-  public async findOrCreate(dto: CreateUserDto): Promise<[User, boolean]> {
+  public async findOneAndUpdateOrCreate(
+    dto: CreateUserDto,
+  ): Promise<[User, boolean]> {
     const query =
       dto.email && dto.phone
         ? { $or: [{ email: dto.email }, { phone: dto.phone }] }
