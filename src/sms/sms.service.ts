@@ -51,6 +51,6 @@ export class SmsService {
     if (!isPhoneNumber(phone)) {
       throw Error('Invalid phone number');
     }
-    return this.termii.sendOtp(phone.replace('+', ''), 'Gembrs', 'dnd');
+    return this.termii.sendOtp(phone.replace('+', ''));
   }
 }

@@ -25,7 +25,7 @@ export class TermiiService {
   private checkIfApiKeyIsSet() {
     if (!this.apiKey) {
       throw new Error(
-        'TERMII_API_KEY is not set. Visit https://termii.com/account/api to get your api key',
+        'TERMII API KEY is not set. Visit https://termii.com/account/api to get your api key',
       );
     }
   }
@@ -61,7 +61,7 @@ export class TermiiService {
       return response.data;
     } catch (error) {
       console.log(error.response.data);
-      return error;
+      return;
     }
   }
 
@@ -81,7 +81,7 @@ export class TermiiService {
 
   async sendOtp(
     to: string,
-    from: string,
+    from: string = null,
     channel: 'generic' | 'whatsapp' | 'dnd' = 'generic',
   ) {
     this.checkIfApiKeyIsSet();
@@ -93,7 +93,7 @@ export class TermiiService {
           api_key: this.apiKey,
           message_type: 'NUMERIC',
           to: to,
-          from: from,
+          from: 'Gembrs',
           channel: channel,
           pin_attempts: 10,
           pin_time_to_live: 5,
@@ -106,7 +106,7 @@ export class TermiiService {
       return response.data;
     } catch (error) {
       console.log(error.response.data);
-      return error;
+      return;
     }
   }
 
