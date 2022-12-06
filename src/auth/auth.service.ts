@@ -70,7 +70,9 @@ export class AuthService {
         token.toObject().token,
       );
     } else {
-      await this.smsService.sendOTP(dto.username);
+      const response = await this.smsService.sendOTP(dto.username);
+      console.log('AuthService', response.data);
+      const token = await this.createToken(dto.username, response.pin_id);
     }
     // }
     return { message: 'otp sent to user' };
@@ -129,24 +131,24 @@ export class AuthService {
       userDto = { phone: dto.username, verifiedPhone: true };
     }
     // }
-    const [user] = await this.userService.findOrCreate(userDto);
-    return this.getUserAuthData(user);
+    const [user, isNewUser] = await this.userService.findOrCreate(userDto);
+    return this.getUserAuthData(user, isNewUser);
   }
 
-  async getUserAuthData(user: User) {
-    const organizations = this.organizationService.repo.find({
+  async getUserAuthData(user: User, isNewUser = false) {
+    const organizations = await this.organizationService.repo.find({
       owner: user._id,
     });
-    const payload = {
+    const payload: Partial<TokenData> = {
       username: user.email || user.phone,
       userId: user.id,
     };
-    // this access token will be used to access only user routes routes
-    // find User Organizations
+    // this access token will be used to access user only routes
     return {
       accessToken: this.jwtService.sign(payload, { expiresIn: '30d' }),
       user: user,
       organizations,
+      isNewUser,
     };
   }
 
