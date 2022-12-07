@@ -34,8 +34,8 @@ export class OrganizationController {
   @Public()
   @ApiOperation({ summary: 'Find all Organizations' })
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query('limit') limit: string) {
+    return this.service.findAll(+(limit ?? 5));
   }
 
   @Public()
