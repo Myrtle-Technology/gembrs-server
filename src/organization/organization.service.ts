@@ -46,7 +46,7 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
     return organization;
   }
 
-  public async findAll(limit = 5, filter?: FilterQuery<Organization>) {
+  public async findAll(limit?: number, filter?: FilterQuery<Organization>) {
     return this.repo.find({ ...filter }, null, { limit });
   }
 

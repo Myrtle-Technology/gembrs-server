@@ -34,7 +34,7 @@ import { ObjectId } from 'mongoose';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import slugify from 'slugify';
+
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
   private readonly isDevServer: string =
