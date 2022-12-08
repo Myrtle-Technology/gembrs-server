@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilterQuery, ObjectId } from 'mongoose';
+import slugify from 'slugify';
 import { CustomFieldDefaults } from 'src/custom-field/custom-field.defaults';
 import { CustomFieldService } from 'src/custom-field/custom-field.service';
 import { CustomField } from 'src/custom-field/schemas/custom-field.schema';
@@ -31,7 +32,10 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
   ];
 
   public async createOne(dto: CreateOrganizationDto) {
-    return this.repo.create(dto);
+    return this.repo.create({
+      ...dto,
+      siteName: dto.siteName ?? slugify(dto.name),
+    });
   }
 
   public async findBySiteName(siteName: string, throwError = true) {

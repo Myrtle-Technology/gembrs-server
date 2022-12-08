@@ -102,10 +102,7 @@ export class AuthService {
   async createOrganization(userId: string, dto: CreateOrganizationDto) {
     dto.owner = userId;
     const user = await this.userService.findById(userId);
-    const organization = await this.organizationService.createOne({
-      ...dto,
-      siteName: slugify(dto.name),
-    });
+    const organization = await this.organizationService.createOne(dto);
     const role = await this.roleService.getDefaultAdminRole();
     const member = await this.memberService.create({
       organization: organization._id,
