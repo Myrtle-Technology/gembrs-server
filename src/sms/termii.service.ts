@@ -7,6 +7,7 @@ import { TermiiSendSmsResponse } from './interfaces/termii-send-sms-response.int
 @Injectable()
 export class TermiiService {
   private readonly TERMII_URL = 'https://termii.com/api';
+  private readonly TERMII_SENDER_ID = 'Gembrs';
   private readonly apiKey = this.configService.get<string>('TERMII_API_KEY');
   private axios = axios.create({
     baseURL: this.TERMII_URL,
@@ -33,27 +34,17 @@ export class TermiiService {
   async sendSms(
     to: string,
     message: string,
-    from: string = null,
     channel: 'generic' | 'whatsapp' | 'dnd' = 'generic',
   ) {
     this.checkIfApiKeyIsSet();
 
     try {
-      if (!from && channel === 'generic') {
-        return await this.sendSMSFromRandomNumber(to, message);
-      }
-      if (!from && channel !== 'generic') {
-        throw new InternalServerErrorException(
-          "'From' phone number is required for non-generic channels",
-        );
-      }
-
       const response = await this.axios.post<TermiiSendSmsResponse>(
         '/sms/send',
         new TermiiRequestParams({
           to,
           sms: message,
-          from,
+          from: this.TERMII_SENDER_ID,
           ...this.data,
           channel,
         }).toString(),
@@ -81,7 +72,6 @@ export class TermiiService {
 
   async sendOtp(
     to: string,
-    from: string = null,
     channel: 'generic' | 'whatsapp' | 'dnd' = 'generic',
   ) {
     this.checkIfApiKeyIsSet();
@@ -93,35 +83,42 @@ export class TermiiService {
           api_key: this.apiKey,
           message_type: 'NUMERIC',
           to: to,
-          from: 'Gembrs',
+          from: this.TERMII_SENDER_ID,
           channel: channel,
           pin_attempts: 10,
-          pin_time_to_live: 5,
+          pin_time_to_live: 15,
           pin_length: 6,
           pin_placeholder: '< 1234 >',
-          message_text: 'Your pin is < 1234 >',
+          message_text: `Your ${this.TERMII_SENDER_ID} App pin is < 1234 >. Please enter this pin to continue. This pin will expire in 15 minutes`,
           pin_type: 'NUMERIC',
         }),
       );
       return response.data;
     } catch (error) {
-      console.log(error.response.data);
-      return;
+      throw new InternalServerErrorException(
+        error,
+        'Sorry we are unable to send you a verification token at this time, please try again later',
+      );
     }
   }
 
   async verifyOtp(pin_id: string, pin: string) {
     this.checkIfApiKeyIsSet();
-
-    return (
-      await this.axios.post(
+    try {
+      return await this.axios.post(
         '/sms/otp/verify',
         new TermiiRequestParams({
           api_key: this.apiKey,
           pin_id,
           pin,
         }).toString(),
-      )
-    ).data;
+      );
+    } catch (error) {
+      console.log(error.status, error.response?.data);
+      throw new InternalServerErrorException(
+        error,
+        'Sorry we are unable to verify your OTP at this time, please try again later',
+      );
+    }
   }
 }

@@ -71,11 +71,15 @@ export class AuthService {
       );
     } else {
       const response = await this.smsService.sendOTP(dto.username);
-      console.log('AuthService', response.data);
-      await this.createToken(dto.username, response.pin_id);
+      if (!(response && response.pinId)) {
+        throw new BadRequestException(
+          'Sorry we are unable to send you a verification token at this time, please try again later',
+        );
+      }
+      await this.createToken(dto.username, response.pinId);
     }
     // }
-    return { message: 'otp sent to user' };
+    return { message: `A verification code has been sent to ${dto.username}` };
   }
 
   async createToken(identifier: string, code: string) {
@@ -84,7 +88,7 @@ export class AuthService {
       await token.remove();
     }
     return this.tokenRepo.create({
-      token: code.toString(),
+      token: code,
       identifier: identifier,
     });
   }
@@ -130,8 +134,22 @@ export class AuthService {
       const token = await this.tokenRepo.findByIdentifier({
         identifier: dto.username,
       });
-      this.smsService.verifyOTP(token.token, dto.otp.toString());
-      userDto = { phone: dto.username, verifiedPhone: true };
+      if (!token) {
+        throw new BadRequestException(
+          `The one time password (OTP) you entered is invalid`,
+        );
+      }
+      const isVerified = await this.smsService.verifyOTP(
+        token.token,
+        dto.otp.toString(),
+      );
+      if (!isVerified) {
+        throw new BadRequestException(
+          `The one time password (OTP) you entered is invalid`,
+        );
+      }
+      await token.remove();
+      userDto = { phone: dto.username, verifiedPhone: isVerified };
     }
     // }
     const [user, isNewUser] = await this.userService.findUpdateOrCreate(

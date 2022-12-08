@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { isPhoneNumber } from 'class-validator';
 import { APP_NAME } from 'src/app.constants';
 import { Invitation } from 'src/invitation/schemas/invitation.schema';
@@ -15,39 +15,42 @@ export class SmsService {
     return this.termii.sendSms(
       phone.replace('+', ''),
       `Welcome to ${APP_NAME}`,
-      APP_NAME,
     );
   }
 
-  sendMemberInviteSMS(invitation: Invitation, link: string) {
-    if (!isPhoneNumber(invitation.user.phone)) {
+  sanitizePhoneNumber(phone: string) {
+    if (!isPhoneNumber(phone)) {
       throw Error('Invalid phone number');
     }
+    return phone.replace('+', '');
+  }
+
+  sendMemberInviteSMS(invitation: Invitation, link: string) {
+    const phone = this.sanitizePhoneNumber(invitation.user.phone);
     return this.termii.sendSms(
-      invitation.user.phone.replace('+', ''),
+      phone,
       `You have been invited to join ${invitation.organization.name} on ${APP_NAME}. Kindly click on the link below to join. ${link}`,
-      APP_NAME,
     );
   }
 
   sendOTPLocal(phone: string, otp: string) {
-    if (!isPhoneNumber(phone)) {
-      throw Error('Invalid phone number');
-    }
     return this.termii.sendSms(
-      phone.replace('+', ''),
+      this.sanitizePhoneNumber(phone),
       `Your otp is ${otp} from ${APP_NAME}`,
     );
   }
 
-  verifyOTP(pinId: string, otp: string) {
-    return this.termii.verifyOtp(pinId, otp);
+  async verifyOTP(pinId: string, otp: string) {
+    const response = await this.termii.verifyOtp(pinId, otp);
+    if (response && response.status == 200 && response.data.verified == true) {
+      return true;
+    }
+    throw new BadRequestException(
+      `The one time password (OTP) you entered is invalid`,
+    );
   }
 
   sendOTP(phone: string) {
-    if (!isPhoneNumber(phone)) {
-      throw Error('Invalid phone number');
-    }
-    return this.termii.sendOtp(phone.replace('+', ''));
+    return this.termii.sendOtp(this.sanitizePhoneNumber(phone));
   }
 }
