@@ -34,6 +34,7 @@ import { ObjectId } from 'mongoose';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import slugify from 'slugify';
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
   private readonly isDevServer: string =
@@ -101,7 +102,10 @@ export class AuthService {
   async createOrganization(userId: string, dto: CreateOrganizationDto) {
     dto.owner = userId;
     const user = await this.userService.findById(userId);
-    const organization = await this.organizationService.createOne(dto);
+    const organization = await this.organizationService.createOne({
+      ...dto,
+      siteName: slugify(dto.name),
+    });
     const role = await this.roleService.getDefaultAdminRole();
     const member = await this.memberService.create({
       organization: organization._id,

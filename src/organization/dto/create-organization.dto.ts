@@ -7,6 +7,7 @@ export class CreateOrganizationDto {
   @IsString()
   name: string;
 
+  @IsOptional()
   @IsSlug()
   @IsUnique(
     { property: 'siteName', name: 'Organization', schema: OrganizationSchema },
