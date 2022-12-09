@@ -64,23 +64,31 @@ export class AuthService {
   async sendOtpToEmailOrPhone(dto: VerifyEmailDto) {
     // if (!(this.isDevServer == 'true')) {
     if (isEmail(dto.username)) {
-      const code = Math.floor(100000 + Math.random() * 900000);
-      const token = await this.createToken(dto.username, code.toString());
-      await this.mailService.sendVerificationCode(
-        dto.username,
-        token.toObject().token,
-      );
+      await this.sendTokenToEmail(dto);
     } else {
-      const response = await this.smsService.sendOTP(dto.username);
-      if (!(response && response.pinId)) {
-        throw new BadRequestException(
-          'Sorry we are unable to send you a verification token at this time, please try again later',
-        );
-      }
-      await this.createToken(dto.username, response.pinId);
+      await this.sendTokenToPhone(dto);
     }
     // }
     return { message: `A verification code has been sent to ${dto.username}` };
+  }
+
+  private async sendTokenToPhone(dto: VerifyEmailDto) {
+    const response = await this.smsService.sendOTP(dto.username);
+    if (!(response && response.pinId)) {
+      throw new BadRequestException(
+        'Sorry we are unable to send you a verification token at this time, please try again later',
+      );
+    }
+    await this.createToken(dto.username, response.pinId);
+  }
+
+  private async sendTokenToEmail(dto: VerifyEmailDto) {
+    const code = Math.floor(100000 + Math.random() * 900000);
+    const token = await this.createToken(dto.username, code.toString());
+    await this.mailService.sendVerificationCode(
+      dto.username,
+      token.toObject().token,
+    );
   }
 
   async createToken(identifier: string, code: string) {
@@ -120,43 +128,58 @@ export class AuthService {
     const usernameIsEmail = isEmail(dto.username);
     // if (!(this.isDevServer == 'true')) {
     if (usernameIsEmail) {
-      const token = await this.tokenRepo.findByIdentifier({
-        token: dto.otp,
-        identifier: dto.username,
-      });
-      if (!token) {
-        throw new BadRequestException(
-          `The one time password (OTP) you entered is invalid`,
-        );
-      }
-      await token.remove();
-      userDto = { email: dto.username, verifiedEmail: true };
+      userDto = await this.validateEmailOtp(dto);
     } else {
-      const token = await this.tokenRepo.findByIdentifier({
-        identifier: dto.username,
-      });
-      if (!token) {
-        throw new BadRequestException(
-          `The one time password (OTP) you entered is invalid`,
-        );
-      }
-      const isVerified = await this.smsService.verifyOTP(
-        token.token,
-        dto.otp.toString(),
-      );
-      if (!isVerified) {
-        throw new BadRequestException(
-          `The one time password (OTP) you entered is invalid`,
-        );
-      }
-      await token.remove();
-      userDto = { phone: dto.username, verifiedPhone: isVerified };
+      userDto = await this.validatePhoneOtp(dto);
     }
     // }
     const [user, isNewUser] = await this.userService.findUpdateOrCreate(
       userDto,
     );
     return this.getUserAuthData(user, isNewUser);
+  }
+
+  private async validatePhoneOtp(dto: VerifyOtpDto) {
+    const token = await this.tokenRepo.findByIdentifier({
+      identifier: dto.username,
+    });
+    if (!token) {
+      throw new BadRequestException(
+        `The one time password (OTP) you entered is invalid`,
+      );
+    }
+    if (token.verified) {
+      throw new BadRequestException(
+        `The one time password (OTP) you entered has already been used`,
+      );
+    }
+    const isVerified = await this.smsService.verifyOTP(
+      token.token,
+      dto.otp.toString(),
+    );
+    if (!isVerified) {
+      throw new BadRequestException(
+        `The one time password (OTP) you entered is invalid`,
+      );
+    }
+    token.verified = true;
+    await token.save();
+    return { phone: dto.username, verifiedPhone: isVerified };
+  }
+
+  private async validateEmailOtp(dto: VerifyOtpDto) {
+    const token = await this.tokenRepo.findByIdentifier({
+      token: dto.otp,
+      identifier: dto.username,
+    });
+    if (!token) {
+      throw new BadRequestException(
+        `The one time password (OTP) you entered is invalid`,
+      );
+    }
+    token.verified = true;
+    await token.save();
+    return { email: dto.username, verifiedEmail: true };
   }
 
   async getUserAuthData(user: User, isNewUser = false) {

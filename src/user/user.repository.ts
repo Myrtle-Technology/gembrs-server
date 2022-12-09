@@ -27,7 +27,6 @@ export class UserRepository extends SharedRepository<
         ? { email: dto.email }
         : { phone: dto.phone };
     const user = await this.model.findOneAndUpdate(query, dto, {
-      upsert: true,
       new: true,
     });
     if (!user) {
