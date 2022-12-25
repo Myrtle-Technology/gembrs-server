@@ -84,5 +84,5 @@ UserSchema.post('save', function (error, doc, next) {
     next(new BadRequestException('Bad input try again'));
   }
 });
-
+UserSchema.index({ '$**': 'text' });
 UserSchema.plugin(mongoosePagination);

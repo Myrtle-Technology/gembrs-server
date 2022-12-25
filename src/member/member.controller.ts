@@ -16,7 +16,7 @@ import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator'
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 import { ResourcesEnum } from 'src/role/enums/resources.enum';
 import { Permit } from 'src/role/decorators/permit.decorator';
-import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
+import { PaginationQuery } from 'src/shared/paginator/decorator';
 import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
 import { CreateOneMemberDto } from './dto/create-one-member.dto';
 
@@ -48,7 +48,7 @@ export class MemberController {
   })
   findAll(
     @Req() request: TokenRequest,
-    @CursorPaginateQuery() params: Record<string, string>,
+    @PaginationQuery() params: Record<string, string>,
   ) {
     return this.service.findAndPaginate(
       request.tokenData.organizationId,

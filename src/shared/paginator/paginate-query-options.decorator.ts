@@ -4,8 +4,8 @@ import { ApiQuery } from '@nestjs/swagger';
 export function CursorPaginateQueryOptions() {
   return applyDecorators(
     ApiQuery({ name: 'limit', required: false, type: Number }),
-    ApiQuery({ name: 'nextCursor', required: false, type: 'string' }),
-    ApiQuery({ name: 'previousCursor', required: false, type: 'string' }),
+    ApiQuery({ name: 'page', required: false, type: 'string' }),
+    ApiQuery({ name: 'search', required: false, type: 'string' }),
     ApiQuery({
       name: 'fields',
       required: false,
@@ -30,6 +30,12 @@ export function CursorPaginateQueryOptions() {
       isArray: true,
       type: 'string',
       description: 'Relations to include in the response',
+    }),
+    ApiQuery({
+      name: 'filter',
+      required: false,
+      type: 'object',
+      description: 'Filter the response and search',
     }),
   );
 }
