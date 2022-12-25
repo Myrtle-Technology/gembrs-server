@@ -49,4 +49,8 @@ export class UserService extends SharedService<UserRepository> {
   public async remove(id: ObjectId | string) {
     return this.repo.deleteById(id);
   }
+
+  public async findUserOrganizations(user: string) {
+    return this.repo.findUserOrganizations(user);
+  }
 }

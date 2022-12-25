@@ -32,30 +32,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     ]);
     const request: TokenRequest = context.switchToHttp().getRequest();
     if (isPublic) {
-      const organizationSlug = request.headers[
-        ORGANIZATION_API_HEADER
-      ] as string;
-
-      if (organizationSlug == 'gembrs') {
-        return true;
-      }
-
-      if (!organizationSlug) {
-        throw new BadRequestException(
-          'Please specify the organization you want to access',
-        );
-      }
-
-      return this.organizationService
-        .findBySiteName(organizationSlug)
-        .then((organization) => {
-          if (!organization)
-            throw new NotFoundException(
-              'No organization with the specified site name was found',
-            );
-          request.organization = organization;
-          return !!organization;
-        });
+      return this.handlePublicRoutes(request);
     }
     const bearerToken: string[] = (request.headers.authorization || '').split(
       ' ',
@@ -73,6 +50,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       ]);
 
     // if it is not an a allowUserWithoutOrganization route,
+    // and user has organizations, check if user is a member of the organization
+    if (
+      !allowUserWithoutOrganization &&
+      request.tokenData?.organizations.length
+    ) {
+      this.handleLoggedInUserButNoOrganization(request);
+    }
+
+    // if it is not an a allowUserWithoutOrganization route,
     // and user has no organization, throw exception
     if (!allowUserWithoutOrganization && !request.tokenData?.organizationId) {
       throw new UnauthorizedException(
@@ -80,5 +66,60 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       );
     }
     return super.canActivate(context);
+  }
+
+  async handleLoggedInUserButNoOrganization(request: TokenRequest) {
+    // check if user is a member of the organization
+    const organizationSlug = request.headers[ORGANIZATION_API_HEADER] as string;
+    if (!organizationSlug) {
+      throw new BadRequestException(
+        'Please specify the organization you want to access',
+      );
+    }
+    const organization = await this.organizationService.findBySiteName(
+      organizationSlug,
+    );
+    if (!organization) {
+      throw new UnauthorizedException(
+        'User is not allowed to access this route',
+      );
+    }
+    request.organization = organization;
+
+    const userIsAMember = request.tokenData.organizations.includes(
+      organization._id,
+    );
+
+    if (userIsAMember) {
+      // set organizationId to the organization the user is a member of
+      request.tokenData.organizationId = organization._id;
+    }
+
+    throw new UnauthorizedException('User is not allowed to access this route');
+  }
+
+  async handlePublicRoutes(request: TokenRequest) {
+    const organizationSlug = request.headers[ORGANIZATION_API_HEADER] as string;
+
+    if (organizationSlug == 'gembrs') {
+      return true;
+    }
+
+    if (!organizationSlug) {
+      throw new BadRequestException(
+        'Please specify the organization you want to access',
+      );
+    }
+
+    return this.organizationService
+      .findBySiteName(organizationSlug)
+      .then((organization) => {
+        if (!organization)
+          throw new NotFoundException(
+            'No organization with the specified site name was found',
+          );
+        request.organization = organization;
+        return !!organization;
+      });
   }
 }

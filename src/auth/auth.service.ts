@@ -183,12 +183,11 @@ export class AuthService {
   }
 
   async getUserAuthData(user: User, isNewUser = false) {
-    const organizations = await this.organizationService.repo.find({
-      owner: user._id,
-    });
+    const organizations = await this.userService.findUserOrganizations(user.id);
     const payload: Partial<TokenData> = {
       username: user.email || user.phone,
       userId: user.id,
+      organizations: organizations.map((org) => org._id),
     };
     // this access token will be used to access user only routes
     return {
@@ -257,13 +256,19 @@ export class AuthService {
   }
 
   async getMemberAuthData(member: Member, dto?: LoginDto) {
+    // fetch user organizations
     const payload: TokenData = {
       username: dto?.username || member.user.email || member.user.phone,
       memberId: member._id,
       organizationId: member.organization?._id ?? member.organization,
       userId: member.user?._id ?? member.user,
       roleId: member.role?._id ?? member.role,
+      organizations: [],
     };
+    const organizations = await this.userService.findUserOrganizations(
+      payload.userId,
+    );
+    payload.organizations = organizations.map((org) => org._id);
     return {
       accessToken: this.jwtService.sign(payload),
       user: member,
@@ -273,9 +278,7 @@ export class AuthService {
   async findUserOrganizations(username: string): Promise<Organization[]> {
     const user = await this.userService.findByUsername(username);
 
-    return this.organizationService.repo.find({
-      owner: user._id,
-    });
+    return this.userService.findUserOrganizations(user._id);
   }
   /** @deprecated use {@link AuthService.updatePersonalDetails} and {@link AuthService.createOrganization} instead */
   async createNewAccount(dto: CreateAccountDto) {
