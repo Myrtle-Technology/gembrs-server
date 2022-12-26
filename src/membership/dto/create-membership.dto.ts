@@ -9,6 +9,7 @@ import {
   IsString,
 } from 'class-validator';
 import { CreateCustomFieldDto } from 'src/custom-field/dto/create-custom-field.dto';
+import { MembershipAccess } from '../enums/membership-access.enum';
 import { MembershipType } from '../enums/membership-type.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { BundleAdminWorkflowSettings } from '../schemas/bundle-admin-workflow-settings.schema';
@@ -36,12 +37,8 @@ export class CreateMembershipDto {
   @IsEnum(MembershipType)
   type: MembershipType;
 
-  @IsBoolean()
-  isPublic: boolean;
-
-  @IsOptional()
-  @IsArray()
-  changeableTo: string[];
+  @IsEnum(MembershipAccess)
+  access: MembershipAccess;
 
   @IsOptional()
   @IsArray()
@@ -52,13 +49,22 @@ export class CreateMembershipDto {
   renewalPeriod: RenewalPeriod;
 
   @IsOptional()
-  approveApplication: boolean;
-
-  @IsOptional()
   active: boolean;
 
   @IsOptional()
   organization: string;
+
+  /*
+
+  @IsOptional()
+  @IsArray()
+  changeableTo: string[];
+
+  @IsBoolean()
+  isPublic: boolean;
+
+  @IsOptional()
+  approveApplication: boolean;
 
   @IsOptional()
   @ApiProperty({ type: () => BundleAdminWorkflowSettings })
@@ -82,5 +88,5 @@ export class CreateMembershipDto {
 
   @IsOptional()
   @ApiProperty({ type: () => RenewalReminder })
-  renewalReminderOnDueDate: RenewalReminder;
+  renewalReminderOnDueDate: RenewalReminder;*/
 }
