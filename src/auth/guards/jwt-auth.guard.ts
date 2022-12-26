@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -8,6 +9,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
+import { Observable } from 'rxjs';
 import { OrganizationService } from 'src/organization/organization.service';
 import { USER_WITHOUT_ORGANIZATION } from '../decorators/allow-user-without-organization.decorator';
 import { ORGANIZATION_API_HEADER } from '../decorators/organization-api.decorator';
@@ -50,52 +52,51 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       ]);
 
     // if it is not an a allowUserWithoutOrganization route,
-    // and user has organizations, check if user is a member of the organization
-    if (
-      !allowUserWithoutOrganization &&
-      request.tokenData?.organizations.length
-    ) {
-      this.handleLoggedInUserButNoOrganization(request);
-    }
-
-    // if it is not an a allowUserWithoutOrganization route,
     // and user has no organization, throw exception
     if (!allowUserWithoutOrganization && !request.tokenData?.organizationId) {
+      // if it is not an a allowUserWithoutOrganization route,
+      // and user has organizations, check if user is a member of the organization
+      if (request.tokenData?.organizations.length) {
+        return this.handleLoggedInUserAndHasOrganizations(context);
+      }
       throw new UnauthorizedException(
-        'User is not allowed to access this route',
+        'User is not allowed to access this route ',
       );
     }
     return super.canActivate(context);
   }
 
-  async handleLoggedInUserButNoOrganization(request: TokenRequest) {
+  async handleLoggedInUserAndHasOrganizations(
+    context: ExecutionContext,
+  ): Promise<any> {
+    throw new ForbiddenException('You are not a member of this community');
+    /*const request: TokenRequest = context.switchToHttp().getRequest();
     // check if user is a member of the organization
     const organizationSlug = request.headers[ORGANIZATION_API_HEADER] as string;
-    if (!organizationSlug) {
+    if (!organizationSlug || organizationSlug == 'gembrs') {
       throw new BadRequestException(
         'Please specify the organization you want to access',
       );
     }
     const organization = await this.organizationService.findBySiteName(
       organizationSlug,
+      false,
     );
     if (!organization) {
-      throw new UnauthorizedException(
-        'User is not allowed to access this route',
-      );
+      return false;
     }
     request.organization = organization;
 
     const userIsAMember = request.tokenData.organizations.includes(
-      organization._id,
+      organization.id,
     );
 
-    if (userIsAMember) {
-      // set organizationId to the organization the user is a member of
-      request.tokenData.organizationId = organization._id;
+    if (!userIsAMember) {
+      throw new ForbiddenException('You are not a member of this community');
     }
-
-    throw new UnauthorizedException('User is not allowed to access this route');
+    // set organizationId to the organization the user is a member of
+    request.tokenData.organizationId = organization.id;
+    return super.canActivate(context);*/
   }
 
   async handlePublicRoutes(request: TokenRequest) {

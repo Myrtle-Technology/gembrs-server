@@ -23,7 +23,7 @@ export const PaginationQuery = createParamDecorator(
       limit: +query.limit,
       sort: query.sort as string,
       page: +`${query.page}`,
-      query: JSON.parse(query.filter as string),
+      query: JSON.parse((query.filter as string) || '{}'),
       populate: query.include ? (query.include as string[]) : [],
     };
     return _query;
