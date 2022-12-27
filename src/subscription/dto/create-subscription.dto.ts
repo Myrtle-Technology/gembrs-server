@@ -3,7 +3,7 @@ import { SubscriptionStatus } from '../enums/subscription-status.enum';
 
 export class CreateSubscriptionDto {
   organization: string;
-  member: string;
+  user: string;
   membership: string;
   status: SubscriptionStatus;
   currentPeriodStart: Date;

@@ -1,5 +1,6 @@
 import {
   FilterQuery,
+  InsertManyOptions,
   Model,
   ObjectId,
   ProjectionType,
@@ -89,6 +90,10 @@ export class SharedRepository<
   public async create(dto: CreateDto, options?: SaveOptions) {
     const createdUser = new this.model(dto);
     return createdUser.save(options);
+  }
+
+  public async createMany(dto: CreateDto[], options?: InsertManyOptions) {
+    return this.model.insertMany(dto, options);
   }
 
   public async updateById(

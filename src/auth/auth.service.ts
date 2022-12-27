@@ -29,7 +29,6 @@ import { SmsService } from 'src/sms/sms.service';
 import { TokenRepository } from './token.repository';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { CreateOneMemberDto } from 'src/member/dto/create-one-member.dto';
-import { InvitationService } from 'src/invitation/invitation.service';
 import { ObjectId } from 'mongoose';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
@@ -49,8 +48,7 @@ export class AuthService {
     private userService: UserService,
     private roleService: RoleService,
     private organizationService: OrganizationService,
-    private memberService: MemberService,
-    private invitationService: InvitationService,
+    private memberService: MemberService, // private invitationService: InvitationService,
   ) {}
 
   get organizationSlug() {
@@ -362,17 +360,17 @@ export class AuthService {
   }
 
   async acceptOrganizationInvite(organization: string, invitation: string) {
-    return this.invitationService.acceptOrganizationInvite(
-      organization,
-      invitation,
-    );
+    // return this.invitationService.acceptOrganizationInvite(
+    //   organization,
+    //   invitation,
+    // );
   }
 
   async declineOrganizationInvite(organization: string, invitation: string) {
-    return this.invitationService.declineOrganizationInvite(
-      organization,
-      invitation,
-    );
+    // return this.invitationService.declineOrganizationInvite(
+    //   organization,
+    //   invitation,
+    // );
   }
 
   async registerMember(organization: string, dto: CreateOneMemberDto) {

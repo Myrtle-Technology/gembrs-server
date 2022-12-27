@@ -55,11 +55,6 @@ rolesBuilder
   .updateOwn(ResourcesEnum.Sms)
   .createOwn(ResourcesEnum.Sms)
   .deleteOwn(ResourcesEnum.Sms)
-  // Invitations
-  .readOwn(ResourcesEnum.Invitation)
-  .updateOwn(ResourcesEnum.Invitation)
-  .createOwn(ResourcesEnum.Invitation)
-  .deleteOwn(ResourcesEnum.Invitation)
   // subscriptions
   .readOwn(ResourcesEnum.Subscription)
   .updateOwn(ResourcesEnum.Subscription)

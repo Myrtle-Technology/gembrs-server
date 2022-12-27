@@ -1,7 +1,10 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { TermiiRequestParams } from './dto/termii-request-params.dto';
+import {
+  TermiiBulkRequestParams,
+  TermiiRequestParams,
+} from './dto/termii-request-params.dto';
 import { TermiiSendSmsResponse } from './interfaces/termii-send-sms-response.interface';
 
 @Injectable()
@@ -55,6 +58,30 @@ export class TermiiService {
       return;
     }
   }
+  /*async sendBulkSms(
+    to: string[],
+    message: string,
+    channel: 'generic' | 'whatsapp' | 'dnd' = 'generic',
+  ) {
+    this.checkIfApiKeyIsSet();
+
+    try {
+      const response = await this.axios.post<TermiiSendSmsResponse>(
+        '/sms/send/bulk',
+        new TermiiBulkRequestParams({
+          to,
+          sms: message,
+          from: this.TERMII_SENDER_ID,
+          ...this.data,
+          channel,
+        }).toString(),
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error.response.data);
+      return;
+    }
+  }*/
 
   async sendSMSFromRandomNumber(to: string, message: string) {
     this.checkIfApiKeyIsSet();

@@ -25,6 +25,12 @@ import { Membership } from 'src/membership/schemas/membership.schema';
 import { MailService } from 'src/mail/mail.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { MemberCreatedEvent } from './events/member-created.event';
+import { User } from 'src/user/schemas/user.schema';
+import { BulkInviteMemberDto } from './dto/bulk-invite-member.dto';
+import { MemberStatus } from './enums/member-status.enum';
+import { isEmail, isPhoneNumber } from 'class-validator';
+import { SmsService } from 'src/sms/sms.service';
+import { OrganizationService } from 'src/organization/organization.service';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -34,9 +40,11 @@ export class MemberService extends SharedService<MemberRepository> {
     private readonly userService: UserService,
     private readonly roleService: RoleService,
     private readonly membershipService: MembershipService,
+    private readonly organizationService: OrganizationService,
     private readonly subscriptionService: SubscriptionService,
     @Inject(forwardRef(() => MailService))
     private readonly mailService: MailService,
+    private readonly smsService: SmsService,
     private readonly eventEmitter: EventEmitter2,
     private configService: ConfigService,
   ) {
@@ -70,12 +78,11 @@ export class MemberService extends SharedService<MemberRepository> {
       organization,
       role: role._id,
       customFields: dto.customFields,
-      contactPhone: dto.contactPhone,
       officeTitle: dto.officeTitle,
       password: dto.password,
       bio: dto.bio,
     })) as Member;
-    await this.createMemberSubscription(membership, organization, member);
+    await this.createMemberSubscription(membership, organization, user, member);
     this.eventEmitter.emit(
       MemberCreatedEvent.eventName,
       new MemberCreatedEvent(member, dto.notifyMember),
@@ -96,28 +103,32 @@ export class MemberService extends SharedService<MemberRepository> {
   public async createMemberSubscription(
     membership: Membership,
     organization: string,
+    user: User,
     member: Member,
   ) {
     const [startDateTime, endDateTime] =
       this.membershipService.getMembershipStartAndEndDate(membership);
-    return this.subscriptionService.createOne({
+    const subscription = await this.subscriptionService.createOne({
       organization: organization,
-      member: member._id,
+      user: user._id,
       membership: membership.id,
       status: SubscriptionStatus.Pending,
       currentPeriodStart: startDateTime.toJSDate(),
-      currentPeriodEnd: endDateTime.toJSDate(),
+      currentPeriodEnd: endDateTime?.toJSDate(),
       cancelAtPeriodEnd:
         membership.renewalPeriod.duration !== RenewalPeriodDuration.Never,
       defaultPaymentMethod: membership.paymentMethod,
     });
+    await this.repo.updateOne(member._id, { subscription: subscription._id });
+    return subscription;
   }
 
   public async findAndPaginate(
     organization: string,
     params: PaginationOptions<Member>,
   ) {
-    params.query = { ...params.query, organization };
+    const defaultFilter = { status: MemberStatus.ACCEPTED };
+    params.query = { ...defaultFilter, ...params.query, organization };
     return this.repo.paginate(params);
   }
   public async findAll(
@@ -126,7 +137,12 @@ export class MemberService extends SharedService<MemberRepository> {
     projection?: ProjectionType<Member>,
     options?: QueryOptions<Member>,
   ) {
-    return this.repo.find({ ...filter, organization }, projection, options);
+    const defaultFilter = { status: MemberStatus.ACCEPTED };
+    return this.repo.find(
+      { ...defaultFilter, ...filter, organization },
+      projection,
+      options,
+    );
   }
 
   public async findById(
@@ -209,20 +225,81 @@ export class MemberService extends SharedService<MemberRepository> {
 
   public async findAllMemberSubscriptions(
     organization: string,
-    member: string,
+    memberId: string,
   ) {
+    const member = await this.findById(memberId);
     return this.subscriptionService.findAll(organization, {
-      member,
+      user: member.user?._id ?? member.user,
     });
   }
 
   public async findActiveMemberSubscription(
     organization: string,
-    member: string,
+    memberId: string,
   ) {
-    return this.subscriptionService.findOne(organization, {
-      member,
-      active: true,
-    });
+    const member = await this.findById(memberId, [
+      'user',
+      'role',
+      'subscription',
+    ]);
+    return member.subscription;
+  }
+
+  public async inviteMembers(organizationId: string, dto: BulkInviteMemberDto) {
+    const role = dto.makeAdmin
+      ? await this.roleService.getDefaultAdminRole()
+      : await this.roleService.getDefaultMemberRole();
+    const organization = await this.organizationService.findById(
+      organizationId,
+    );
+    const bulkDto = dto.usernames.map<CreateMemberDto>((username) => ({
+      organization: organizationId,
+      membership: dto.membership,
+      status: MemberStatus.INVITED,
+      userEmail: isEmail(username) ? username : '',
+      userPhone: isPhoneNumber(username) ? username : '',
+      role: role._id,
+      user: null,
+    }));
+
+    const members = await this.repo.createManyInvitees(bulkDto);
+
+    const sendEmail = members
+      .filter((m) => m.userEmail)
+      .map((member) => ({
+        name: member.userEmail,
+        email: member.userEmail,
+        link: this.generateInviteLink(member),
+        message: dto.message,
+        hostName: `${organization.owner.firstName} ${organization.owner.lastName}`,
+        organizationName: organization.name,
+      }));
+    const sendSMS = members
+      .filter((m) => m.userPhone)
+      .map((member) => ({
+        phone: member.userPhone,
+        link: this.generateInviteLink(member),
+        message: dto.message,
+        hostName: `${organization.owner.firstName} ${organization.owner.lastName}`,
+        organizationName: organization.name,
+      }));
+
+    const emails = sendEmail.map((dto) =>
+      this.mailService.sendMemberInvitationEmail(dto),
+    );
+
+    const sms = sendSMS.map((dto) =>
+      this.smsService.sendMemberInvitationSMS(dto),
+    );
+
+    await Promise.all([...emails, ...sms]);
+
+    return members;
+  }
+
+  private generateInviteLink(member: Member) {
+    const frontendBaseUrl = this.configService.get<string>('FRONTEND_BASE_URL');
+
+    return `${frontendBaseUrl}/invites/${member._id}`;
   }
 }

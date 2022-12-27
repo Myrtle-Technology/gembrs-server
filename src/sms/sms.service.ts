@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { isPhoneNumber } from 'class-validator';
 import { APP_NAME } from 'src/app.constants';
-import { Invitation } from 'src/invitation/schemas/invitation.schema';
 import { TermiiService } from './termii.service';
 
 @Injectable()
@@ -25,11 +24,16 @@ export class SmsService {
     return phone.replace('+', '');
   }
 
-  sendMemberInviteSMS(invitation: Invitation, link: string) {
-    const phone = this.sanitizePhoneNumber(invitation.user.phone);
-    return this.termii.sendSms(
-      phone,
-      `You have been invited to join ${invitation.organization.name} on ${APP_NAME}. Kindly click on the link below to join. ${link}`,
+  sendMemberInvitationSMS(dto: {
+    phone: string;
+    hostName: string;
+    organizationName: string;
+    message: string;
+    link: string;
+  }) {
+    this.termii.sendSms(
+      this.sanitizePhoneNumber(dto.phone),
+      `${dto.hostName} has invited you to join ${dto.organizationName} on ${APP_NAME}. ${dto.message}. Click ${dto.link} to join the community`,
     );
   }
 

@@ -24,7 +24,6 @@ import { ResourceRoleService } from './role/services/resource-role.service';
 import { MembershipModule } from './membership/membership.module';
 import { CustomFieldModule } from './custom-field/custom-field.module';
 import { SubscriptionModule } from './subscription/subscription.module';
-import { InvitationModule } from './invitation/invitation.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { TemplateModule } from './template/template.module';
@@ -68,7 +67,6 @@ import { TemplateModule } from './template/template.module';
     MembershipModule,
     CustomFieldModule,
     SubscriptionModule,
-    InvitationModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({

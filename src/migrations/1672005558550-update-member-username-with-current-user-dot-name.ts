@@ -15,6 +15,8 @@ export const up = async () => {
         $set: {
           userName: `${user.firstName} ${user.lastName}`,
           userEmail: user.email,
+          userPhone: user.phone,
+          status: 'accepted',
         },
       },
     );

@@ -4,7 +4,9 @@ import mongoose, { Document } from 'mongoose';
 import { mongoosePagination } from 'mongoose-paginate-ts';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { Role } from 'src/role/schemas/role.schema';
+import { Subscription } from 'src/subscription/schemas/subscription.schema';
 import { User } from 'src/user/schemas/user.schema';
+import { MemberStatus } from '../enums/member-status.enum';
 import {
   MemberCustomField,
   MemberCustomFieldSchema,
@@ -15,7 +17,7 @@ import {
 @Schema({ timestamps: true })
 export class Member extends Document {
   @ApiProperty()
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
   @ApiProperty()
@@ -25,6 +27,14 @@ export class Member extends Document {
     ref: 'Organization',
   })
   organization: Organization;
+
+  @ApiProperty()
+  @Prop({
+    // required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Subscription',
+  })
+  subscription: Subscription;
 
   @ApiProperty()
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
@@ -42,6 +52,10 @@ export class Member extends Document {
 
   @ApiProperty()
   @Prop()
+  userPhone: string;
+
+  @ApiProperty()
+  @Prop()
   bio: string;
 
   @ApiProperty()
@@ -51,6 +65,10 @@ export class Member extends Document {
   @ApiProperty()
   @Prop()
   officeTitle: string;
+
+  @ApiProperty()
+  @Prop({ type: String, enum: MemberStatus, default: MemberStatus.ACCEPTED })
+  status: MemberStatus;
 
   @ApiProperty()
   @Prop({ select: false })
@@ -75,7 +93,8 @@ MemberSchema.pre('save', async function (next) {
   if (member.isModified('user')) {
     const user: User = await this.$model('User').findById(member.user);
     member.userName = `${user.firstName} ${user.lastName}`;
-    member.userEmail = `${user.firstName} ${user.lastName}`;
+    member.userEmail = user.email;
+    member.userPhone = user.phone;
   }
   next();
 });
@@ -84,6 +103,7 @@ MemberSchema.post('save', async function (doc) {
   const member = doc as Member;
   const user: User = await this.$model('User').findById(member.user);
   member.userName = `${user.firstName} ${user.lastName}`;
-  member.userEmail = `${user.firstName} ${user.lastName}`;
+  member.userEmail = user.email;
+  member.userPhone = user.phone;
   await member.save();
 });

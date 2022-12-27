@@ -1,4 +1,5 @@
 import { IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { MemberStatus } from '../enums/member-status.enum';
 import { CreateMemberCustomFieldDto } from './create-member-custom-field.dto';
 
 export class CreateMemberDto {
@@ -8,13 +9,20 @@ export class CreateMemberDto {
 
   role: string;
 
+  @IsOptional()
+  status?: MemberStatus;
+
   @IsString()
   @IsOptional()
   bio?: string;
 
   @IsPhoneNumber()
   @IsOptional()
-  contactPhone?: string;
+  userPhone?: string;
+
+  @IsPhoneNumber()
+  @IsOptional()
+  userEmail?: string;
 
   @IsString()
   @IsOptional()

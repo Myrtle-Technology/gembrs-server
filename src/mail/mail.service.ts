@@ -1,7 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_NAME } from 'src/app.constants';
-import { Invitation } from 'src/invitation/schemas/invitation.schema';
 import { Member } from 'src/member/schemas/member.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { User } from './../user/schemas/user.schema';
@@ -14,7 +13,7 @@ import { MemberService } from 'src/member/member.service';
 
 @Injectable()
 export class MailService {
-  private readonly clientURL = this.configService.get('CLIENT_URL');
+  private readonly clientURL = this.configService.get('FRONTEND_BASE_URL');
   constructor(
     private mailerService: MailerService,
     private elasticMailService: ElasticMailService,
@@ -173,16 +172,26 @@ export class MailService {
     });
   }
 
-  public async sendMemberInviteEmail(invitation: Invitation, link: string) {
-    await this.elasticMailService.send({
-      Recipients: { To: [invitation.user.email] },
+  public async sendMemberInvitationEmail(dto: {
+    name: string;
+    email: string;
+    hostName: string;
+    organizationName: string;
+    message: string;
+    link: string;
+  }) {
+    return this.elasticMailService.send({
+      Recipients: { To: [dto.email] },
       Content: {
-        Subject: `You have been invited to join ${invitation.organization.name}`,
+        Subject: `${dto.hostName} has invited you to join ${dto.organizationName}`,
         TemplateName: ElasticMailTemplateNames.MemberInvite, // `.hbs` extension is appended automatically
         Merge: {
-          name: `${invitation.user.firstName || invitation.user.email}`,
-          link,
+          name: `${dto.name || dto.email}`,
+          link: dto.link,
+          hostName: `${dto.hostName}`,
+          organizationName: `${dto.organizationName}`,
           APP_NAME,
+          message: dto.message,
         },
       },
     });

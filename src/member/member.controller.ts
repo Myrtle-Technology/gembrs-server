@@ -19,6 +19,7 @@ import { Permit } from 'src/role/decorators/permit.decorator';
 import { PaginationQuery } from 'src/shared/paginator/decorator';
 import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
 import { CreateOneMemberDto } from './dto/create-one-member.dto';
+import { BulkInviteMemberDto } from './dto/bulk-invite-member.dto';
 
 @ApiBearerAuth()
 @OrganizationApi()
@@ -33,9 +34,20 @@ export class MemberController {
     possession: 'own',
   })
   @Post()
-  @ApiOperation({ summary: 'Create a Member' })
+  @ApiOperation({ summary: 'Create a Member', deprecated: true })
   create(@Req() request: TokenRequest, @Body() dto: CreateOneMemberDto) {
     return this.service.createOne(request.tokenData.organizationId, dto);
+  }
+
+  @Permit({
+    resource: ResourcesEnum.Member,
+    action: 'create',
+    possession: 'own',
+  })
+  @Post('/invite')
+  @ApiOperation({ summary: 'Invite Members' })
+  invite(@Req() request: TokenRequest, @Body() dto: BulkInviteMemberDto) {
+    return this.service.inviteMembers(request.tokenData.organizationId, dto);
   }
 
   @Get()

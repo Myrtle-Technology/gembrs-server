@@ -24,6 +24,10 @@ export class UserService extends SharedService<UserRepository> {
     return this.repo.findOneAndUpdateOrCreate(dto);
   }
 
+  public async findUpdateOrCreateBulk(dto: string[]) {
+    return this.repo.findUpdateOrCreateBulk(dto);
+  }
+
   public async findByUsername(username: string, throwError = true) {
     const user = await this.repo.findByUsername(username);
     if (!user && throwError) {

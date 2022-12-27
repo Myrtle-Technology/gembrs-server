@@ -49,9 +49,24 @@ export class UserRepository extends SharedRepository<
     return [user, false];
   }
 
-  findByUsername(username: string) {
+  public async findByUsername(username: string) {
     return this.model.findOne(
       isEmail(username) ? { email: username } : { phone: username },
     );
+  }
+
+  public async findUpdateOrCreateBulk(dto: string[]) {
+    const users = await this.model.find({
+      $or: dto.map((d) => (isEmail(d) ? { email: d } : { phone: d })),
+    });
+    const usersFound = users.map((u) => u.email || u.phone);
+    const usersToCreate = dto.filter((d) => !usersFound.includes(d));
+    const createdUsers = await this.model.insertMany(
+      usersToCreate.map((u) => ({
+        email: isEmail(u) ? u : undefined,
+        phone: isEmail(u) ? undefined : u,
+      })),
+    );
+    return [...users, ...createdUsers];
   }
 }
