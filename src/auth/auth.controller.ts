@@ -110,7 +110,16 @@ export class AuthController {
     @Request() request: TokenRequest,
     @Body() dto: VerifyOtpDto,
   ) {
-    return this.authService.validateNewUserOTP(request.user._id, dto);
+    return this.authService.validateNewMemberOTP(request.user._id, dto);
+  }
+
+  @Post('validate-member-otp')
+  @ApiOperation({ summary: 'Validate Otp for registered members' })
+  validateNewMemberOTP(
+    @Request() request: TokenRequest,
+    @Body() dto: VerifyOtpDto,
+  ) {
+    return this.authService.validateNewMemberOTP(request.user._id, dto);
   }
 
   @Public()

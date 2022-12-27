@@ -315,48 +315,25 @@ export class AuthService {
   }
 
   /** @deprecated Not needed anymore */
-  async validateNewUserOTP(memberId: string, dto: VerifyOtpDto) {
-    const user = await this.userService.findByUsername(dto.username);
+  async validateNewMemberOTP(memberId: string, dto: VerifyOtpDto) {
+    let userDto: CreateUserDto;
+    const usernameIsEmail = isEmail(dto.username);
     // if (!(this.isDevServer == 'true')) {
-    if (isEmail(dto.username)) {
-      const token = await this.tokenRepo.findByIdentifier({
-        token: dto.otp,
-        identifier: dto.username,
-      });
-      if (!token) {
-        throw new BadRequestException(
-          `The one time password (OTP) you entered is invalid`,
-        );
-      }
-      await token.remove();
-      user.verifiedEmail = true;
+    if (usernameIsEmail) {
+      userDto = await this.validateEmailOtp(dto);
     } else {
-      this.smsService.verifyOTP(user.phone, dto.otp.toString());
-      user.verifiedPhone = true;
+      userDto = await this.validatePhoneOtp(dto);
     }
     // }
-    await this.userService.repo.updateById(user._id, {
-      verifiedEmail: user.verifiedEmail,
-      verifiedPhone: user.verifiedPhone,
-    });
     const member = await this.memberService.findById(memberId, [
       'organization',
       'user',
       'role',
     ]);
-    this.mailService.welcomeRegisteredUserAndOrganization(
-      user,
-      member.organization,
-    );
+    const user = await this.userService.update(member.user._id, userDto);
+    this.mailService.welcomeRegisteredMember(user, member.organization);
+    member.user = user;
     return this.getMemberAuthData(member);
-  }
-
-  async initForgotMemberPassword() {
-    //
-  }
-
-  async resetMemberPassword() {
-    //
   }
 
   async validateInvite(invitation: string) {
@@ -372,6 +349,16 @@ export class AuthService {
   }
 
   async registerMember(organization: string, dto: CreateOneMemberDto) {
-    return this.memberService.createOne(organization, dto);
+    const member = await this.memberService.createOne(organization, dto);
+    let otpResponse = {};
+    if (member.user.verifiedEmail || member.user.verifiedPhone) {
+      otpResponse = await this.sendOtpToEmailOrPhone({
+        username: member.user.email || member.user.phone,
+      });
+    }
+    return {
+      ...otpResponse,
+      ...(await this.getMemberAuthData(member)),
+    };
   }
 }

@@ -9,6 +9,8 @@ export class CreateMemberDto {
 
   role: string;
 
+  subscription?: string;
+
   @IsOptional()
   status?: MemberStatus;
 

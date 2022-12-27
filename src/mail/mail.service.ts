@@ -88,10 +88,27 @@ export class MailService {
     user: User,
     organization: Organization,
   ) {
-    const memberUrl = `https://${organization.siteName}.${this.clientURL
-      .replace('https://', '')
-      .replace('http://', '')}`;
-    const adminUrl = `${memberUrl}/admin`;
+    const memberUrl = `${this.clientURL}/${organization.siteName}`;
+    const adminUrl = `${this.clientURL}/community/${organization.siteName}`;
+
+    await this.elasticMailService.send({
+      Recipients: { To: [user.email] },
+      Content: {
+        Subject: `Welcome to ${APP_NAME}! Make yourself at home`,
+        TemplateName: ElasticMailTemplateNames.WelcomeToGembrs,
+        Merge: {
+          name: `${user.firstName}`,
+          memberUrl,
+          adminUrl,
+          APP_NAME,
+          organization: `${organization.name}`,
+        },
+      },
+    });
+  }
+  async welcomeRegisteredMember(user: User, organization: Organization) {
+    const memberUrl = `${this.clientURL}/${organization.siteName}`;
+    const adminUrl = `${this.clientURL}/community/${organization.siteName}`;
 
     await this.elasticMailService.send({
       Recipients: { To: [user.email] },

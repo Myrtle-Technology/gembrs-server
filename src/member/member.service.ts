@@ -33,6 +33,7 @@ import { isEmail, isPhoneNumber } from 'class-validator';
 import { SmsService } from 'src/sms/sms.service';
 import { OrganizationService } from 'src/organization/organization.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { MembershipAccess } from 'src/membership/enums/membership-access.enum';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -71,10 +72,15 @@ export class MemberService extends SharedService<MemberRepository> {
       dto.membership,
     );
     if (!membership) {
-      throw new BadRequestException('Membership level not found');
+      throw new BadRequestException('Membership not found');
     }
     const [user] = await this.userService.findUpdateOrCreate(dto);
     const role = await this.roleService.getDefaultMemberRole();
+    const subscription = await this.createMemberSubscription(
+      membership,
+      organization,
+      user,
+    );
     const member = (await this.create({
       user: user._id,
       organization,
@@ -82,9 +88,13 @@ export class MemberService extends SharedService<MemberRepository> {
       customFields: dto.customFields,
       officeTitle: dto.officeTitle,
       password: dto.password,
+      status:
+        membership.access == MembershipAccess.APPLICATION
+          ? MemberStatus.PENDING
+          : MemberStatus.ACCEPTED,
       bio: dto.bio,
+      subscription: subscription._id,
     })) as Member;
-    await this.createMemberSubscription(membership, organization, user, member);
     this.eventEmitter.emit(
       MemberCreatedEvent.eventName,
       new MemberCreatedEvent(member, dto.notifyMember),
@@ -106,7 +116,6 @@ export class MemberService extends SharedService<MemberRepository> {
     membership: Membership,
     organization: string,
     user: User,
-    member: Member,
   ) {
     const [startDateTime, endDateTime] =
       this.membershipService.getMembershipStartAndEndDate(membership);
@@ -121,7 +130,6 @@ export class MemberService extends SharedService<MemberRepository> {
         membership.renewalPeriod.duration !== RenewalPeriodDuration.Never,
       defaultPaymentMethod: membership.paymentMethod,
     });
-    await this.repo.updateOne(member._id, { subscription: subscription._id });
     return subscription;
   }
 
@@ -241,11 +249,7 @@ export class MemberService extends SharedService<MemberRepository> {
     organization: string,
     memberId: string,
   ) {
-    const member = await this.findById(memberId, [
-      'user',
-      'role',
-      'subscription',
-    ]);
+    const member = await this.findOne(organization, memberId, ['subscription']);
     return member.subscription;
   }
 
