@@ -3,6 +3,7 @@ import {
   Injectable,
   Inject,
   forwardRef,
+  NotFoundException,
 } from '@nestjs/common';
 import { FilterQuery, ObjectId, ProjectionType, QueryOptions } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
@@ -31,6 +32,7 @@ import { MemberStatus } from './enums/member-status.enum';
 import { isEmail, isPhoneNumber } from 'class-validator';
 import { SmsService } from 'src/sms/sms.service';
 import { OrganizationService } from 'src/organization/organization.service';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -129,6 +131,8 @@ export class MemberService extends SharedService<MemberRepository> {
   ) {
     const defaultFilter = { status: MemberStatus.ACCEPTED };
     params.query = { ...defaultFilter, ...params.query, organization };
+    const defaultSort = 'userName';
+    params.sort = params.sort || defaultSort;
     return this.repo.paginate(params);
   }
   public async findAll(
@@ -301,5 +305,49 @@ export class MemberService extends SharedService<MemberRepository> {
     const frontendBaseUrl = this.configService.get<string>('FRONTEND_BASE_URL');
 
     return `${frontendBaseUrl}/invites/${member._id}`;
+  }
+
+  public async validateInvitation(memberId: string) {
+    const member = await this.findById(memberId);
+    if (!member) {
+      throw new NotFoundException(
+        'We could not find the invitation you are looking for',
+      );
+    }
+    if (member.status !== MemberStatus.INVITED) {
+      if (member.status === MemberStatus.EXPIRED) {
+        throw new BadRequestException('Invitation has expired');
+      }
+      throw new BadRequestException(
+        `This invitation has already been ${member.status}`,
+      );
+    }
+    return member;
+  }
+
+  public async acceptInvitation(memberId: string, dto: CreateUserDto) {
+    await this.validateInvitation(memberId);
+    // create user
+    const [user] = await this.userService.findUpdateOrCreate(dto);
+
+    // update member
+    const updatedMember = await this.repo.updateOne(
+      { _id: memberId },
+      { user: user._id, status: MemberStatus.ACCEPTED },
+    );
+
+    return updatedMember;
+  }
+
+  public async declineInvitation(memberId: string) {
+    await this.validateInvitation(memberId);
+
+    // update member
+    const updatedMember = await this.repo.updateOne(
+      { _id: memberId },
+      { status: MemberStatus.DECLINED },
+    );
+
+    return updatedMember;
   }
 }

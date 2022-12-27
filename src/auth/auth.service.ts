@@ -359,18 +359,16 @@ export class AuthService {
     //
   }
 
-  async acceptOrganizationInvite(organization: string, invitation: string) {
-    // return this.invitationService.acceptOrganizationInvite(
-    //   organization,
-    //   invitation,
-    // );
+  async validateInvite(invitation: string) {
+    return this.memberService.validateInvitation(invitation);
   }
 
-  async declineOrganizationInvite(organization: string, invitation: string) {
-    // return this.invitationService.declineOrganizationInvite(
-    //   organization,
-    //   invitation,
-    // );
+  async acceptOrganizationInvite(invitation: string, dto: CreateUserDto) {
+    return this.memberService.acceptInvitation(invitation, dto);
+  }
+
+  async declineOrganizationInvite(invitation: string) {
+    return this.memberService.declineInvitation(invitation);
   }
 
   async registerMember(organization: string, dto: CreateOneMemberDto) {

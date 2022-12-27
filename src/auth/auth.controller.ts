@@ -22,6 +22,7 @@ import { CreateOneMemberDto } from 'src/member/dto/create-one-member.dto';
 import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { SetOrganizationDto } from './dto/set-organization.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @OrganizationApi()
 @ApiTags('Authentication')
@@ -122,20 +123,23 @@ export class AuthController {
   }
 
   @Public()
-  @Post('accept-invite/:organization/:invitation')
+  @Post('accept-invite/:invitation')
   acceptOrganizationInvite(
-    @Param('organization') organization: string,
     @Param('invitation') invitation: string,
+    @Body() dto: CreateUserDto,
   ) {
-    return this.authService.acceptOrganizationInvite(organization, invitation);
+    return this.authService.acceptOrganizationInvite(invitation, dto);
   }
 
   @Public()
-  @Post('decline-invite/:organization/:invitation')
-  declineOrganizationInvite(
-    @Param('organization') organization: string,
-    @Param('invitation') invitation: string,
-  ) {
-    return this.authService.declineOrganizationInvite(organization, invitation);
+  @Post('decline-invite/:invitation')
+  declineOrganizationInvite(@Param('invitation') invitation: string) {
+    return this.authService.declineOrganizationInvite(invitation);
+  }
+
+  @Public()
+  @Post('validate-invite/:invitation')
+  validateInvite(@Param('invitation') invitation: string) {
+    return this.authService.validateInvite(invitation);
   }
 }

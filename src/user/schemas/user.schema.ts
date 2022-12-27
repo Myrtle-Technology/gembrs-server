@@ -54,6 +54,10 @@ export class User extends Document {
   phone: string;
 
   @ApiProperty()
+  @Prop()
+  bio: string;
+
+  @ApiProperty()
   @Prop(Boolean)
   verifiedEmail: boolean;
 
