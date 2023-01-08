@@ -34,6 +34,7 @@ import { SmsService } from 'src/sms/sms.service';
 import { OrganizationService } from 'src/organization/organization.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { MembershipAccess } from 'src/membership/enums/membership-access.enum';
+import { AcceptInvite } from './dto/accept-invite.dto';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -312,7 +313,7 @@ export class MemberService extends SharedService<MemberRepository> {
   }
 
   public async validateInvitation(memberId: string) {
-    const member = await this.findById(memberId);
+    const member = await this.findById(memberId, ['organization', 'role']);
     if (!member) {
       throw new NotFoundException(
         'We could not find the invitation you are looking for',
@@ -329,7 +330,7 @@ export class MemberService extends SharedService<MemberRepository> {
     return member;
   }
 
-  public async acceptInvitation(memberId: string, dto: CreateUserDto) {
+  public async acceptInvitation(memberId: string, dto: AcceptInvite) {
     await this.validateInvitation(memberId);
     // create user
     const [user] = await this.userService.findUpdateOrCreate(dto);
@@ -337,7 +338,11 @@ export class MemberService extends SharedService<MemberRepository> {
     // update member
     const updatedMember = await this.repo.updateOne(
       { _id: memberId },
-      { user: user._id, status: MemberStatus.ACCEPTED },
+      {
+        user: user._id,
+        status: MemberStatus.ACCEPTED,
+        userName: user.firstName + ' ' + user.lastName,
+      },
     );
 
     return updatedMember;

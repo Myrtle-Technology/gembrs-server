@@ -53,7 +53,7 @@ export class SharedRepository<
   }
 
   public async findById(
-    id: ObjectId | any,
+    id: ObjectId | string,
     options?: QueryOptions<Entity>,
   ): Promise<Entity> {
     return (

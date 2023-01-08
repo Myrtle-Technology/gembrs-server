@@ -23,6 +23,7 @@ import { CreateOrganizationDto } from 'src/organization/dto/create-organization.
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { SetOrganizationDto } from './dto/set-organization.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { AcceptInvite } from 'src/member/dto/accept-invite.dto';
 
 @OrganizationApi()
 @ApiTags('Authentication')
@@ -33,6 +34,11 @@ export class AuthController {
   @AllowUserWithoutOrganization()
   @Get('me')
   me(@Request() req: TokenRequest) {
+    return req.user.organization ? req.user.user : req.user;
+  }
+
+  @Get('me/member')
+  meMember(@Request() req: TokenRequest) {
     return req.user;
   }
 
@@ -135,7 +141,7 @@ export class AuthController {
   @Post('accept-invite/:invitation')
   acceptOrganizationInvite(
     @Param('invitation') invitation: string,
-    @Body() dto: CreateUserDto,
+    @Body() dto: AcceptInvite,
   ) {
     return this.authService.acceptOrganizationInvite(invitation, dto);
   }

@@ -26,6 +26,9 @@ export class CreateMemberDto {
   @IsOptional()
   userEmail?: string;
 
+  @IsOptional()
+  userName?: string;
+
   @IsString()
   @IsOptional()
   officeTitle?: string;

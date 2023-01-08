@@ -34,7 +34,7 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
   public async createOne(dto: CreateOrganizationDto) {
     return this.repo.create({
       ...dto,
-      siteName: dto.siteName ?? slugify(dto.name),
+      siteName: (dto.siteName ?? slugify(dto.name)).toLowerCase(),
     });
   }
 

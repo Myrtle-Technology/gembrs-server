@@ -33,6 +33,7 @@ import { ObjectId } from 'mongoose';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { CreateOrganizationDto } from 'src/organization/dto/create-organization.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { AcceptInvite } from 'src/member/dto/accept-invite.dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
@@ -110,15 +111,14 @@ export class AuthService {
     const user = await this.userService.findById(userId);
     const organization = await this.organizationService.createOne(dto);
     const role = await this.roleService.getDefaultAdminRole();
-    const member = await this.memberService.create({
+    const member: Member = (await this.memberService.create({
       organization: organization._id,
       user: userId,
       role: role._id,
       officeTitle: 'Host',
-    });
-    const _member = member.toObject<Member>();
+    })) as Member;
     this.mailService.welcomeRegisteredUserAndOrganization(user, organization);
-    return this.getMemberAuthData(_member);
+    return this.getMemberAuthData(member);
   }
 
   async validateOTP(dto: VerifyOtpDto) {
@@ -340,8 +340,9 @@ export class AuthService {
     return this.memberService.validateInvitation(invitation);
   }
 
-  async acceptOrganizationInvite(invitation: string, dto: CreateUserDto) {
-    return this.memberService.acceptInvitation(invitation, dto);
+  async acceptOrganizationInvite(invitation: string, dto: AcceptInvite) {
+    const member = await this.memberService.acceptInvitation(invitation, dto);
+    return this.getMemberAuthData(member);
   }
 
   async declineOrganizationInvite(invitation: string) {
