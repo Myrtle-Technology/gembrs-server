@@ -8,6 +8,7 @@ export const up = async () => {
   const cursor = members.find();
   while (await cursor.hasNext()) {
     const member = await cursor.next();
+    if (!member.user) return;
     const user = await users.findOne({ _id: member.user });
     await members.updateOne(
       { _id: member._id },
