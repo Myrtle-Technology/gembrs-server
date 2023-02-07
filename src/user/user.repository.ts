@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId, QueryOptions } from 'mongoose';
 import { isEmail } from 'class-validator';
 import { Member } from 'src/member/schemas/member.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
@@ -30,18 +30,14 @@ export class UserRepository extends SharedRepository<
     return members.map((m) => m.organization);
   }
 
-  public async findOneAndUpdateOrCreate(
-    dto: CreateUserDto,
-  ): Promise<[User, boolean]> {
+  public async findOneOrCreate(dto: CreateUserDto): Promise<[User, boolean]> {
     const query =
       dto.email && dto.phone
         ? { $or: [{ email: dto.email }, { phone: dto.phone }] }
         : dto.email
         ? { email: dto.email }
         : { phone: dto.phone };
-    const user = await this.model.findOneAndUpdate(query, dto, {
-      new: true,
-    });
+    const user = await this.model.findOne(query);
     if (!user) {
       const _user = await this.model.create(dto);
       return [await this.findById(_user.id), true];
@@ -55,7 +51,7 @@ export class UserRepository extends SharedRepository<
     );
   }
 
-  public async findUpdateOrCreateBulk(dto: string[]) {
+  public async findOrCreateBulk(dto: string[]) {
     const users = await this.model.find({
       $or: dto.map((d) => (isEmail(d) ? { email: d } : { phone: d })),
     });
@@ -68,5 +64,23 @@ export class UserRepository extends SharedRepository<
       })),
     );
     return [...users, ...createdUsers];
+  }
+
+  public async updateById(
+    id: ObjectId | any,
+    dto: UpdateUserDto,
+    options?: QueryOptions<User>,
+  ): Promise<User> {
+    const user = await this.model.findByIdAndUpdate(id, dto, {
+      new: true,
+      ...options,
+      populate: this.populateOnFind,
+    });
+    this.memberModel.find({ user: user.id }).updateMany({
+      userName: `${user.firstName} ${user.lastName}`,
+      userEmail: user.email,
+      userPhone: user.phone,
+    });
+    return user;
   }
 }

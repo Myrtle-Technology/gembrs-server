@@ -81,35 +81,38 @@ export class MemberService extends SharedService<MemberRepository> {
       organization,
     });
     if (memberExists) {
-      throw new BadRequestException(
-        'You are already a member of this community',
-      );
+      return memberExists;
     }
     const role = await this.roleService.getDefaultMemberRole();
-    const subscription = await this.createMemberSubscription(
-      membership,
-      organization,
-      user,
-    );
-    const member = (await this.create({
-      user: user._id,
-      organization,
-      role: role._id,
-      customFields: dto.customFields,
-      officeTitle: dto.officeTitle,
-      password: dto.password,
-      status:
-        membership.access == MembershipAccess.APPLICATION
-          ? MemberStatus.PENDING
-          : MemberStatus.ACCEPTED,
-      bio: dto.bio,
-      subscription: subscription._id,
-    })) as Member;
-    this.eventEmitter.emit(
-      MemberCreatedEvent.eventName,
-      new MemberCreatedEvent(member, true),
-    );
-    return this.findById(member._id);
+    try {
+      const subscription = await this.createMemberSubscription(
+        membership,
+        organization,
+        user,
+      );
+      const member = (await this.create({
+        user: user._id,
+        organization,
+        role: role._id,
+        customFields: dto.customFields,
+        officeTitle: dto.officeTitle,
+        password: dto.password,
+        status:
+          membership.access == MembershipAccess.APPLICATION
+            ? MemberStatus.PENDING
+            : MemberStatus.ACCEPTED,
+        bio: dto.bio,
+        subscription: subscription._id,
+      })) as Member;
+      this.eventEmitter.emit(
+        MemberCreatedEvent.eventName,
+        new MemberCreatedEvent(member, true),
+      );
+      return this.findById(member._id);
+    } catch (error) {
+      console.error(error);
+      throw new Error(error);
+    }
   }
 
   @OnEvent(MemberCreatedEvent.eventName, { async: true })

@@ -21,11 +21,11 @@ export class UserService extends SharedService<UserRepository> {
         'You need to enter either your email or phone number',
       );
     }
-    return this.repo.findOneAndUpdateOrCreate(dto);
+    return this.repo.findOneOrCreate(dto);
   }
 
   public async findUpdateOrCreateBulk(dto: string[]) {
-    return this.repo.findUpdateOrCreateBulk(dto);
+    return this.repo.findOrCreateBulk(dto);
   }
 
   public async findByUsername(username: string, throwError = true) {

@@ -55,16 +55,16 @@ export class Member extends Document {
   userPhone: string;
 
   @ApiProperty()
-  @Prop({ index: true })
+  @Prop({ required: false, index: true })
   bio: string;
 
   /** @deprecated */
   @ApiProperty()
-  @Prop()
+  @Prop({ required: false })
   contactPhone: string;
 
   @ApiProperty()
-  @Prop()
+  @Prop({ required: false })
   officeTitle: string;
 
   @ApiProperty()
@@ -72,11 +72,11 @@ export class Member extends Document {
   status: MemberStatus;
 
   @ApiProperty()
-  @Prop({ select: false })
+  @Prop({ select: false, required: false })
   password: string;
 
   @ApiProperty()
-  @Prop({ type: [{ type: MemberCustomFieldSchema }] })
+  @Prop({ required: false, type: [{ type: MemberCustomFieldSchema }] })
   customFields: MemberCustomField[];
 
   // @OneToMany(() => Subscription, (subscription) => subscription.member)
@@ -106,5 +106,5 @@ MemberSchema.post('save', async function (doc) {
   member.userName = `${user.firstName} ${user.lastName}`;
   member.userEmail = user.email;
   member.userPhone = user.phone;
-  await member.save();
+  member.save();
 });
