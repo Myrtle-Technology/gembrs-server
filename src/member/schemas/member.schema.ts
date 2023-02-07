@@ -43,21 +43,22 @@ export class Member extends Document {
   // https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design
   // Added the userName field and the userEmail fields for de-normalization to aid searching and pagination
   @ApiProperty()
-  @Prop()
+  @Prop({ index: true })
   userName: string;
 
   @ApiProperty()
-  @Prop()
+  @Prop({ index: true })
   userEmail: string;
 
   @ApiProperty()
-  @Prop()
+  @Prop({ index: true })
   userPhone: string;
 
   @ApiProperty()
-  @Prop()
+  @Prop({ index: true })
   bio: string;
 
+  /** @deprecated */
   @ApiProperty()
   @Prop()
   contactPhone: string;
@@ -83,8 +84,8 @@ export class Member extends Document {
 }
 
 export const MemberSchema = SchemaFactory.createForClass(Member);
-MemberSchema.index({ '$**': 'text' });
-MemberSchema.index({ 'customFields.$**': 'text' });
+// MemberSchema.index({ '$**': 'text' });
+// MemberSchema.index({ 'customFields.$**': 'text' });
 MemberSchema.plugin(mongoosePagination);
 
 // update the userName field whenever the user field is updated.

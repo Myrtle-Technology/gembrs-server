@@ -1,5 +1,6 @@
 export enum CustomFieldType {
   Text = 'text',
+  TextArea = 'textarea',
   Tel = 'tel',
   Email = 'email',
   Password = 'password',
@@ -8,6 +9,7 @@ export enum CustomFieldType {
   Number = 'number',
   Boolean = 'boolean',
   Select = 'select',
+  MultiSelect = 'multiselect',
   File = 'file',
   Checkbox = 'checkbox',
   Radio = 'radio',

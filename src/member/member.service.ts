@@ -76,6 +76,15 @@ export class MemberService extends SharedService<MemberRepository> {
       throw new BadRequestException('Membership not found');
     }
     const [user] = await this.userService.findUpdateOrCreate(dto);
+    const memberExists = await this.repo.findOne({
+      user: user._id,
+      organization,
+    });
+    if (memberExists) {
+      throw new BadRequestException(
+        'You are already a member of this community',
+      );
+    }
     const role = await this.roleService.getDefaultMemberRole();
     const subscription = await this.createMemberSubscription(
       membership,
@@ -98,7 +107,7 @@ export class MemberService extends SharedService<MemberRepository> {
     })) as Member;
     this.eventEmitter.emit(
       MemberCreatedEvent.eventName,
-      new MemberCreatedEvent(member, dto.notifyMember),
+      new MemberCreatedEvent(member, true),
     );
     return this.findById(member._id);
   }

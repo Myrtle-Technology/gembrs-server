@@ -20,7 +20,7 @@ export class Subscription {
   currentPeriodStart: Date;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ required: false })
   currentPeriodEnd: Date;
 
   @ApiProperty()
