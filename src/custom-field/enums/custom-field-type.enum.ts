@@ -5,6 +5,7 @@ export enum CustomFieldType {
   Email = 'email',
   Password = 'password',
   Date = 'date',
+  Time = 'time',
   Datetime = 'datetime',
   Number = 'number',
   Boolean = 'boolean',
