@@ -4,6 +4,7 @@ import slugify from 'slugify';
 import { CustomFieldDefaults } from 'src/custom-field/custom-field.defaults';
 import { CustomFieldService } from 'src/custom-field/custom-field.service';
 import { CustomField } from 'src/custom-field/schemas/custom-field.schema';
+import { MembershipAccess } from 'src/membership/enums/membership-access.enum';
 import { MembershipService } from 'src/membership/membership.service';
 import { SharedService } from 'src/shared/shared.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -63,7 +64,19 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
   }
 
   public async findAllMemberships(organization: string) {
-    return this.membershipService.findAll(organization);
+    return this.membershipService.findAll(organization, {
+      access: { $ne: MembershipAccess.INVITE },
+    });
+  }
+
+  public async findOrganizationMembershipById(
+    organization: string,
+    id: string,
+  ) {
+    return this.membershipService.findOne(organization, {
+      _id: id,
+      access: { $ne: MembershipAccess.INVITE },
+    });
   }
 
   public async getRegistrationFormFields(

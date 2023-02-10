@@ -43,7 +43,7 @@ export class MembershipController {
   @Get(':id')
   @ApiOperation({ summary: 'Find a Membership' })
   findOne(@Req() request: TokenRequest, @Param('id') id: string) {
-    return this.service.findOne(request.tokenData.organizationId, id);
+    return this.service.findById(request.tokenData.organizationId, id);
   }
 
   @Patch(':id')

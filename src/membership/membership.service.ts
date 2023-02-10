@@ -32,8 +32,12 @@ export class MembershipService extends SharedService<MembershipRepository> {
     return this.repo.find({ ...filter, organization });
   }
 
-  public async findOne(organization: string, id: string) {
+  public async findById(organization: string, id: string) {
     return this.repo.findOne({ organization, _id: id });
+  }
+
+  public async findOne(organization: string, filter: any) {
+    return this.repo.findOne({ organization, ...filter });
   }
 
   public async updateOne(

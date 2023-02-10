@@ -32,7 +32,6 @@ import { MemberStatus } from './enums/member-status.enum';
 import { isEmail, isPhoneNumber } from 'class-validator';
 import { SmsService } from 'src/sms/sms.service';
 import { OrganizationService } from 'src/organization/organization.service';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { MembershipAccess } from 'src/membership/enums/membership-access.enum';
 import { AcceptInvite } from './dto/accept-invite.dto';
 
@@ -68,7 +67,7 @@ export class MemberService extends SharedService<MemberRepository> {
   }
 
   public async createOne(organization: string, dto: CreateOneMemberDto) {
-    const membership = await this.membershipService.findOne(
+    const membership = await this.membershipService.findById(
       organization,
       dto.membership,
     );

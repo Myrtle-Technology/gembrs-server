@@ -46,6 +46,19 @@ export class OrganizationController {
     return this.service.findAllMemberships(id);
   }
 
+  @Public()
+  @ApiOperation({ summary: 'Find all Organization Memberships' })
+  @Get('/:id/memberships/:membershipId')
+  findOneMembership(
+    @Param('id') organizationId: string,
+    @Param('membershipId') membershipId: string,
+  ) {
+    return this.service.findOrganizationMembershipById(
+      organizationId,
+      membershipId,
+    );
+  }
+
   // @Permit({
   //   resource: ResourcesEnum.Organization,
   //   action: 'create',
