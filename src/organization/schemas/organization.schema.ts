@@ -6,7 +6,11 @@ import { User } from 'src/user/schemas/user.schema';
 
 // export type OrganizationDocument = Organization & Document;
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
+  toObject: { virtuals: true }, // So `console.log()` and other functions that use `toObject()` include virtuals
+})
 export class Organization extends Document {
   @ApiProperty()
   @Prop({ required: true })
@@ -58,5 +62,12 @@ export class Organization extends Document {
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);
+
+OrganizationSchema.virtual('membersCount', {
+  ref: 'Member',
+  localField: '_id',
+  foreignField: 'organization',
+  count: true,
+});
 
 OrganizationSchema.plugin(mongoosePagination);

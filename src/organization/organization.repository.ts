@@ -67,6 +67,12 @@ export class OrganizationRepository extends SharedRepository<
   }
 
   public async findBySiteName(siteName: string) {
-    return this.model.findOne({ siteName });
+    return this.model.findOne({ siteName }, null, {
+      lean: true,
+      populate: [
+        { path: 'owner', select: 'firstName lastName -_id' },
+        { path: 'membersCount' },
+      ],
+    });
   }
 }

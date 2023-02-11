@@ -52,7 +52,12 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
   }
 
   public async findById(id: ObjectId | string) {
-    return this.repo.findById(id);
+    return this.repo.findById(id, {
+      populate: [
+        { path: 'owner', select: 'firstName lastName -_id' },
+        { path: 'membersCount' },
+      ],
+    });
   }
 
   public async update(id: ObjectId | string, dto: UpdateOrganizationDto) {
