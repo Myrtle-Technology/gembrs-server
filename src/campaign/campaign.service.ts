@@ -10,13 +10,14 @@ import { CampaignStatus } from './enums/campaign-status.enum';
 import { Campaign } from './schemas/campaign.schema';
 import { PaginationOptions } from 'src/shared/shared.repository';
 import { FilterQuery, ObjectId, ProjectionType, QueryOptions } from 'mongoose';
+import { UpdateCampaignTemplateSmsDto } from './dto/update-campaign-template-sms.dto';
 
 @Injectable()
 export class CampaignService extends SharedService<CampaignRepository> {
   constructor(
     readonly repo: CampaignRepository,
     readonly templateRepo: TemplateRepository,
-    readonly recipient: RecipientRepository,
+    readonly recipientRepo: RecipientRepository,
   ) {
     super(repo);
   }
@@ -69,6 +70,16 @@ export class CampaignService extends SharedService<CampaignRepository> {
     return this.repo.create(campaignDto);
   }
 
+  public async updateCampaignSms(
+    userId: string,
+    campaignId: string,
+    dto: UpdateCampaignTemplateSmsDto,
+  ) {
+    const campaign = await this.findById(userId, campaignId);
+    await this.templateRepo.updateOne(campaign.template, dto);
+    return this.findById(userId, campaignId);
+  }
+
   public async updateCampaign(
     userId: string,
     campaignId: string,
@@ -83,7 +94,8 @@ export class CampaignService extends SharedService<CampaignRepository> {
     dto: UpdateCampaignDto,
   ) {
     const campaign = await this.updateCampaign(userId, campaignId, dto);
-
+    // const recipients = await this.recipientRepo.find({});
+    // if ()
     if (campaign.scheduledAt) {
       // Schedule
     } else {

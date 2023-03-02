@@ -1,3 +1,4 @@
+import { UpdateCampaignTemplateSmsDto } from './dto/update-campaign-template-sms.dto';
 import { TokenRequest } from './../auth/interfaces/token-request.interface';
 import {
   Controller,
@@ -42,16 +43,33 @@ export class CampaignController {
     return this.service.findById(request.tokenData.userId, id);
   }
 
+  @Patch(':id/sms')
+  updateCampaignSms(
+    @Request() request: TokenRequest,
+    @Param('id') id: string,
+    @Body() dto: UpdateCampaignTemplateSmsDto,
+  ) {
+    return this.service.updateCampaignSms(request.tokenData.userId, id, dto);
+  }
   @Patch(':id')
   update(
     @Request() request: TokenRequest,
     @Param('id') id: string,
-    @Body() updateCampaignDto: UpdateCampaignDto,
+    @Body() dto: UpdateCampaignDto,
   ) {
-    return this.service.updateCampaign(
+    return this.service.updateCampaign(request.tokenData.userId, id, dto);
+  }
+
+  @Patch(':id')
+  updateAndSendCampaign(
+    @Request() request: TokenRequest,
+    @Param('id') id: string,
+    @Body() dto: UpdateCampaignDto,
+  ) {
+    return this.service.updateAndSendCampaign(
       request.tokenData.userId,
       id,
-      updateCampaignDto,
+      dto,
     );
   }
 
