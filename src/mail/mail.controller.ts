@@ -9,10 +9,11 @@ export class MailController {
 
   @Post('/send')
   sendEmail(@Req() request: TokenRequest, @Body() dto: SendMailDto) {
-    this.service.sendMail(
-      'organization',
-      request.tokenData.organizationId,
-      dto,
-    );
+    // this.service.sendMail(
+    //   'organization',
+    //   request.tokenData.organizationId,
+    //   dto,
+    // );
+    return 'send not implemented';
   }
 }

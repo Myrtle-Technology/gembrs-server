@@ -8,7 +8,6 @@ import { ElasticMailService } from './elastic-mail.service';
 import { ElasticMailTemplateNames } from './elastic-mail.templates';
 import { MailerService, ISendMailOptions } from '@nestjs-modules/mailer';
 import { SendMailDto } from './dto/send-mail.dto';
-import { TemplateService } from 'src/template/template.service';
 import { MemberService } from 'src/member/member.service';
 
 @Injectable()
@@ -18,7 +17,6 @@ export class MailService {
     private mailerService: MailerService,
     private elasticMailService: ElasticMailService,
     private configService: ConfigService,
-    private templateService: TemplateService,
     @Inject(forwardRef(() => MemberService))
     private memberService: MemberService,
   ) {}
@@ -27,7 +25,7 @@ export class MailService {
     const template = Handlebars.compile(html);
     return this.mailerService.sendMail({ ...options, html: template(context) });
   }
-
+  /*
   // Move to newsletters later -- not tested
   async sendMail(
     owner: 'user' | 'organization',
@@ -83,7 +81,7 @@ export class MailService {
         });
     });
   }
-
+*/
   async welcomeRegisteredUserAndOrganization(
     user: User,
     organization: Organization,
