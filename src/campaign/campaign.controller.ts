@@ -13,8 +13,12 @@ import {
 import { CampaignService } from './campaign.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
+import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
+import { AllowUserWithoutOrganization } from 'src/auth/decorators/allow-user-without-organization.decorator';
 
-@Controller('campaign')
+@OrganizationApi()
+@AllowUserWithoutOrganization()
+@Controller('campaigns')
 export class CampaignController {
   constructor(private readonly service: CampaignService) {}
 
