@@ -26,7 +26,7 @@ import { CustomFieldModule } from './custom-field/custom-field.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { TemplateModule } from './template/template.module';
+import { CampaignModule } from './campaign/campaign.module';
 
 @Module({
   imports: [
@@ -91,7 +91,7 @@ import { TemplateModule } from './template/template.module';
       }),
       inject: [ConfigService],
     }),
-    TemplateModule,
+    CampaignModule,
   ],
   controllers: [AppController],
   providers: [

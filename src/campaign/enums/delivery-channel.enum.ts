@@ -1,4 +1,4 @@
-export enum TemplateType {
+export enum DeliveryChannel {
   EMAIL = 'email',
   SMS = 'sms',
 }
