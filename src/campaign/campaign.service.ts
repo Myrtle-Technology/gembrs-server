@@ -112,4 +112,8 @@ export class CampaignService extends SharedService<CampaignRepository> {
   public async removeOne(organization: string, id: ObjectId | string) {
     return this.repo.deleteOne({ organization, _id: id });
   }
+
+  public async removeMany(organization: string, ids: Array<ObjectId | string>) {
+    return this.repo.deleteOne({ organization, _id: { $in: ids } });
+  }
 }
