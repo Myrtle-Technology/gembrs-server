@@ -5,7 +5,7 @@ export class CreateCampaignDto {
 
   status: CampaignStatus; // draft, scheduled, sent, etc.
 
-  template: string;
+  template: Record<string, unknown>;
 
   createdBy: string;
 }

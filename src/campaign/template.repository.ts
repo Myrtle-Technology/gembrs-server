@@ -16,7 +16,7 @@ export class TemplateRepository extends SharedRepository<
     super(model);
   }
 
-  protected populateOnFind = ['user', 'organization'];
+  protected populateOnFind = [];
 
   public async find(
     filter: FilterQuery<Template>,

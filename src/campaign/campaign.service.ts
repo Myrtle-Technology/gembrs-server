@@ -16,6 +16,8 @@ import { UpdateCampaignTemplateSmsDto } from './dto/update-campaign-template-sms
 import { CronJob } from 'cron';
 import { DateTime } from 'luxon';
 import { SchedulerRegistry } from '@nestjs/schedule';
+import EditorjsParser from 'editorjs-parser';
+import { convert as covertHTMLtoText } from 'html-to-text';
 
 @Injectable()
 export class CampaignService extends SharedService<CampaignRepository> {
@@ -68,7 +70,7 @@ export class CampaignService extends SharedService<CampaignRepository> {
   }
 
   public async createCampaign(userId: string, dto: CreateTemplateDto) {
-    const template = await this.templateRepo.create(dto);
+    const template = await this.createTemplate(dto);
     const campaignDto: CreateCampaignDto = {
       title: dto.title,
       template: template._id,
@@ -76,6 +78,34 @@ export class CampaignService extends SharedService<CampaignRepository> {
       createdBy: userId,
     };
     return this.repo.create(campaignDto);
+  }
+
+  private async createTemplate(dto: CreateTemplateDto) {
+    const parser = new EditorjsParser();
+    const template = await this.templateRepo.create(dto);
+    // TODO generate template email and sms strings
+    const html = parser.parse(dto.content);
+    return this.templateRepo.updateOne(
+      { _id: template._id },
+      {
+        emailTemplate: html, // convert template.content to html
+        smsTemplate: covertHTMLtoText(html), // convert to plain text.
+      },
+    );
+  }
+
+  private async updateTemplate(templateId: string, dto: UpdateCampaignDto) {
+    const parser = new EditorjsParser();
+    // TODO generate template email and sms strings
+    const html = parser.parse(dto.template);
+    return this.templateRepo.updateOne(
+      { _id: templateId },
+      {
+        content: dto.template,
+        emailTemplate: html,
+        smsTemplate: covertHTMLtoText(html),
+      },
+    );
   }
 
   public async updateCampaignSms(
@@ -96,6 +126,9 @@ export class CampaignService extends SharedService<CampaignRepository> {
     campaignId: string,
     dto: UpdateCampaignDto,
   ) {
+    if (dto.template) {
+      await this.updateTemplate(campaignId, dto.template);
+    }
     return this.repo.updateOne({ _id: campaignId, createdBy: userId }, dto);
   }
 
