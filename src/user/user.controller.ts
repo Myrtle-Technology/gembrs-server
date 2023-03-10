@@ -11,14 +11,16 @@ import { UserService } from './user.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
+import { AllowUserWithoutOrganization } from 'src/auth/decorators/allow-user-without-organization.decorator';
 
+@AllowUserWithoutOrganization()
 @ApiTags('User')
 @Controller('users')
 export class UserController {
   constructor(private readonly service: UserService) {}
 
   @Get('/contacts')
-  @ApiOperation({ summary: 'Find all User Contacts' })
+  @ApiOperation({ summary: 'Find all Current User Contacts' })
   findAll(@Request() request: TokenRequest, @Query('search') search: string) {
     return this.service.findUserContacts(request.tokenData.userId, search);
   }
