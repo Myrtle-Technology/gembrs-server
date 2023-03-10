@@ -58,7 +58,7 @@ export class TermiiService {
       return;
     }
   }
-  /*async sendBulkSms(
+  async sendBulkSms(
     to: string[],
     message: string,
     channel: 'generic' | 'whatsapp' | 'dnd' = 'generic',
@@ -68,20 +68,20 @@ export class TermiiService {
     try {
       const response = await this.axios.post<TermiiSendSmsResponse>(
         '/sms/send/bulk',
-        new TermiiBulkRequestParams({
+        JSON.stringify({
           to,
           sms: message,
           from: this.TERMII_SENDER_ID,
           ...this.data,
           channel,
-        }).toString(),
+        }),
       );
       return response.data;
     } catch (error) {
       console.log(error.response.data);
       return;
     }
-  }*/
+  }
 
   async sendSMSFromRandomNumber(to: string, message: string) {
     this.checkIfApiKeyIsSet();

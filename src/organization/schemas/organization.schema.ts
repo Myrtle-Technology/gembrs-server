@@ -71,3 +71,5 @@ OrganizationSchema.virtual('membersCount', {
 });
 
 OrganizationSchema.plugin(mongoosePagination);
+
+OrganizationSchema.index({ '$**': 'text' });

@@ -38,7 +38,7 @@ export class TermiiBulkRequestParams {
   channel: string;
   api_key: string;
 
-  constructor(payload: TermiiBulkRequestParams) {
+  constructor(payload: Partial<TermiiBulkRequestParams>) {
     Object.assign(this, payload);
   }
 

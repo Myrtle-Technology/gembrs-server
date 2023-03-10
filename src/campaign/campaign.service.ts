@@ -1,3 +1,5 @@
+import { SmsService } from './../sms/sms.service';
+import { MailService } from 'src/mail/mail.service';
 import { RecipientRepository } from './recipient.repository';
 import { TemplateRepository } from './template.repository';
 import { Injectable } from '@nestjs/common';
@@ -11,13 +13,19 @@ import { Campaign } from './schemas/campaign.schema';
 import { PaginationOptions } from 'src/shared/shared.repository';
 import { FilterQuery, ObjectId, ProjectionType, QueryOptions } from 'mongoose';
 import { UpdateCampaignTemplateSmsDto } from './dto/update-campaign-template-sms.dto';
+import { CronJob } from 'cron';
+import { DateTime } from 'luxon';
+import { SchedulerRegistry } from '@nestjs/schedule';
 
 @Injectable()
 export class CampaignService extends SharedService<CampaignRepository> {
   constructor(
     readonly repo: CampaignRepository,
-    readonly templateRepo: TemplateRepository,
-    readonly recipientRepo: RecipientRepository,
+    private readonly templateRepo: TemplateRepository,
+    private readonly recipientRepo: RecipientRepository,
+    private readonly mailService: MailService,
+    private readonly smsService: SmsService,
+    private readonly schedulerRegistry: SchedulerRegistry,
   ) {
     super(repo);
   }
@@ -76,7 +84,10 @@ export class CampaignService extends SharedService<CampaignRepository> {
     dto: UpdateCampaignTemplateSmsDto,
   ) {
     const campaign = await this.findById(userId, campaignId);
-    await this.templateRepo.updateOne(campaign.template, dto);
+    await this.templateRepo.updateOne(
+      campaign.template?._id ?? campaign.template,
+      dto,
+    );
     return this.findById(userId, campaignId);
   }
 
@@ -94,15 +105,62 @@ export class CampaignService extends SharedService<CampaignRepository> {
     dto: UpdateCampaignDto,
   ) {
     const campaign = await this.updateCampaign(userId, campaignId, dto);
-    // const recipients = await this.recipientRepo.find({});
-    // if ()
     if (campaign.scheduledAt) {
       // Schedule
+      this.scheduleCampaign(userId, campaign);
+      return this.repo.updateOne(
+        { _id: campaign._id, createdBy: userId },
+        {
+          status: CampaignStatus.SCHEDULED,
+        },
+      );
     } else {
-      // send
+      await this.sendCampaign(userId, campaign);
+      return this.repo.updateOne(
+        { _id: campaign._id, createdBy: userId },
+        {
+          status: CampaignStatus.SCHEDULED,
+        },
+      );
     }
+  }
 
-    return campaign;
+  public async sendCampaign(userId: string, campaignId: Campaign) {
+    const campaign =
+      typeof campaignId === 'string'
+        ? await this.findById(userId, campaignId)
+        : campaignId;
+    const recipients = await this.recipientRepo.find({
+      campaign: campaign._id,
+    });
+
+    this.mailService.sendMail({
+      template: campaign.template.emailTemplate,
+      recipients,
+    });
+
+    this.smsService.sendBulkSMS({
+      template: campaign.template.smsTemplate,
+      recipients,
+    });
+  }
+
+  public scheduleCampaign(userId: string, campaign: Campaign) {
+    const date = DateTime.fromISO(
+      campaign.scheduledAt as unknown as string,
+    ).toJSDate();
+    const job = new CronJob(date, async () => {
+      await this.sendCampaign(userId, campaign._id);
+    });
+
+    this.schedulerRegistry.addCronJob(`${Date.now()}-${campaign.title}`, job);
+    job.start();
+  }
+
+  public cancelAllScheduledCampaigns() {
+    this.schedulerRegistry.getCronJobs().forEach((job) => {
+      job.stop();
+    });
   }
 
   public async removeById(id: ObjectId | string) {

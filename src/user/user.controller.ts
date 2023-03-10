@@ -1,60 +1,44 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Param,
-  Delete,
   Query,
-  Res,
   Patch,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { Response } from 'express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 
 @ApiTags('User')
 @Controller('users')
 export class UserController {
   constructor(private readonly service: UserService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Find all Users' })
-  findAll(@Query('filter') filter: any) {
-    return this.service.findAll(filter);
+  @Get('/contacts')
+  @ApiOperation({ summary: 'Find all User Contacts' })
+  findAll(@Request() request: TokenRequest, @Query('search') search: string) {
+    return this.service.findUserContacts(request.tokenData.userId, search);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Find or Create a User' })
-  public async create(
-    @Body() createUserDto: CreateUserDto,
-    @Res() response: Response,
+  @Patch('/')
+  @ApiOperation({ summary: 'Update User Profile' })
+  updateCurrentUser(
+    @Request() request: TokenRequest,
+    @Body() dto: UpdateUserDto,
   ) {
-    const user = await this.service.findUpdateOrCreate(createUserDto);
-    if (user[1]) {
-      return response.status(201).json(user[0]);
-    }
-    return response.status(200).json(user[0]);
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Find a User' })
-  findOne(@Param('id') id: string) {
-    return this.service.findById(id);
+    return this.service.update(request.tokenData.userId, dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update User Profile' })
-  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.service.update(id, dto);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a User' })
-  public async remove(@Param('id') id: string) {
-    await this.service.remove(id);
-    return { message: 'User deleted successfully' };
+  @ApiOperation({ summary: 'Update User Profile OLD', deprecated: true })
+  update(
+    @Request() request: TokenRequest,
+    @Param('id') id: string,
+    @Body() dto: UpdateUserDto,
+  ) {
+    return this.service.update(request.tokenData.userId, dto);
   }
 }

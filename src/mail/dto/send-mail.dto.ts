@@ -1,5 +1,6 @@
+import { Recipient } from './../../campaign/schemas/recipient.schema';
 export class SendMailDto {
   template: string;
-  contacts: string[];
+  recipients: Recipient[];
   // schedule: string;
 }

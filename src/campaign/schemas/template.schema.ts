@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { mongoosePagination } from 'mongoose-paginate-ts';
 import { User } from 'src/user/schemas/user.schema';
 
 @Schema({ timestamps: true })
-export class Template {
+export class Template extends Document {
   @Prop({ required: true })
   title: string;
 

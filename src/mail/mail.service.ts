@@ -9,6 +9,8 @@ import { ElasticMailTemplateNames } from './elastic-mail.templates';
 import { MailerService, ISendMailOptions } from '@nestjs-modules/mailer';
 import { SendMailDto } from './dto/send-mail.dto';
 import { MemberService } from 'src/member/member.service';
+import { ArrayHelper } from 'src/shared/helpers/array.helper';
+import { compile } from 'handlebars';
 
 @Injectable()
 export class MailService {
@@ -25,49 +27,27 @@ export class MailService {
     const template = Handlebars.compile(html);
     return this.mailerService.sendMail({ ...options, html: template(context) });
   }
-  /*
-  // Move to newsletters later -- not tested
-  async sendMail(
-    owner: 'user' | 'organization',
-    ownerId: string,
-    dto: SendMailDto,
-  ) {
-    const template = await this.templateService.findOne(
-      owner,
-      ownerId,
-      dto.template,
-    );
-    if (owner == 'organization') {
-      const contacts = await this.memberService.findAll(ownerId, {
-        _id: { $in: dto.contacts },
-      });
-      // send emails in chunks of 50
 
-      const emailsToBeSent: ISendMailOptions[] = contacts
-        .filter((c) => !!c.user.email) // work with users that have emails
-        .map((contact) => ({
-          html: template.html,
-          context: { ...contact.user },
-          to: {
-            address: contact.user.email,
-            name: `${contact.user.firstName} ${contact.user.lastName}`,
-          },
-        }));
+  public async sendMail(dto: SendMailDto) {
+    const template = compile(dto.template);
+    const emailsToBeSent: ISendMailOptions[] = dto.recipients
+      .filter((recipient) => !!recipient.email) // work with users that have emails
+      .map((recipient) => ({
+        html: template(recipient.user),
+        context: { ...recipient },
+        to: {
+          address: recipient.email,
+          name: `${recipient.user.firstName} ${recipient.user.lastName}`,
+        },
+      }));
 
-      this.processEmailSending(emailsToBeSent);
-    }
-  }
-
-  chunkEmails<T = unknown>(arr: T[], chunkSize: number): T[][] {
-    return Array.from(Array(Math.ceil(arr.length / chunkSize)), (_, i) =>
-      arr.slice(i * chunkSize, i * chunkSize + chunkSize),
-    );
+    this.processEmailSending(emailsToBeSent);
   }
 
   // run this and figure out a way to give delivery reports
   // see if you can schedule it after every 30 mins
-  async processEmailSending(options: ISendMailOptions[]) {
-    const chunks = this.chunkEmails(options, 50);
+  private async processEmailSending(options: ISendMailOptions[]) {
+    const chunks = ArrayHelper.chunk(options, 50);
     chunks.forEach((chunk) => {
       const mailSendingProcesses: Promise<void>[] = chunk.map((option) =>
         this.send(option),
@@ -81,7 +61,7 @@ export class MailService {
         });
     });
   }
-*/
+
   async welcomeRegisteredUserAndOrganization(
     user: User,
     organization: Organization,

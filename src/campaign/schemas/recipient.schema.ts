@@ -1,14 +1,22 @@
+import { Campaign } from './campaign.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { mongoosePagination } from 'mongoose-paginate-ts';
 import { User } from 'src/user/schemas/user.schema';
 import { DeliveryChannel } from '../enums/delivery-channel.enum';
 import { DeliveryStatus } from '../enums/delivery-status.enum';
 
 @Schema({ timestamps: true })
-export class Recipient {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+export class Recipient extends Document {
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Campaign',
+    required: true,
+  })
+  campaign: Campaign;
 
   @Prop()
   email: string;
@@ -29,6 +37,21 @@ export class Recipient {
     default: DeliveryStatus.PENDING,
   })
   status: DeliveryStatus; // sent, failed, etc.
+
+  @Prop()
+  message: string;
+
+  @Prop()
+  error: string;
+
+  @Prop()
+  sentAt: Date;
+
+  @Prop()
+  deliveredAt: Date;
+
+  @Prop({ type: mongoose.Schema.Types.Mixed })
+  metadata: Record<string, unknown>;
 }
 export const RecipientSchema = SchemaFactory.createForClass(Recipient);
 

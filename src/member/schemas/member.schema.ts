@@ -84,8 +84,8 @@ export class Member extends Document {
 }
 
 export const MemberSchema = SchemaFactory.createForClass(Member);
-// MemberSchema.index({ '$**': 'text' });
-// MemberSchema.index({ 'customFields.$**': 'text' });
+MemberSchema.index({ '$**': 'text' });
+MemberSchema.index({ 'customFields.$**': 'text' });
 MemberSchema.plugin(mongoosePagination);
 
 // update the userName field whenever the user field is updated.

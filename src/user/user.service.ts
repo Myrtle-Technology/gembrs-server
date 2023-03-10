@@ -8,6 +8,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { ObjectId } from 'mongoose';
+import { PaginationOptions } from 'src/shared/shared.repository';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UserService extends SharedService<UserRepository> {
@@ -56,5 +58,9 @@ export class UserService extends SharedService<UserRepository> {
 
   public async findUserOrganizations(user: string) {
     return this.repo.findUserOrganizations(user);
+  }
+
+  public async findUserContacts(user: string, search?: string) {
+    return this.repo.findUserContacts(user, search);
   }
 }

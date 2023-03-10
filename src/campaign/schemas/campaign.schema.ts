@@ -2,12 +2,12 @@ import { Recipient } from './recipient.schema';
 import { Template } from './template.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { mongoosePagination } from 'mongoose-paginate-ts';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { CampaignStatus } from '../enums/campaign-status.enum';
 import { User } from 'src/user/schemas/user.schema';
 
 @Schema({ timestamps: true })
-export class Campaign {
+export class Campaign extends Document {
   @Prop({ required: true })
   title: string;
 

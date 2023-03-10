@@ -8,6 +8,8 @@ import { Model, ObjectId, QueryOptions } from 'mongoose';
 import { isEmail } from 'class-validator';
 import { Member } from 'src/member/schemas/member.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
+import _ from 'lodash';
+import { UserContact } from './interfaces/user-contact.interface';
 
 @Injectable()
 export class UserRepository extends SharedRepository<
@@ -18,6 +20,8 @@ export class UserRepository extends SharedRepository<
   constructor(
     @InjectModel(User.name) model: Model<User>,
     @InjectModel(Member.name) readonly memberModel: Model<Member>,
+    @InjectModel(Organization.name)
+    readonly organizationModel: Model<Organization>,
   ) {
     super(model);
   }
@@ -82,5 +86,48 @@ export class UserRepository extends SharedRepository<
       userPhone: user.phone,
     });
     return user;
+  }
+
+  public async findUserOwnedOrganizations(
+    user: string,
+  ): Promise<Organization[]> {
+    return this.organizationModel.find({ owner: user }).exec();
+  }
+
+  public async findUserContacts(
+    user: string,
+    search?: string,
+  ): Promise<UserContact[]> {
+    // get all organizations of user
+    const organizations = await this.organizationModel
+      .find({
+        owner: user,
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } },
+        ],
+      })
+      .exec();
+    // get all users of those organizations
+    const members = await this.memberModel
+      .find({
+        organization: { $in: organizations.map((o) => o.id) },
+        $or: [
+          { userName: { $regex: search, $options: 'i' } },
+          { userEmail: { $regex: search, $options: 'i' } },
+          { userPhone: { $regex: search, $options: 'i' } },
+        ],
+      })
+      .populate(['user', 'organization'])
+      .exec();
+    return _(members)
+      .groupBy((m) => m.organization._id)
+      .map(function (items) {
+        return {
+          organization: items[0].organization,
+          contacts: _.map(items, 'user'),
+        };
+      })
+      .value();
   }
 }
