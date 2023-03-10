@@ -8,6 +8,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Template, TemplateSchema } from './schemas/template.schema';
 import { Recipient, RecipientSchema } from './schemas/recipient.schema';
 import { CampaignRepository } from './campaign.repository';
+import { MailModule } from 'src/mail/mail.module';
+import { SmsModule } from 'src/sms/sms.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { CampaignRepository } from './campaign.repository';
     MongooseModule.forFeature([
       { schema: RecipientSchema, name: Recipient.name },
     ]),
+    MailModule,
+    SmsModule,
   ],
   controllers: [CampaignController],
   providers: [
