@@ -11,10 +11,10 @@ export class Template extends Document {
   @Prop({ type: mongoose.Schema.Types.Mixed, required: true })
   content: Record<string, unknown>;
 
-  @Prop({ required: true })
+  @Prop()
   emailTemplate: string;
 
-  @Prop({ required: true })
+  @Prop()
   smsTemplate: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })

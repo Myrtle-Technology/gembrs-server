@@ -1,17 +1,26 @@
-import { IsOptional, IsString } from 'class-validator';
+import { DeliveryChannel } from '../enums/delivery-channel.enum';
+import { DeliveryStatus } from '../enums/delivery-status.enum';
 
 export class CreateRecipientDto {
   user: string;
 
-  organization: string;
+  campaign: string;
 
-  @IsString()
-  name?: string;
+  email: string;
 
-  @IsString()
-  @IsOptional()
-  html?: string;
+  phone: string;
 
-  @IsOptional()
-  publishedAt?: string;
+  channel: DeliveryChannel; // sms, email, push, etc.
+
+  status?: DeliveryStatus; // sent, failed, etc.
+
+  message?: string;
+
+  error?: string;
+
+  sentAt?: Date;
+
+  deliveredAt?: Date;
+
+  metadata?: Record<string, unknown>;
 }

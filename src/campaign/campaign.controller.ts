@@ -70,7 +70,7 @@ export class CampaignController {
   }
 
   @ApiOperation({ summary: 'Update and send Campaign to recipients' })
-  @Patch(':id')
+  @Patch(':id/send')
   updateAndSendCampaign(
     @Request() request: TokenRequest,
     @Param('id') id: string,
@@ -83,18 +83,35 @@ export class CampaignController {
     );
   }
 
+  @ApiOperation({ summary: 'Update and send Campaign to recipients' })
+  @Delete(':id/recipients')
+  async removeCampaignRecipients(
+    @Request() request: TokenRequest,
+    @Param('id') campaignId: string,
+    @Query('recipientIds') recipientIds: string[],
+  ) {
+    await this.service.removeCampaignRecipients(
+      request.tokenData.userId,
+      campaignId,
+      typeof recipientIds == 'string' ? [recipientIds] : recipientIds,
+    );
+    return { message: 'Recipients removed successfully' };
+  }
+
   @ApiOperation({ summary: 'Delete Campaign' })
   @Delete(':id')
-  remove(@Request() request: TokenRequest, @Param('id') id: string) {
-    return this.service.removeOne(request.tokenData.userId, id);
+  async remove(@Request() request: TokenRequest, @Param('id') id: string) {
+    await this.service.removeOne(request.tokenData.userId, id);
+    return { message: 'Campaign deleted successfully' };
   }
 
   @ApiOperation({ summary: 'Delete Multiple Campaigns' })
-  @Delete(':id')
-  removeMultiple(
+  @Delete('')
+  async removeMultiple(
     @Request() request: TokenRequest,
     @Query('ids') ids: Array<string>,
   ) {
-    return this.service.removeMany(request.tokenData.userId, ids);
+    await this.service.removeMany(request.tokenData.userId, ids);
+    return { message: 'Campaigns deleted successfully' };
   }
 }

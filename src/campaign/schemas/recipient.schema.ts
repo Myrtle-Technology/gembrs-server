@@ -56,3 +56,8 @@ export class Recipient extends Document {
 export const RecipientSchema = SchemaFactory.createForClass(Recipient);
 
 RecipientSchema.plugin(mongoosePagination);
+
+RecipientSchema.index(
+  { campaign: 1, user: 1, channel: 1 },
+  { unique: true, name: 'campaign_user_channel' },
+);

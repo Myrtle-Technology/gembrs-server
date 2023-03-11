@@ -4,7 +4,10 @@ import { RecipientRepository } from './recipient.repository';
 import { TemplateRepository } from './template.repository';
 import { Injectable } from '@nestjs/common';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
-import { UpdateCampaignDto } from './dto/update-campaign.dto';
+import {
+  UpdateCampaignDto,
+  UpdateCampaignRecipientDto,
+} from './dto/update-campaign.dto';
 import { SharedService } from 'src/shared/shared.service';
 import { CampaignRepository } from './campaign.repository';
 import { CreateTemplateDto } from './dto/create-template.dto';
@@ -16,8 +19,10 @@ import { UpdateCampaignTemplateSmsDto } from './dto/update-campaign-template-sms
 import { CronJob } from 'cron';
 import { DateTime } from 'luxon';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import EditorjsParser from 'editorjs-parser';
+import * as EditorjsParser from 'editorjs-parser';
 import { convert as covertHTMLtoText } from 'html-to-text';
+import { Recipient } from './schemas/recipient.schema';
+import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
 
 @Injectable()
 export class CampaignService extends SharedService<CampaignRepository> {
@@ -64,9 +69,13 @@ export class CampaignService extends SharedService<CampaignRepository> {
     id: ObjectId | string,
     relations = ['template'],
   ): Promise<Campaign> {
-    return this.repo.findOne({ _id: id, createdBy: userId }, null, {
+    const campaign = this.repo.findOne({ _id: id, createdBy: userId }, null, {
       populate: relations,
     });
+    if (!campaign) {
+      throw new NotFoundException('Campaign not found');
+    }
+    return campaign;
   }
 
   public async createCampaign(userId: string, dto: CreateTemplateDto) {
@@ -126,10 +135,34 @@ export class CampaignService extends SharedService<CampaignRepository> {
     campaignId: string,
     dto: UpdateCampaignDto,
   ) {
+    const recipients = await this.recipientRepo.decipherRecipients(
+      campaignId,
+      dto.dummyRecipients,
+    );
     if (dto.template) {
       await this.updateTemplate(campaignId, dto.template);
     }
-    return this.repo.updateOne({ _id: campaignId, createdBy: userId }, dto);
+    return this.repo.updateOne(
+      { _id: campaignId, createdBy: userId },
+      {
+        ...dto,
+        recipients,
+      },
+    );
+  }
+
+  public async removeCampaignRecipients(
+    userId: string,
+    campaignId: string,
+    recipientIds: string[],
+  ) {
+    const campaign = await this.repo.removeRecipients(
+      userId,
+      campaignId,
+      recipientIds,
+    );
+    await this.recipientRepo.deleteOne({ _id: { $in: recipientIds } });
+    return campaign;
   }
 
   public async updateAndSendCampaign(
@@ -138,24 +171,20 @@ export class CampaignService extends SharedService<CampaignRepository> {
     dto: UpdateCampaignDto,
   ) {
     const campaign = await this.updateCampaign(userId, campaignId, dto);
+    let status = CampaignStatus.SENT;
     if (campaign.scheduledAt) {
       // Schedule
       this.scheduleCampaign(userId, campaign);
-      return this.repo.updateOne(
-        { _id: campaign._id, createdBy: userId },
-        {
-          status: CampaignStatus.SCHEDULED,
-        },
-      );
+      status = CampaignStatus.SCHEDULED;
     } else {
       await this.sendCampaign(userId, campaign);
-      return this.repo.updateOne(
-        { _id: campaign._id, createdBy: userId },
-        {
-          status: CampaignStatus.SCHEDULED,
-        },
-      );
     }
+    return this.repo.updateOne(
+      { _id: campaign._id, createdBy: userId },
+      {
+        status: status,
+      },
+    );
   }
 
   public async sendCampaign(userId: string, campaignId: Campaign) {

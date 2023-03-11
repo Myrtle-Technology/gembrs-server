@@ -8,7 +8,7 @@ import { Model, ObjectId, QueryOptions } from 'mongoose';
 import { isEmail } from 'class-validator';
 import { Member } from 'src/member/schemas/member.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
-import _ from 'lodash';
+import { groupBy, map } from 'lodash';
 import { UserContact } from './interfaces/user-contact.interface';
 
 @Injectable()
@@ -120,14 +120,14 @@ export class UserRepository extends SharedRepository<
       })
       .populate(['user', 'organization'])
       .exec();
-    return _(members)
-      .groupBy((m) => m.organization._id)
-      .map(function (items) {
+    return map(
+      groupBy(members, (m) => m.organization._id),
+      function (items) {
         return {
           organization: items[0].organization,
-          contacts: _.map(items, 'user'),
+          contacts: map(items, 'user'),
         };
-      })
-      .value();
+      },
+    );
   }
 }

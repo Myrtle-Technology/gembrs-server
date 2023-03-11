@@ -10,6 +10,8 @@ import { Recipient, RecipientSchema } from './schemas/recipient.schema';
 import { CampaignRepository } from './campaign.repository';
 import { MailModule } from 'src/mail/mail.module';
 import { SmsModule } from 'src/sms/sms.module';
+import { MemberSchema, Member } from 'src/member/schemas/member.schema';
+import { UserSchema, User } from 'src/user/schemas/user.schema';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { SmsModule } from 'src/sms/sms.module';
     MongooseModule.forFeature([
       { schema: RecipientSchema, name: Recipient.name },
     ]),
+    MongooseModule.forFeature([{ schema: MemberSchema, name: Member.name }]),
+    MongooseModule.forFeature([{ schema: UserSchema, name: User.name }]),
     MailModule,
     SmsModule,
   ],

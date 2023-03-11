@@ -5,6 +5,7 @@ import { mongoosePagination } from 'mongoose-paginate-ts';
 import mongoose, { Document } from 'mongoose';
 import { CampaignStatus } from '../enums/campaign-status.enum';
 import { User } from 'src/user/schemas/user.schema';
+import { UpdateCampaignRecipientDto } from '../dto/update-campaign.dto';
 
 @Schema({ timestamps: true })
 export class Campaign extends Document {
@@ -29,6 +30,9 @@ export class Campaign extends Document {
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipient' }] })
   recipients: Recipient[];
+
+  @Prop({ type: mongoose.Schema.Types.Mixed })
+  dummyRecipient: UpdateCampaignRecipientDto[];
 }
 export const CampaignSchema = SchemaFactory.createForClass(Campaign);
 

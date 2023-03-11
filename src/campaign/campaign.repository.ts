@@ -28,4 +28,37 @@ export class CampaignRepository extends SharedRepository<
       .populate(this.populateOnFind)
       .exec();
   }
+
+  public async updateOne(
+    filter: FilterQuery<Campaign>,
+    dto: UpdateCampaignDto,
+    options?: QueryOptions<Campaign>,
+  ): Promise<Campaign> {
+    return this.model.findOneAndUpdate(
+      filter,
+      {
+        title: dto.title,
+        dummyRecipients: dto.dummyRecipients,
+        status: dto.status,
+        scheduledAt: dto.scheduledAt,
+        $addToSet: { recipients: { $each: dto.recipients || [] } },
+      },
+      {
+        new: true,
+        ...options,
+        populate: this.populateOnFind,
+      },
+    );
+  }
+
+  public async removeRecipients(
+    userId: string,
+    campaignId: string,
+    recipientIds: string[],
+  ) {
+    return this.model.updateOne(
+      { createdBy: userId, _id: campaignId },
+      { $pullAll: { recipients: recipientIds || [] } },
+    );
+  }
 }
