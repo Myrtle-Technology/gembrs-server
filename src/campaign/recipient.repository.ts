@@ -105,15 +105,21 @@ export class RecipientRepository extends SharedRepository<
       return rs;
     });
 
-    const existingRecipients = await this.model.find({
-      $or: newRecipients.map(({ user, channel }) => ({ user, channel })),
-    });
+    const existingRecipients = await this.model
+      .find({
+        $or: newRecipients.map(({ user, channel }) => ({
+          user,
+          channel,
+          campaign,
+        })),
+      })
+      .exec();
 
     const newRecipientsToCreate = newRecipients.filter(
       (newRecipient) =>
         !existingRecipients.some(
           (existingRecipient) =>
-            existingRecipient.user === newRecipient.user &&
+            existingRecipient.user.equals(newRecipient.user) &&
             existingRecipient.channel === newRecipient.channel,
         ),
     );

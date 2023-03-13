@@ -211,9 +211,15 @@ export class CampaignService extends SharedService<CampaignRepository> {
     const date = DateTime.fromISO(
       campaign.scheduledAt as unknown as string,
     ).toJSDate();
-    const job = new CronJob(date, async () => {
-      await this.sendCampaign(userId, campaign._id);
-    });
+    const job = new CronJob(
+      date,
+      async () => {
+        await this.sendCampaign(userId, campaign._id);
+      },
+      () => {
+        console.log('Campaign Schedule Job completed');
+      },
+    );
 
     this.schedulerRegistry.addCronJob(`${Date.now()}-${campaign.title}`, job);
     job.start();

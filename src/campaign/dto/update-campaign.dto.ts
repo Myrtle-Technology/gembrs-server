@@ -7,7 +7,7 @@ export class UpdateCampaignDto extends PartialType(CreateCampaignDto) {
   recipients?: string[];
 }
 
-export interface UpdateCampaignRecipientDto {
+export class UpdateCampaignRecipientDto {
   type: 'organization' | 'user';
   id: string; // organizationId or userId
 }
