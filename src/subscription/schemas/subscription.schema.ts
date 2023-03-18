@@ -6,6 +6,7 @@ import { Member } from 'src/member/schemas/member.schema';
 import { PaymentMethod } from 'src/membership/enums/payment-method.enum';
 import { Membership } from 'src/membership/schemas/membership.schema';
 import { Organization } from 'src/organization/schemas/organization.schema';
+import { User } from 'src/user/schemas/user.schema';
 import { SubscriptionStatus } from '../enums/subscription-status.enum';
 
 @Schema({ timestamps: true })
@@ -19,7 +20,7 @@ export class Subscription {
   currentPeriodStart: Date;
 
   @ApiProperty()
-  @Prop({ required: true })
+  @Prop({ required: false })
   currentPeriodEnd: Date;
 
   @ApiProperty()
@@ -63,8 +64,8 @@ export class Subscription {
   membership: Membership;
 
   @ApiProperty()
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Member' })
-  member: Member;
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  user: User;
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(Subscription);

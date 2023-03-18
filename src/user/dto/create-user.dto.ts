@@ -18,4 +18,13 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   imageUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  bio?: string;
+
+  @IsOptional()
+  verifiedEmail?: boolean;
+  @IsOptional()
+  verifiedPhone?: boolean;
 }

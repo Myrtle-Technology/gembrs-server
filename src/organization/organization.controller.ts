@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -19,7 +20,7 @@ import { Permit } from 'src/role/decorators/permit.decorator';
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 
 @OrganizationApi()
-@ApiTags('Organization')
+@ApiTags('Organization or Community')
 @Controller('organizations')
 export class OrganizationController {
   constructor(private readonly service: OrganizationService) {}
@@ -34,8 +35,8 @@ export class OrganizationController {
   @Public()
   @ApiOperation({ summary: 'Find all Organizations' })
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query('limit') limit: string) {
+    return this.service.findAll(+limit);
   }
 
   @Public()
@@ -43,6 +44,19 @@ export class OrganizationController {
   @Get('/:id/memberships')
   findAllMemberships(@Param('id') id: string) {
     return this.service.findAllMemberships(id);
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Find all Organization Memberships' })
+  @Get('/:id/memberships/:membershipId')
+  findOneMembership(
+    @Param('id') organizationId: string,
+    @Param('membershipId') membershipId: string,
+  ) {
+    return this.service.findOrganizationMembershipById(
+      organizationId,
+      membershipId,
+    );
   }
 
   // @Permit({

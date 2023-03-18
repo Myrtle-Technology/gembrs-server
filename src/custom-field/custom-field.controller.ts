@@ -17,7 +17,7 @@ import { UpdateCustomFieldDto } from './dto/update-custom-field.dto';
 
 @ApiBearerAuth()
 @OrganizationApi()
-@ApiTags('Custom Fields')
+@ApiTags('Custom Fields or Questions')
 @Controller('custom-field')
 export class CustomFieldController {
   constructor(private readonly service: CustomFieldService) {}

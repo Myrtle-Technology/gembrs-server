@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional } from 'class-validator';
 import { IsSlug } from 'src/shared/decorators/is-slug.decorator';
 import { IsUnique } from 'src/shared/decorators/is-unique.decorator';
@@ -8,6 +7,7 @@ export class CreateOrganizationDto {
   @IsString()
   name: string;
 
+  @IsOptional()
   @IsSlug()
   @IsUnique(
     { property: 'siteName', name: 'Organization', schema: OrganizationSchema },

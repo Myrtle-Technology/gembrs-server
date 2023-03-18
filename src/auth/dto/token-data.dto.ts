@@ -4,4 +4,5 @@ export class TokenData {
   organizationId: string;
   memberId: string;
   roleId: string;
+  organizations: string[];
 }

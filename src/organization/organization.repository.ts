@@ -23,8 +23,19 @@ export class OrganizationRepository extends SharedRepository<
   populateOnFind = ['owner'];
 
   public async create(dto: CreateOrganizationDto, options?: SaveOptions) {
+    dto.siteName = await this.validateOrganizationSiteName(dto);
     const organization = await super.create(dto, options);
     return await this.setOwner(dto.owner, organization._id);
+  }
+
+  private async validateOrganizationSiteName(dto: CreateOrganizationDto) {
+    const organizationExists = await this.model
+      .countDocuments({ siteName: dto.siteName })
+      .exec();
+    if (organizationExists) {
+      return `${dto.siteName}-${organizationExists + 1}`.toLowerCase();
+    }
+    return dto.siteName;
   }
 
   public async setOwner(ownerId: string, organizationId: string) {
@@ -36,6 +47,7 @@ export class OrganizationRepository extends SharedRepository<
   }
 
   public async findOrCreate(dto: CreateOrganizationDto) {
+    dto.siteName = await this.validateOrganizationSiteName(dto);
     const organization = await this.model.findOneAndUpdate(
       { siteName: dto.siteName },
       dto,
@@ -55,6 +67,12 @@ export class OrganizationRepository extends SharedRepository<
   }
 
   public async findBySiteName(siteName: string) {
-    return this.model.findOne({ siteName });
+    return this.model.findOne({ siteName }, null, {
+      lean: true,
+      populate: [
+        { path: 'owner', select: 'firstName lastName -_id' },
+        { path: 'membersCount' },
+      ],
+    });
   }
 }

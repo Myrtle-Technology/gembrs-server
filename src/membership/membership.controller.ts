@@ -14,7 +14,7 @@ import { UpdateMembershipDto } from './dto/update-membership.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TokenRequest } from 'src/auth/interfaces/token-request.interface';
 import { OrganizationApi } from 'src/auth/decorators/organization-api.decorator';
-import { CursorPaginateQuery } from 'src/shared/paginator/decorator';
+import { PaginationQuery } from 'src/shared/paginator/decorator';
 import { CursorPaginateQueryOptions } from 'src/shared/paginator/paginate-query-options.decorator';
 
 @ApiBearerAuth()
@@ -35,7 +35,7 @@ export class MembershipController {
   @ApiOperation({ summary: 'Find all Memberships' })
   findAll(
     @Req() request: TokenRequest,
-    @CursorPaginateQuery() params: Record<string, string>,
+    @PaginationQuery() params: Record<string, string>,
   ) {
     return this.service.paginate(request.tokenData.organizationId, params);
   }
@@ -43,7 +43,7 @@ export class MembershipController {
   @Get(':id')
   @ApiOperation({ summary: 'Find a Membership' })
   findOne(@Req() request: TokenRequest, @Param('id') id: string) {
-    return this.service.findOne(request.tokenData.organizationId, id);
+    return this.service.findById(request.tokenData.organizationId, id);
   }
 
   @Patch(':id')

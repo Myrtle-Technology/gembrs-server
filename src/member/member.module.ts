@@ -13,6 +13,8 @@ import { RoleModule } from 'src/role/role.module';
 import { MembershipModule } from 'src/membership/membership.module';
 import { SubscriptionModule } from 'src/subscription/subscription.module';
 import { MailModule } from 'src/mail/mail.module';
+import { OrganizationModule } from 'src/organization/organization.module';
+import { SmsModule } from 'src/sms/sms.module';
 
 @Module({
   imports: [
@@ -20,7 +22,9 @@ import { MailModule } from 'src/mail/mail.module';
     RoleModule,
     MembershipModule,
     SubscriptionModule,
+    OrganizationModule,
     MailModule,
+    SmsModule,
     MongooseModule.forFeature([
       { name: Member.name, schema: MemberSchema },
       { name: MemberCustomField.name, schema: MemberCustomFieldSchema },

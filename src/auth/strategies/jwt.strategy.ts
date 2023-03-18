@@ -23,10 +23,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: TokenData) {
     const user = await this.userService.findByUsername(payload.username);
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Unauthorized, please login to continue');
     }
     if (payload.organizationId) {
-      const member = await this.memberService.findOne(
+      const member: Member = await this.memberService.findOne(
         payload.organizationId,
         payload.memberId,
         ['role', 'organization', 'user'],

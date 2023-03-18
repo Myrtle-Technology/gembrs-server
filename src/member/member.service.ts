@@ -1,5 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongoose';
+import {
+  BadRequestException,
+  Injectable,
+  Inject,
+  forwardRef,
+  NotFoundException,
+} from '@nestjs/common';
+import { FilterQuery, ObjectId, ProjectionType, QueryOptions } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { SharedService } from 'src/shared/shared.service';
@@ -20,6 +26,14 @@ import { Membership } from 'src/membership/schemas/membership.schema';
 import { MailService } from 'src/mail/mail.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { MemberCreatedEvent } from './events/member-created.event';
+import { User } from 'src/user/schemas/user.schema';
+import { BulkInviteMemberDto } from './dto/bulk-invite-member.dto';
+import { MemberStatus } from './enums/member-status.enum';
+import { isEmail, isPhoneNumber } from 'class-validator';
+import { SmsService } from 'src/sms/sms.service';
+import { OrganizationService } from 'src/organization/organization.service';
+import { MembershipAccess } from 'src/membership/enums/membership-access.enum';
+import { AcceptInvite } from './dto/accept-invite.dto';
 
 @Injectable()
 export class MemberService extends SharedService<MemberRepository> {
@@ -29,8 +43,11 @@ export class MemberService extends SharedService<MemberRepository> {
     private readonly userService: UserService,
     private readonly roleService: RoleService,
     private readonly membershipService: MembershipService,
+    private readonly organizationService: OrganizationService,
     private readonly subscriptionService: SubscriptionService,
+    @Inject(forwardRef(() => MailService))
     private readonly mailService: MailService,
+    private readonly smsService: SmsService,
     private readonly eventEmitter: EventEmitter2,
     private configService: ConfigService,
   ) {
@@ -50,31 +67,51 @@ export class MemberService extends SharedService<MemberRepository> {
   }
 
   public async createOne(organization: string, dto: CreateOneMemberDto) {
-    const membership = await this.membershipService.findOne(
+    const membership = await this.membershipService.findById(
       organization,
       dto.membership,
     );
     if (!membership) {
-      throw new BadRequestException('Membership level not found');
+      throw new BadRequestException('Membership not found');
     }
-    const [user] = await this.userService.findOrCreate(dto);
-    const role = await this.roleService.getDefaultMemberRole();
-    const member = (await this.create({
+    const [user] = await this.userService.findUpdateOrCreate(dto);
+    const memberExists = await this.repo.findOne({
       user: user._id,
       organization,
-      role: role._id,
-      customFields: dto.customFields,
-      contactPhone: dto.contactPhone,
-      officeTitle: dto.officeTitle,
-      password: dto.password,
-      bio: dto.bio,
-    })) as Member;
-    await this.createMemberSubscription(membership, organization, member);
-    this.eventEmitter.emit(
-      MemberCreatedEvent.eventName,
-      new MemberCreatedEvent(member, dto.notifyMember),
-    );
-    return this.findById(member._id);
+    });
+    if (memberExists) {
+      return memberExists;
+    }
+    const role = await this.roleService.getDefaultMemberRole();
+    try {
+      const subscription = await this.createMemberSubscription(
+        membership,
+        organization,
+        user,
+      );
+      const member = (await this.create({
+        user: user._id,
+        organization,
+        role: role._id,
+        customFields: dto.customFields,
+        officeTitle: dto.officeTitle,
+        password: dto.password,
+        status:
+          membership.access == MembershipAccess.APPLICATION
+            ? MemberStatus.PENDING
+            : MemberStatus.ACCEPTED,
+        bio: dto.bio,
+        subscription: subscription._id,
+      })) as Member;
+      this.eventEmitter.emit(
+        MemberCreatedEvent.eventName,
+        new MemberCreatedEvent(member, true),
+      );
+      return this.findById(member._id);
+    } catch (error) {
+      console.error(error);
+      throw new Error(error);
+    }
   }
 
   @OnEvent(MemberCreatedEvent.eventName, { async: true })
@@ -90,29 +127,46 @@ export class MemberService extends SharedService<MemberRepository> {
   public async createMemberSubscription(
     membership: Membership,
     organization: string,
-    member: Member,
+    user: User,
   ) {
     const [startDateTime, endDateTime] =
       this.membershipService.getMembershipStartAndEndDate(membership);
-    return this.subscriptionService.createOne({
+    const subscription = await this.subscriptionService.createOne({
       organization: organization,
-      member: member._id,
+      user: user._id,
       membership: membership.id,
       status: SubscriptionStatus.Pending,
       currentPeriodStart: startDateTime.toJSDate(),
-      currentPeriodEnd: endDateTime.toJSDate(),
+      currentPeriodEnd: endDateTime?.toJSDate(),
       cancelAtPeriodEnd:
         membership.renewalPeriod.duration !== RenewalPeriodDuration.Never,
       defaultPaymentMethod: membership.paymentMethod,
     });
+    return subscription;
   }
 
-  public async findAll(
+  public async findAndPaginate(
     organization: string,
     params: PaginationOptions<Member>,
   ) {
-    params.query = { ...params.query, organization };
+    const defaultFilter = { status: MemberStatus.ACCEPTED };
+    params.query = { ...defaultFilter, ...params.query, organization };
+    const defaultSort = 'userName';
+    params.sort = params.sort || defaultSort;
     return this.repo.paginate(params);
+  }
+  public async findAll(
+    organization: string,
+    filter: FilterQuery<Member>,
+    projection?: ProjectionType<Member>,
+    options?: QueryOptions<Member>,
+  ) {
+    const defaultFilter = { status: MemberStatus.ACCEPTED };
+    return this.repo.find(
+      { ...defaultFilter, ...filter, organization },
+      projection,
+      options,
+    );
   }
 
   public async findById(
@@ -154,6 +208,16 @@ export class MemberService extends SharedService<MemberRepository> {
     );
   }
 
+  public async findByUserOrganization(
+    user: string,
+    organization: string,
+    relations: string[] = ['role', 'user', 'organization'],
+  ) {
+    return this.repo.findOne({ organization, user }, null, {
+      populate: relations,
+    });
+  }
+
   public async update(
     organization: string,
     id: ObjectId | string,
@@ -185,20 +249,125 @@ export class MemberService extends SharedService<MemberRepository> {
 
   public async findAllMemberSubscriptions(
     organization: string,
-    member: string,
+    memberId: string,
   ) {
+    const member = await this.findById(memberId);
     return this.subscriptionService.findAll(organization, {
-      member,
+      user: member.user?._id ?? member.user,
     });
   }
 
   public async findActiveMemberSubscription(
     organization: string,
-    member: string,
+    memberId: string,
   ) {
-    return this.subscriptionService.findOne(organization, {
-      member,
-      active: true,
-    });
+    const member = await this.findOne(organization, memberId, ['subscription']);
+    return member.subscription;
+  }
+
+  public async inviteMembers(organizationId: string, dto: BulkInviteMemberDto) {
+    const role = dto.makeAdmin
+      ? await this.roleService.getDefaultAdminRole()
+      : await this.roleService.getDefaultMemberRole();
+    const organization = await this.organizationService.findById(
+      organizationId,
+    );
+    const bulkDto = dto.usernames.map<CreateMemberDto>((username) => ({
+      organization: organizationId,
+      membership: dto.membership,
+      status: MemberStatus.INVITED,
+      userEmail: isEmail(username) ? username : '',
+      userPhone: isPhoneNumber(username) ? username : '',
+      role: role._id,
+      user: null,
+    }));
+
+    const members = await this.repo.createManyInvitees(bulkDto);
+
+    const sendEmail = members
+      .filter((m) => m.userEmail)
+      .map((member) => ({
+        name: member.userEmail,
+        email: member.userEmail,
+        link: this.generateInviteLink(member),
+        message: dto.message,
+        hostName: `${organization.owner.firstName} ${organization.owner.lastName}`,
+        organizationName: organization.name,
+      }));
+    const sendSMS = members
+      .filter((m) => m.userPhone)
+      .map((member) => ({
+        phone: member.userPhone,
+        link: this.generateInviteLink(member),
+        message: dto.message,
+        hostName: `${organization.owner.firstName} ${organization.owner.lastName}`,
+        organizationName: organization.name,
+      }));
+
+    const emails = sendEmail.map((dto) =>
+      this.mailService.sendMemberInvitationEmail(dto),
+    );
+
+    const sms = sendSMS.map((dto) =>
+      this.smsService.sendMemberInvitationSMS(dto),
+    );
+
+    await Promise.all([...emails, ...sms]);
+
+    return members;
+  }
+
+  private generateInviteLink(member: Member) {
+    const frontendBaseUrl = this.configService.get<string>('FRONTEND_BASE_URL');
+
+    return `${frontendBaseUrl}/invites/${member._id}`;
+  }
+
+  public async validateInvitation(memberId: string) {
+    const member = await this.findById(memberId, ['organization', 'role']);
+    if (!member) {
+      throw new NotFoundException(
+        'We could not find the invitation you are looking for',
+      );
+    }
+    if (member.status !== MemberStatus.INVITED) {
+      if (member.status === MemberStatus.EXPIRED) {
+        throw new BadRequestException('Invitation has expired');
+      }
+      throw new BadRequestException(
+        `This invitation has already been ${member.status}`,
+      );
+    }
+    return member;
+  }
+
+  public async acceptInvitation(memberId: string, dto: AcceptInvite) {
+    await this.validateInvitation(memberId);
+    // create user
+    const [user] = await this.userService.findUpdateOrCreate(dto);
+
+    // update member
+    const updatedMember = await this.repo.updateOne(
+      { _id: memberId },
+      {
+        user: user._id,
+        status: MemberStatus.ACCEPTED,
+        userName: user.firstName + ' ' + user.lastName,
+      },
+    );
+
+    return updatedMember;
+  }
+
+  public async declineInvitation(memberId: string) {
+    await this.validateInvitation(memberId);
+
+    // update member
+    const updatedMember = await this.repo.updateOne(
+      { _id: memberId },
+      { status: MemberStatus.DECLINED },
+    );
+
+    return updatedMember;
   }
 }

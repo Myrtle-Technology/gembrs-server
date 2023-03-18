@@ -8,6 +8,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { ObjectId } from 'mongoose';
+import { PaginationOptions } from 'src/shared/shared.repository';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UserService extends SharedService<UserRepository> {
@@ -15,13 +17,17 @@ export class UserService extends SharedService<UserRepository> {
     super(repo);
   }
 
-  public async findOrCreate(dto: CreateUserDto) {
+  public async findUpdateOrCreate(dto: CreateUserDto) {
     if (!(dto.email || dto.phone)) {
       throw new BadRequestException(
         'You need to enter either your email or phone number',
       );
     }
-    return this.repo.findOrCreate(dto);
+    return this.repo.findOneOrCreate(dto);
+  }
+
+  public async findUpdateOrCreateBulk(dto: string[]) {
+    return this.repo.findOrCreateBulk(dto);
   }
 
   public async findByUsername(username: string, throwError = true) {
@@ -48,5 +54,13 @@ export class UserService extends SharedService<UserRepository> {
 
   public async remove(id: ObjectId | string) {
     return this.repo.deleteById(id);
+  }
+
+  public async findUserOrganizations(user: string) {
+    return this.repo.findUserOrganizations(user);
+  }
+
+  public async findUserContacts(user: string, search?: string) {
+    return this.repo.findUserContacts(user, search);
   }
 }

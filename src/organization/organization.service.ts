@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilterQuery, ObjectId } from 'mongoose';
+import slugify from 'slugify';
 import { CustomFieldDefaults } from 'src/custom-field/custom-field.defaults';
 import { CustomFieldService } from 'src/custom-field/custom-field.service';
 import { CustomField } from 'src/custom-field/schemas/custom-field.schema';
+import { MembershipAccess } from 'src/membership/enums/membership-access.enum';
 import { MembershipService } from 'src/membership/membership.service';
 import { SharedService } from 'src/shared/shared.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -31,7 +33,10 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
   ];
 
   public async createOne(dto: CreateOrganizationDto) {
-    return this.repo.create(dto);
+    return this.repo.create({
+      ...dto,
+      siteName: (dto.siteName ?? slugify(dto.name)).toLowerCase(),
+    });
   }
 
   public async findBySiteName(siteName: string, throwError = true) {
@@ -42,12 +47,17 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
     return organization;
   }
 
-  public async findAll(filter?: FilterQuery<Organization>) {
-    return this.repo.find({ ...filter });
+  public async findAll(limit?: number, filter?: FilterQuery<Organization>) {
+    return this.repo.find({ ...filter }, null, { limit });
   }
 
   public async findById(id: ObjectId | string) {
-    return this.repo.findById(id);
+    return this.repo.findById(id, {
+      populate: [
+        { path: 'owner', select: 'firstName lastName -_id' },
+        { path: 'membersCount' },
+      ],
+    });
   }
 
   public async update(id: ObjectId | string, dto: UpdateOrganizationDto) {
@@ -59,7 +69,19 @@ export class OrganizationService extends SharedService<OrganizationRepository> {
   }
 
   public async findAllMemberships(organization: string) {
-    return this.membershipService.findAll(organization);
+    return this.membershipService.findAll(organization, {
+      access: { $ne: MembershipAccess.INVITE },
+    });
+  }
+
+  public async findOrganizationMembershipById(
+    organization: string,
+    id: string,
+  ) {
+    return this.membershipService.findOne(organization, {
+      _id: id,
+      access: { $ne: MembershipAccess.INVITE },
+    });
   }
 
   public async getRegistrationFormFields(

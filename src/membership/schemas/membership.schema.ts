@@ -22,6 +22,7 @@ import {
   CustomField,
   CustomFieldSchema,
 } from 'src/custom-field/schemas/custom-field.schema';
+import { MembershipAccess } from '../enums/membership-access.enum';
 
 // export type MemberDocument = Member & Document;
 
@@ -60,16 +61,26 @@ export class Membership extends Document {
   type: MembershipType;
 
   @ApiProperty()
+  @Prop({
+    type: String,
+    default: MembershipAccess.OPEN,
+    enum: MembershipAccess,
+  })
+  access: MembershipAccess;
+
+  /**@deprecated not needed anymore */
+  @ApiProperty()
   @Prop()
   isPublic: boolean;
+
+  /**@deprecated not needed anymore */
+  @ApiProperty()
+  @Prop({ default: false })
+  approveApplication: boolean;
 
   @ApiProperty()
   @Prop({ type: RenewalPeriodSchema })
   renewalPeriod: RenewalPeriod;
-
-  @ApiProperty()
-  @Prop({ default: false })
-  approveApplication: boolean;
 
   @ApiProperty()
   @Prop({ default: true })

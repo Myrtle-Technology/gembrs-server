@@ -32,8 +32,12 @@ export class MembershipService extends SharedService<MembershipRepository> {
     return this.repo.find({ ...filter, organization });
   }
 
-  public async findOne(organization: string, id: string) {
+  public async findById(organization: string, id: string) {
     return this.repo.findOne({ organization, _id: id });
+  }
+
+  public async findOne(organization: string, filter: any) {
+    return this.repo.findOne({ organization, ...filter });
   }
 
   public async updateOne(
@@ -51,14 +55,14 @@ export class MembershipService extends SharedService<MembershipRepository> {
 
   public getMembershipStartAndEndDate(membership: Membership) {
     const startDateTime = DateTime.now();
-    if (membership.renewalPeriod.duration == RenewalPeriodDuration.Never) {
-      return [startDateTime, null];
+    let endDateTime: DateTime | null = null;
+    if (membership.renewalPeriod.duration !== RenewalPeriodDuration.Never) {
+      endDateTime = startDateTime.plus(
+        Duration.fromObject({
+          [membership.renewalPeriod.duration]: membership.renewalPeriod.length,
+        }),
+      );
     }
-    const endDateTime = startDateTime.plus(
-      Duration.fromObject({
-        [membership.renewalPeriod.duration]: membership.renewalPeriod.length,
-      }),
-    );
 
     return [startDateTime, endDateTime];
   }

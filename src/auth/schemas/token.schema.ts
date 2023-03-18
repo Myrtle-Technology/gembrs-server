@@ -8,6 +8,9 @@ export class Token extends Document {
 
   @Prop()
   identifier: string;
+
+  @Prop()
+  verified: boolean;
 }
 
 export const TokenSchema = SchemaFactory.createForClass(Token);

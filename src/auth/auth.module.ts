@@ -16,7 +16,6 @@ import { ConfigModule } from '@nestjs/config';
 import { TokenRepository } from './token.repository';
 import { Token, TokenSchema } from './schemas/token.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { InvitationModule } from 'src/invitation/invitation.module';
 
 @Module({
   imports: [
@@ -33,7 +32,6 @@ import { InvitationModule } from 'src/invitation/invitation.module';
     RoleModule,
     OrganizationModule,
     MemberModule,
-    InvitationModule,
     // MemberCommonFieldModule,
     // MembershipPlanModule,
     // SubscriptionModule,

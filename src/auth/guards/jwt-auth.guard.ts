@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -32,30 +33,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     ]);
     const request: TokenRequest = context.switchToHttp().getRequest();
     if (isPublic) {
-      const organizationSlug = request.headers[
-        ORGANIZATION_API_HEADER
-      ] as string;
-
-      if (organizationSlug == 'gembrs') {
-        return true;
-      }
-
-      if (!organizationSlug) {
-        throw new BadRequestException(
-          'Please specify the organization you want to access',
-        );
-      }
-
-      return this.organizationService
-        .findBySiteName(organizationSlug)
-        .then((organization) => {
-          if (!organization)
-            throw new NotFoundException(
-              'No organization with the specified site name was found',
-            );
-          request.organization = organization;
-          return !!organization;
-        });
+      return this.handlePublicRoutes(request);
     }
     const bearerToken: string[] = (request.headers.authorization || '').split(
       ' ',
@@ -75,10 +53,39 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     // if it is not an a allowUserWithoutOrganization route,
     // and user has no organization, throw exception
     if (!allowUserWithoutOrganization && !request.tokenData?.organizationId) {
+      // and user has organizations, throw forbidden exception
+      if (request.tokenData?.organizations.length) {
+        throw new ForbiddenException('You are not a member of this community');
+      }
       throw new UnauthorizedException(
-        'User is not allowed to access this route',
+        'User is not allowed to access this route ',
       );
     }
     return super.canActivate(context);
+  }
+
+  async handlePublicRoutes(request: TokenRequest) {
+    const organizationSlug = request.headers[ORGANIZATION_API_HEADER] as string;
+
+    if (organizationSlug == 'gembrs') {
+      return true;
+    }
+
+    if (!organizationSlug) {
+      throw new BadRequestException(
+        'Please specify the organization you want to access',
+      );
+    }
+
+    return this.organizationService
+      .findBySiteName(organizationSlug, false)
+      .then((organization) => {
+        if (!organization)
+          throw new NotFoundException(
+            'No organization with the specified site name was found',
+          );
+        request.organization = organization;
+        return !!organization;
+      });
   }
 }

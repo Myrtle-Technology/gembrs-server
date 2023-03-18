@@ -4,7 +4,7 @@ import { Token } from './schemas/token.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { isEmail } from 'class-validator';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class TokenRepository extends SharedRepository<Token, CreateTokenDto> {
@@ -12,11 +12,11 @@ export class TokenRepository extends SharedRepository<Token, CreateTokenDto> {
     super(model);
   }
 
-  findByIdentifier(token: string, identifier: string) {
+  findByIdentifier(params: { token?: string; identifier: string }) {
+    const expirationTime = DateTime.now().minus({ minutes: 10 }).toJSDate();
     return this.model.findOne({
-      token,
-      identifier,
-      // $and: [{ createdAt: { $gt: new Date() } }],
+      ...params,
+      $and: [{ createdAt: { $gt: expirationTime } }],
     });
   }
 }

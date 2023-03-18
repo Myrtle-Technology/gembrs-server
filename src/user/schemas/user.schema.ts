@@ -54,6 +54,10 @@ export class User extends Document {
   phone: string;
 
   @ApiProperty()
+  @Prop()
+  bio: string;
+
+  @ApiProperty()
   @Prop(Boolean)
   verifiedEmail: boolean;
 
@@ -84,5 +88,5 @@ UserSchema.post('save', function (error, doc, next) {
     next(new BadRequestException('Bad input try again'));
   }
 });
-
+UserSchema.index({ '$**': 'text' });
 UserSchema.plugin(mongoosePagination);

@@ -29,3 +29,20 @@ export interface Media {
   url: string;
   caption: string;
 }
+
+export class TermiiBulkRequestParams {
+  to: string[];
+  from: string;
+  sms: string;
+  type: string;
+  channel: string;
+  api_key: string;
+
+  constructor(payload: Partial<TermiiBulkRequestParams>) {
+    Object.assign(this, payload);
+  }
+
+  toString() {
+    return JSON.stringify(this);
+  }
+}
