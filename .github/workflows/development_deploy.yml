@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, dev-server]
+    runs-on: [self-hosted, gembrs-server]
     strategy:
       matrix:
         node-version: [16]
@@ -20,13 +20,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    # - name: Use Node.js ${{ matrix.node-version }}
-    #  uses: actions/setup-node@v3
-    #  with:
-    #    token: ${{ secrets.CI_PA_TOKEN }}
-    #    node-version: ${{ matrix.node-version }}
-    #    check-latest: false
-    #    cache: 'npm'
     - run: ls
     - run: rsync -a -u ~/actions-runner/gembrs-server_work/gembrs-server/gembrs-server/ /var/www/staging.gembrs.com/server
     - run: | 
