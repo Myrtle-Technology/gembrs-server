@@ -134,7 +134,7 @@ export class AuthController {
     @Request() request: TokenRequest,
     @Body() dto: CreateOneMemberDto,
   ) {
-    return this.authService.registerMember(request?.organization?.id, dto);
+    return this.authService.registerMember(request?.organization?._id, dto);
   }
 
   @Public()
