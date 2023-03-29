@@ -33,7 +33,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     ]);
     const request: TokenRequest = context.switchToHttp().getRequest();
     if (isPublic) {
-      return this.handlePublicRoutes(request);
+      return this.handlePublicRoutes(request).then((result) => {
+        return true;
+      });
     }
     const bearerToken: string[] = (request.headers.authorization || '').split(
       ' ',
