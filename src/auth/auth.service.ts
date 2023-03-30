@@ -37,8 +37,9 @@ import { AcceptInvite } from 'src/member/dto/accept-invite.dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
-  private readonly isDevServer: string =
-    this.configService.get<string>('IS_DEV_SERVER');
+  private get isDevServer(): boolean {
+    return this.configService.get<string>('IS_DEV_SERVER') === 'true';
+  }
   constructor(
     @Inject(REQUEST) private request: TokenRequest,
     private tokenRepo: TokenRepository,
@@ -61,13 +62,13 @@ export class AuthService {
   }
 
   async sendOtpToEmailOrPhone(dto: VerifyEmailDto) {
-    // if (!(this.isDevServer == 'true')) {
-    if (isEmail(dto.username)) {
-      await this.sendTokenToEmail(dto);
-    } else {
-      await this.sendTokenToPhone(dto);
+    if (!this.isDevServer) {
+      if (isEmail(dto.username)) {
+        await this.sendTokenToEmail(dto);
+      } else {
+        await this.sendTokenToPhone(dto);
+      }
     }
-    // }
     return { message: `A verification code has been sent to ${dto.username}` };
   }
 
@@ -124,13 +125,11 @@ export class AuthService {
   async validateOTP(dto: VerifyOtpDto) {
     let userDto: CreateUserDto;
     const usernameIsEmail = isEmail(dto.username);
-    // if (!(this.isDevServer == 'true')) {
     if (usernameIsEmail) {
       userDto = await this.validateEmailOtp(dto);
     } else {
       userDto = await this.validatePhoneOtp(dto);
     }
-    // }
     const [user, isNewUser] = await this.userService.findUpdateOrCreate(
       userDto,
     );
@@ -138,6 +137,9 @@ export class AuthService {
   }
 
   private async validatePhoneOtp(dto: VerifyOtpDto) {
+    if (this.isDevServer) {
+      return { phone: dto.username, verifiedPhone: true };
+    }
     const token = await this.tokenRepo.findByIdentifier({
       identifier: dto.username,
     });
@@ -166,6 +168,9 @@ export class AuthService {
   }
 
   private async validateEmailOtp(dto: VerifyOtpDto) {
+    if (this.isDevServer) {
+      return { email: dto.username, verifiedEmail: true };
+    }
     const token = await this.tokenRepo.findByIdentifier({
       token: dto.otp,
       identifier: dto.username,
